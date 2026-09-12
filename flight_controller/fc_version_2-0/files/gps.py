@@ -16,9 +16,9 @@ class GPS:
         self.activated = True
 
         self.activation_time = time.monotonic()
+        with open("output.txt", "a") as file:
+            file.write(f"GPS Activation time: {self.activation_time}\n")
 
     def deactivate(self):
 
         self.activated = False
-
-        self.activation_time = None

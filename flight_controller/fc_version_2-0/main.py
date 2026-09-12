@@ -30,6 +30,16 @@ radar = Radar()
 
 gps = GPS()
 
+# ============================================================
+# OUTPUT
+# ============================================================
+
+
+def update_output(gps, radar):
+    with open("output.txt", "w") as file:
+        file.write(f"GPS Activation time: {gps.activation_time}\n")
+        file.write(f"Radar capture times: {radar.capture_times}\n")
+
 
 # ============================================================
 # MAIN LOOP
@@ -42,32 +52,20 @@ def main():
     global start_time
 
     print("Starting drone radar interface...")
+    open("output.txt", "w")  # overwrite previous file
 
     try:
 
         while True:
 
             # ------------------------------------------------
-            # ARMING
+            # Radar Capture
             # ------------------------------------------------
 
-            if rc.rc7_high and not drone_armed:
+            if rc.rc7_high:
 
-                drone_armed = True
-
-                start_time = time.monotonic()
-
-                print("Drone armed")
-
-            # ------------------------------------------------
-            # DISARMING
-            # ------------------------------------------------
-
-            if not rc.rc7_high and drone_armed:
-
-                drone_armed = False
-
-                print("Drone disarmed")
+                radar.start_capture()
+                update_output(gps, radar)
 
             # ------------------------------------------------
             # GPS
@@ -76,10 +74,7 @@ def main():
             if rc.rc8_high:
 
                 gps.activate()
-
-            else:
-
-                gps.deactivate()
+                update_output(gps, radar)
 
             # ------------------------------------------------
             # DISPLAY
