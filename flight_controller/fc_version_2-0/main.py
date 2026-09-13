@@ -14,9 +14,7 @@ from files.config import DISPLAY_REFRESH
 # GLOBAL STATE
 # ============================================================
 
-drone_armed = False
-start_time = None
-program_start_time = time.monotonic()
+start_time = time.monotonic()
 
 # ============================================================
 # INITIALISE
@@ -58,14 +56,21 @@ def main():
 
         while True:
 
+            runtime = time.monotonic() - start_time
+
             # ------------------------------------------------
             # Radar Capture
             # ------------------------------------------------
 
-            if rc.rc7_high:
+            if rc.rc7_high and rc.rc7_last_low:
 
-                radar.start_capture()
+                radar.start_capture(runtime)
                 update_output(gps, radar)
+                radar.stop_capture()
+                rc.rc7_last_low = 0
+
+            if not rc.rc7_high:
+                rc.rc7_last_low = 1
 
             # ------------------------------------------------
             # GPS
@@ -80,7 +85,7 @@ def main():
             # DISPLAY
             # ------------------------------------------------
 
-            display(rc, radar, gps, drone_armed, start_time, program_start_time)
+            display(rc, radar, gps, runtime)
 
             time.sleep(DISPLAY_REFRESH)
 

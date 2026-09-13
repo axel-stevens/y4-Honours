@@ -12,7 +12,7 @@ class Radar:
 
         self.capture_times = []
 
-    def start_capture(self, start_time):
+    def start_capture(self, runtime):
 
         if self.capturing:
             return
@@ -21,22 +21,21 @@ class Radar:
 
         self.capture_count += 1
 
-        self.last_capture_time = time.monotonic()
+        self.last_capture_time = runtime
 
-        if start_time is not None:
-            self.capture_times.append(self.last_capture_time - start_time)
+        self.capture_times.append(self.last_capture_time)
 
         print("Radar capture started")
 
         # Start radar here
-        subprocess.run(
-            """
-            sudo ./build-arm64/pupradar_capture --firmware firmware/SDR_USB_FW.hex --duration 5 --fc-low 24.00e9 --fc-high 26e9 --sweep-time 1 --samp-num 4 --out ~/SDR-data/0209_pi/0209_2GHz_128_0-5ms_loopback_rx1_01 --rx 1
-            """,
-            shell=True,
-            executable="/bin/bash",
-            check=True,
-        )
+        # subprocess.run(
+        #     """
+        #     sudo ./build-arm64/pupradar_capture --firmware firmware/SDR_USB_FW.hex --duration 5 --fc-low 24.00e9 --fc-high 26e9 --sweep-time 1 --samp-num 4 --out ~/SDR-data/0209_pi/0209_2GHz_128_0-5ms_loopback_rx1_01 --rx 1
+        #     """,
+        #     shell=True,
+        #     executable="/bin/bash",
+        #     check=True,
+        # )
 
     def stop_capture(self):
 

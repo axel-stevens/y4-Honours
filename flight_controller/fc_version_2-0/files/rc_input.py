@@ -18,6 +18,9 @@ class RCInput:
         self.rc7_rising_time = None
         self.rc8_rising_time = None
 
+        self.rc7_last_low = 0
+        self.rc8_last_low = 0
+
         GPIO.setup(RC7_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
         GPIO.setup(RC8_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)

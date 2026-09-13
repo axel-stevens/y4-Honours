@@ -16,20 +16,13 @@ def format_time(seconds):
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
 
-def display(rc, radar, gps, drone_armed, start_time, program_start_time):
+def display(rc, radar, gps, runtime):
 
     os.system("clear")
 
     # --------------------------------------------------------
     # RUNNING TIMES
     # --------------------------------------------------------
-
-    if start_time is not None:
-        running_time = time.monotonic() - start_time
-    else:
-        running_time = 0
-
-    program_running_time = time.monotonic() - program_start_time
 
     # --------------------------------------------------------
     # HEADER
@@ -48,11 +41,7 @@ def display(rc, radar, gps, drone_armed, start_time, program_start_time):
     print("  DRONE STATUS")
     print("  " + "-" * 32)
 
-    armed = "YES" if drone_armed else "NO"
-
-    print(f"  Armed:                 {armed}")
-    print(f"  Drone running time:    {format_time(running_time)}")
-    print(f"  Program running time:  {format_time(program_running_time)}")
+    print(f"  Program running time:  {format_time(runtime)}")
 
     print()
 
@@ -88,14 +77,10 @@ def display(rc, radar, gps, drone_armed, start_time, program_start_time):
     print(f"  Capture status:        {radar_status}")
     print(f"  Captures:              {radar.capture_count}")
 
-    if radar.last_capture_time is not None and start_time is not None:
-
-        capture_runtime = radar.last_capture_time - start_time
-
+    if radar.last_capture_time is not None:
+        capture_runtime = radar.last_capture_time
         print(f"  Last capture:          " f"{format_time(capture_runtime)}")
-
     else:
-
         print("  Last capture:          --:--:--")
 
     print()
@@ -111,14 +96,10 @@ def display(rc, radar, gps, drone_armed, start_time, program_start_time):
 
     print(f"  Status:                {gps_status}")
 
-    if gps.activation_time is not None and start_time is not None:
-
-        gps_runtime = gps.activation_time - start_time
-
+    if gps.activation_time is not None:
+        gps_runtime = gps.activation_time
         print(f"  Activation runtime:    " f"{format_time(gps_runtime)}")
-
     else:
-
         print("  Activation runtime:    --:--:--")
 
     print()
