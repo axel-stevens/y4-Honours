@@ -1,9 +1,7 @@
 import os
-import time
 
 
 def format_time(seconds):
-
     if seconds is None:
         return "--:--:--"
 
@@ -20,54 +18,86 @@ def display(radar, drone, runtime):
 
     os.system("clear")
 
-    # --------------------------------------------------------
-    # RUNNING TIMES
-    # --------------------------------------------------------
-
-    # --------------------------------------------------------
+    # ========================================================
     # HEADER
-    # --------------------------------------------------------
+    # ========================================================
 
     print("=" * 60)
     print("              DRONE RADAR CONTROL INTERFACE")
     print("=" * 60)
-
     print()
 
-    # --------------------------------------------------------
+    # ========================================================
     # DRONE STATUS
-    # --------------------------------------------------------
+    # ========================================================
 
     print("  DRONE STATUS")
     print("  " + "-" * 32)
 
-    print(f"  Program running time:  {format_time(runtime)}")
+    armed_status = "ARMED" if drone.armed else "DISARMED"
 
+    print(f"  Program running time:  {format_time(runtime)}")
+    print(f"  Flight mode:           {drone.flight_mode}")
+    print(f"  Armed:                 {armed_status}")
     print()
 
-    # --------------------------------------------------------
-    # RC INPUTS
-    # --------------------------------------------------------
+    # ========================================================
+    # GPS
+    # ========================================================
 
-    print("  RC INPUTS")
+    print("  GPS")
     print("  " + "-" * 32)
 
-    rc7_state = "HIGH" if rc.rc7_high else "LOW"
-    rc8_state = "HIGH" if rc.rc8_high else "LOW"
+    print(f"  Fix type:              {drone.gps_fix}")
+    print(f"  Satellites:            {drone.satellites}")
+    print(f"  Position:              " f"{drone.latitude:.7f}, {drone.longitude:.7f}")
+    print(f"  Altitude:              {drone.altitude:.2f} m")
+    print(f"  Relative altitude:     {drone.relative_altitude:.2f} m")
+    print(f"  Groundspeed:           {drone.groundspeed:.2f} m/s")
+    print()
 
-    print(f"  RC7  GPIO 17:          {rc7_state}")
-    print(f"       Pulse width:      {rc.rc7_pulse_width:.0f} us")
+    # ========================================================
+    # ATTITUDE
+    # ========================================================
+
+    print("  ATTITUDE")
+    print("  " + "-" * 32)
+
+    print(f"  Roll:                  {drone.roll:.2f} rad")
+    print(f"  Pitch:                 {drone.pitch:.2f} rad")
+    print(f"  Yaw:                   {drone.yaw:.2f} rad")
+    print()
+
+    # ========================================================
+    # BATTERY
+    # ========================================================
+
+    print("  BATTERY")
+    print("  " + "-" * 32)
+
+    print(f"  Voltage:               {drone.battery_voltage:.2f} V")
+    print(f"  Current:               {drone.battery_current:.2f} A")
+
+    if drone.battery_remaining >= 0:
+        print(f"  Remaining:             {drone.battery_remaining}%")
+    else:
+        print("  Remaining:             --")
 
     print()
 
-    print(f"  RC8  GPIO 27:          {rc8_state}")
-    print(f"       Pulse width:      {rc.rc8_pulse_width:.0f} us")
+    # ========================================================
+    # RC INPUT
+    # ========================================================
 
+    print("  RC INPUT")
+    print("  " + "-" * 32)
+
+    print(f"  Channel 15:            {drone.rc_channel_15}")
     print()
 
-    # --------------------------------------------------------
+    # ========================================================
     # RADAR
-    # --------------------------------------------------------
+    # ========================================================
 
     print("  RADAR")
     print("  " + "-" * 32)
@@ -78,35 +108,15 @@ def display(radar, drone, runtime):
     print(f"  Captures:              {radar.capture_count}")
 
     if radar.last_capture_time is not None:
-        capture_runtime = radar.last_capture_time
-        print(f"  Last capture:          " f"{format_time(capture_runtime)}")
+        print(f"  Last capture:          " f"{format_time(radar.last_capture_time)}")
     else:
         print("  Last capture:          --:--:--")
 
     print()
 
-    # --------------------------------------------------------
-    # GPS
-    # --------------------------------------------------------
-
-    print("  GPS")
-    print("  " + "-" * 32)
-
-    gps_status = "ACTIVATED" if gps.activated else "NOT ACTIVATED"
-
-    print(f"  Status:                {gps_status}")
-
-    if gps.activation_time is not None:
-        gps_runtime = gps.activation_time
-        print(f"  Activation runtime:    " f"{format_time(gps_runtime)}")
-    else:
-        print("  Activation runtime:    --:--:--")
-
-    print()
-
-    # --------------------------------------------------------
+    # ========================================================
     # FOOTER
-    # --------------------------------------------------------
+    # ========================================================
 
     print("=" * 60)
     print("  Press Ctrl+C to exit")

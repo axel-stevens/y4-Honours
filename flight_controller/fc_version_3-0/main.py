@@ -22,11 +22,8 @@ start_time = time.monotonic()
 
 GPIO.setmode(GPIO.BCM)
 
-rc = RCInput()
 
 radar = Radar()
-
-gps = GPS()
 
 drone = Drone()
 
@@ -35,10 +32,10 @@ drone = Drone()
 # ============================================================
 
 
-def update_output(gps, radar):
-    with open("output.txt", "w") as file:
-        file.write(f"GPS Activation time: {gps.activation_time}\n")
-        file.write(f"Radar capture times: {radar.capture_times}\n")
+# def update_output(drone, radar):
+#     with open("output.txt", "w") as file:
+#         file.write(f"GPS Activation time: {gps.activation_time}\n")
+#         file.write(f"Radar capture times: {radar.capture_times}\n")
 
 
 # ============================================================
@@ -64,30 +61,23 @@ def main():
             # Radar Capture
             # ------------------------------------------------
 
-            if rc.rc7_high and rc.rc7_last_low:
-
+            if drone.rc_channel_15 and drone.rc15_last_low:
                 radar.start_capture(runtime)
-                update_output(gps, radar)
+                # update_output(gps, radar)
                 radar.stop_capture()
-                rc.rc7_last_low = 0
-
-            if not rc.rc7_high:
-                rc.rc7_last_low = 1
+                drone.rc15_last_low = 0
+            if not drone.rc_channel_15:
+                drone.rc15_last_low = 1
 
             # ------------------------------------------------
             # GPS
             # ------------------------------------------------
 
-            if rc.rc8_high:
-
-                gps.activate()
-                update_output(gps, radar)
-
             # ------------------------------------------------
             # DISPLAY
             # ------------------------------------------------
 
-            display(rc, radar, gps, runtime)
+            display(radar, drone)
 
             time.sleep(DISPLAY_REFRESH)
 

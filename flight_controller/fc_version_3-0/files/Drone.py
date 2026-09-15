@@ -34,6 +34,7 @@ class Drone:
 
         # RC
         self.rc_channel_15 = 0
+        self.rc15_last_low = 0
 
     def connect(self):
 
@@ -141,111 +142,85 @@ class Drone:
 
     def update(self):
 
-        msg = self.master.recv_match(blocking=True)
+        while True:
+            msg = self.master.recv_match(blocking=False)
 
-        if msg is None:
-            return
+            if msg is None:
+                break
 
-        msg_type = msg.get_type()
+            msg_type = msg.get_type()
 
-        # -------------------------
-        # GPS
-        # -------------------------
+            # -------------------------
+            # GPS
+            # -------------------------
 
-        if msg_type == "GPS_RAW_INT":
+            if msg_type == "GPS_RAW_INT":
 
-            self.gps_fix = msg.fix_type
+                self.gps_fix = msg.fix_type
 
-            self.satellites = msg.satellites_visible
+                self.satellites = msg.satellites_visible
 
-            self.latitude = msg.lat / 1e7
+                self.latitude = msg.lat / 1e7
 
-            self.longitude = msg.lon / 1e7
+                self.longitude = msg.lon / 1e7
 
-        # -------------------------
-        # GLOBAL POSITION
-        # -------------------------
+            # -------------------------
+            # GLOBAL POSITION
+            # -------------------------
 
-        elif msg_type == "GLOBAL_POSITION_INT":
+            elif msg_type == "GLOBAL_POSITION_INT":
 
-            self.altitude = msg.alt / 1000
+                self.altitude = msg.alt / 1000
 
-            self.relative_altitude = msg.relative_alt / 1000
+                self.relative_altitude = msg.relative_alt / 1000
 
-            self.groundspeed = ((msg.vx**2 + msg.vy**2) ** 0.5) / 100
+                self.groundspeed = ((msg.vx**2 + msg.vy**2) ** 0.5) / 100
 
-        # -------------------------
-        # ATTITUDE
-        # -------------------------
+            # -------------------------
+            # ATTITUDE
+            # -------------------------
 
-        elif msg_type == "ATTITUDE":
+            elif msg_type == "ATTITUDE":
 
-            self.roll = msg.roll
+                self.roll = msg.roll
 
-            self.pitch = msg.pitch
+                self.pitch = msg.pitch
 
-            self.yaw = msg.yaw
+                self.yaw = msg.yaw
 
-        # -------------------------
-        # HEARTBEAT
-        # -------------------------
+            # -------------------------
+            # HEARTBEAT
+            # -------------------------
 
-        elif msg_type == "HEARTBEAT":
+            elif msg_type == "HEARTBEAT":
 
-            self.armed = bool(
-                msg.base_mode & mavutil.mavlink.MAV_MODE_FLAG_SAFETY_ARMED
-            )
+                self.armed = bool(
+                    msg.base_mode & mavutil.mavlink.MAV_MODE_FLAG_SAFETY_ARMED
+                )
 
-            self.flight_mode = mavutil.mode_string_v10(msg)
+                self.flight_mode = mavutil.mode_string_v10(msg)
 
-        # -------------------------
-        # BATTERY
-        # -------------------------
+            # -------------------------
+            # BATTERY
+            # -------------------------
 
-        elif msg_type == "BATTERY_STATUS":
+            elif msg_type == "BATTERY_STATUS":
 
-            if msg.voltages[0] != 65535:
+                if msg.voltages[0] != 65535:
 
-                self.battery_voltage = msg.voltages[0] / 1000
+                    self.battery_voltage = msg.voltages[0] / 1000
 
-            self.battery_current = msg.current_battery / 100
+                self.battery_current = msg.current_battery / 100
 
-            self.battery_remaining = msg.battery_remaining
+                self.battery_remaining = msg.battery_remaining
 
-        # -------------------------
-        # RC CHANNELS
-        # -------------------------
+            # -------------------------
+            # RC CHANNELS
+            # -------------------------
 
-        elif msg_type == "RC_CHANNELS":
+            elif msg_type == "RC_CHANNELS":
 
-            self.rc_channel_15 = msg.chan15_raw
+                self.rc_channel_15 = msg.chan15_raw
 
     def gps_ready(self):
-
         return self.gps_fix >= 3
-
-    def print_status(self):
-
-        print(f"Armed: {self.armed}")
-
-        print(f"Mode: {self.flight_mode}")
-
-        print(f"GPS: {self.gps_fix}")
-
-        print(f"Satellites: {self.satellites}")
-
-        print(f"Position: " f"{self.latitude:.7f}, " f"{self.longitude:.7f}")
-
-        print(f"Altitude: " f"{self.altitude:.2f} m")
-
-        print(f"Groundspeed: " f"{self.groundspeed:.2f} m/s")
-
-        print(f"Roll: {self.roll:.2f} rad")
-
-        print(f"Pitch: {self.pitch:.2f} rad")
-
-        print(f"Yaw: {self.yaw:.2f} rad")
-
-        print(f"Battery: " f"{self.battery_voltage:.2f} V")
-
-        print(f"RC15: {self.rc_channel_15}")
