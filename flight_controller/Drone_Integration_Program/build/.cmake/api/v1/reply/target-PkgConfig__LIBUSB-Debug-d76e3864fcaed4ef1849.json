@@ -1,0 +1,79 @@
+{
+	"abstract" : true,
+	"backtrace" : 4,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"_pkg_create_imp_target",
+			"_pkg_recalculate",
+			"pkg_check_modules",
+			"set_property"
+		],
+		"files" : 
+		[
+			"/usr/share/cmake-4.2/Modules/FindPkgConfig.cmake",
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 3,
+				"file" : 1,
+				"line" : 36,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 1174,
+				"parent" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 813,
+				"parent" : 2
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 787,
+				"parent" : 3
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 794,
+				"parent" : 3
+			}
+		]
+	},
+	"codemodelVersion" : 
+	{
+		"major" : 2,
+		"minor" : 9
+	},
+	"id" : "PkgConfig::LIBUSB::@6890427a1f51a3e7e1df",
+	"imported" : true,
+	"interfaceLinkLibraries" : 
+	[
+		{
+			"backtrace" : 5,
+			"fragment" : "/usr/lib/aarch64-linux-gnu/libusb-1.0.so"
+		}
+	],
+	"local" : true,
+	"name" : "PkgConfig::LIBUSB",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sources" : [],
+	"type" : "INTERFACE_LIBRARY"
+}

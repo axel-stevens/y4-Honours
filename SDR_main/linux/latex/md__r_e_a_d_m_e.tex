@@ -1,0 +1,149 @@
+\chapter{pupradar\+\_\+capture — Linux ARM64 capture-\/only MVP }
+\hypertarget{md__r_e_a_d_m_e}{}\label{md__r_e_a_d_m_e}\index{pupradar\_capture — Linux ARM64 capture-\/only MVP@{pupradar\_capture — Linux ARM64 capture-\/only MVP}}
+\label{md__r_e_a_d_m_e_autotoc_md0}%
+\Hypertarget{md__r_e_a_d_m_e_autotoc_md0}%
+
+
+Single-\/binary tool for the {\bfseries{PUP EN24C T2\+R4}} 24 GHz FMCW radar. Initializes the device, downloads firmware to the Cypress FX2\+LP, configures sawtooth FMCW, captures raw IQ for N seconds, and writes {\ttfamily \texorpdfstring{$<$}{<}out\texorpdfstring{$>$}{>}.bin} + {\ttfamily \texorpdfstring{$<$}{<}out\texorpdfstring{$>$}{>}.json}.
+
+No MATLAB runtime on the target. Tested without hardware via the Fake\+Usb\+Backend test suite.\hypertarget{md__r_e_a_d_m_e_autotoc_md1}{}\doxysection{\texorpdfstring{Layout}{Layout}}\label{md__r_e_a_d_m_e_autotoc_md1}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{linux/}
+\DoxyCodeLine{├──\ CMakeLists.txt}
+\DoxyCodeLine{├──\ toolchains/aarch64-\/linux-\/gnu.cmake\ \ \ \ \ \#\ cross-\/compile\ toolchain\ file}
+\DoxyCodeLine{├──\ firmware/SDR\_USB\_FW.hex\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ FX2LP\ firmware\ (copied\ from\ Matlab\ src/)}
+\DoxyCodeLine{├──\ include/pupradar/\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ public\ headers}
+\DoxyCodeLine{│\ \ \ ├──\ Protocol.hpp\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ opcodes,\ command-\/packet\ builder,\ PLL\ math}
+\DoxyCodeLine{│\ \ \ ├──\ IntelHex.hpp\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ firmware\ HEX\ parser}
+\DoxyCodeLine{│\ \ \ ├──\ IUsbBackend.hpp\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ abstract\ USB\ interface\ (testable)}
+\DoxyCodeLine{│\ \ \ ├──\ UsbDevice.hpp\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ libusb-\/1.0\ implementation}
+\DoxyCodeLine{│\ \ \ ├──\ RadarSession.hpp\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ init\ /\ configure\ /\ captureIq}
+\DoxyCodeLine{│\ \ \ └──\ IqWriter.hpp\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ raw\ .bin\ +\ JSON\ sidecar}
+\DoxyCodeLine{├──\ src/\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ implementations}
+\DoxyCodeLine{├──\ tests/\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ FakeUsbBackend\ +\ \string~25\ unit\ tests}
+\DoxyCodeLine{└──\ scripts/}
+\DoxyCodeLine{\ \ \ \ ├──\ build\_native.sh\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ host\ build\ +\ ctest}
+\DoxyCodeLine{\ \ \ \ ├──\ build\_cross.sh\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ aarch64\ cross\ build}
+\DoxyCodeLine{\ \ \ \ ├──\ deploy\_pi.sh\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ scp\ to\ Pi}
+\DoxyCodeLine{\ \ \ \ └──\ 99-\/pupradar.rules\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ udev\ rule\ for\ non-\/root\ access}
+
+\end{DoxyCode}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md2}{}\doxysection{\texorpdfstring{Build \& test on dev host (WSL /\+ Linux)}{Build \& test on dev host (WSL /\+ Linux)}}\label{md__r_e_a_d_m_e_autotoc_md2}
+Prereqs:\+ {\ttfamily cmake \texorpdfstring{$>$}{>}= 3.\+16}, {\ttfamily g++} with C++17, {\ttfamily libusb-\/1.\+0-\/0-\/dev}, {\ttfamily pkg-\/config}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd\ linux}
+\DoxyCodeLine{./scripts/build\_native.sh}
+
+\end{DoxyCode}
+
+
+This builds the executable for the host arch and runs the full test suite ({\ttfamily ctest -\/-\/output-\/on-\/failure}). The Windows-\/side build path (CMake on MSVC) is not supported — use WSL.\hypertarget{md__r_e_a_d_m_e_autotoc_md3}{}\doxysection{\texorpdfstring{Cross-\/compile for Raspberry Pi 4/\+5 (Raspberry Pi OS 64-\/bit)}{Cross-\/compile for Raspberry Pi 4/\+5 (Raspberry Pi OS 64-\/bit)}}\label{md__r_e_a_d_m_e_autotoc_md3}
+Prereqs in WSL/\+\+Debian:\+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{sudo\ dpkg\ -\/-\/add-\/architecture\ arm64}
+\DoxyCodeLine{echo\ 'deb\ [arch=arm64]\ http://ports.ubuntu.com/ubuntu-\/ports/\ jammy\ main\ universe'\ \(\backslash\)}
+\DoxyCodeLine{\ \ \ \ |\ sudo\ tee\ /etc/apt/sources.list.d/arm64.list}
+\DoxyCodeLine{sudo\ apt-\/get\ update}
+\DoxyCodeLine{sudo\ apt-\/get\ install\ -\/y\ g++-\/aarch64-\/linux-\/gnu\ pkg-\/config\ libusb-\/1.0-\/0-\/dev:arm64}
+
+\end{DoxyCode}
+
+
+Then:\+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./scripts/build\_cross.sh}
+\DoxyCodeLine{file\ build-\/arm64/pupradar\_capture\ \ \ \#\ →\ ELF\ 64-\/bit\ LSB\ executable,\ ARM\ aarch64}
+
+\end{DoxyCode}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md4}{}\doxysection{\texorpdfstring{Deploy and run on the Pi}{Deploy and run on the Pi}}\label{md__r_e_a_d_m_e_autotoc_md4}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./scripts/deploy\_pi.sh\ pi@raspberrypi.local:\string~/pupradar}
+\DoxyCodeLine{ssh\ pi@raspberrypi.local}
+\DoxyCodeLine{sudo\ cp\ \string~/pupradar/99-\/pupradar.rules\ /etc/udev/rules.d/}
+\DoxyCodeLine{sudo\ udevadm\ control\ -\/-\/reload-\/rules\ \&\&\ sudo\ udevadm\ trigger}
+\DoxyCodeLine{}
+\DoxyCodeLine{cd\ \string~/pupradar}
+\DoxyCodeLine{./pupradar\_capture\ -\/-\/duration\ 5\ -\/-\/out\ /tmp/cap}
+
+\end{DoxyCode}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md5}{}\doxysection{\texorpdfstring{Discovering the post-\/firmware VID/\+\+PID (one-\/time)}{Discovering the post-\/firmware VID/\+\+PID (one-\/time)}}\label{md__r_e_a_d_m_e_autotoc_md5}
+The Cypress FX2\+LP boots with a default VID/\+\+PID of {\ttfamily 04B4:\+8613}, then re-\/enumerates after firmware load with VID/\+\+PID defined inside {\ttfamily SDR\+\_\+\+USB\+\_\+\+FW.\+hex}. The MATLAB driver hides this; libusb does not. The defaults baked into this binary are placeholders.
+
+After the first attempted capture (which may fail at the re-\/enumeration step), inspect:\+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{lsusb}
+\DoxyCodeLine{\#\ Look\ for\ the\ new\ Cypress\ (vendor\ 04b4)\ entry\ that\ wasn't\ there\ before\ firmware\ load.}
+
+\end{DoxyCode}
+
+
+Then pass it explicitly:\+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./pupradar\_capture\ -\/-\/post-\/fw-\/vid\ 0x04B4\ -\/-\/post-\/fw-\/pid\ 0xNNNN\ \(\backslash\)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/duration\ 5\ -\/-\/out\ /tmp/cap}
+
+\end{DoxyCode}
+
+
+Once confirmed, edit {\ttfamily 99-\/pupradar.\+rules} to match and reinstall, and add the value to {\ttfamily main.\+cpp} defaults (or document it in your operator notes).\hypertarget{md__r_e_a_d_m_e_autotoc_md6}{}\doxysection{\texorpdfstring{CLI reference}{CLI reference}}\label{md__r_e_a_d_m_e_autotoc_md6}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{pupradar\_capture\ -\/-\/out\ <basename>\ [options]}
+\DoxyCodeLine{\ \ -\/-\/duration\ <s>\ \ \ \ \ \ \ \ \ \ \ \ Capture\ duration\ (default\ 5)}
+\DoxyCodeLine{\ \ -\/-\/firmware\ <path>\ \ \ \ \ \ \ \ \ Path\ to\ SDR\_USB\_FW.hex\ (default\ ./firmware/SDR\_USB\_FW.hex)}
+\DoxyCodeLine{\ \ -\/-\/fc-\/low\ <Hz>\ \ \ \ \ \ \ \ \ \ \ \ \ Sawtooth\ low\ frequency\ (default\ 24.0e9)}
+\DoxyCodeLine{\ \ -\/-\/fc-\/high\ <Hz>\ \ \ \ \ \ \ \ \ \ \ \ Sawtooth\ high\ frequency\ (default\ 24.25e9)}
+\DoxyCodeLine{\ \ -\/-\/sweep-\/time\ <1-\/5>\ \ \ \ \ \ \ \ 1=0.5ms,\ 2=1ms,\ 3=2ms,\ 4=4ms,\ 5=8ms\ (default\ 2)}
+\DoxyCodeLine{\ \ -\/-\/samp-\/num\ <1-\/4>\ \ \ \ \ \ \ \ \ \ Sampling-\/number\ index,\ 1=BASN,\ 2=BASN/2,\ ...\ (default\ 1)}
+\DoxyCodeLine{\ \ -\/-\/tx\ <mask>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1=Tx1,\ 2=Tx2,\ 3=Both\ (default\ 1)}
+\DoxyCodeLine{\ \ -\/-\/rx\ <mask>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1/2/4/8=single,\ 3=Rx12,\ 12=Rx34,\ 15=All\ (default\ 1)}
+\DoxyCodeLine{\ \ -\/-\/post-\/fw-\/vid\ <0xNNNN>\ \ \ \ Post-\/firmware\ VID\ (default\ 0x04B4)}
+\DoxyCodeLine{\ \ -\/-\/post-\/fw-\/pid\ <0xNNNN>\ \ \ \ Post-\/firmware\ PID\ (default\ 0x1004;\ CONFIRM\ with\ lsusb)}
+\DoxyCodeLine{\ \ -\/-\/post-\/fw-\/vid2/-\/-\/pid2\ \ \ \ \ Optional\ second\ candidate}
+\DoxyCodeLine{\ \ -\/-\/reenum-\/timeout-\/ms\ <ms>\ \ Re-\/enumeration\ wait\ (default\ 5000)}
+\DoxyCodeLine{\ \ -\/-\/bulk-\/timeout-\/ms\ <ms>\ \ \ \ Bulk-\/read\ timeout\ per\ chunk\ (default\ 2000)}
+
+\end{DoxyCode}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md7}{}\doxysection{\texorpdfstring{Output format}{Output format}}\label{md__r_e_a_d_m_e_autotoc_md7}
+
+\begin{DoxyItemize}
+\item {\ttfamily \texorpdfstring{$<$}{<}out\texorpdfstring{$>$}{>}.bin} — raw bulk-\/\+IN stream from EP6 (interleaved {\ttfamily int16} I/\+Q, little-\/endian). Includes the firmware-\/side framing/\+header bytes (≈2048-\/byte preamble per acquisition window per the GUI\textquotesingle{}s deinterleave path). Parse with the same logic as {\ttfamily PUPradar\+GUI.\+m::\+\+Get\+Complex\+Data} if you need calibrated samples.
+\item {\ttfamily \texorpdfstring{$<$}{<}out\texorpdfstring{$>$}{>}.json} — sidecar with frequencies, sweep time, sample rate per channel, channel masks, board info uint16 dump, ISO-\/8601 timestamp.
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_autotoc_md8}{}\doxysection{\texorpdfstring{Test approach (no hardware required)}{Test approach (no hardware required)}}\label{md__r_e_a_d_m_e_autotoc_md8}
+{\ttfamily tests/\+\+Fake\+Usb\+Backend.\+hpp} records every USB call and replays scripted responses for {\ttfamily control\+Transfer} IN and {\ttfamily bulk\+Read}. Unit tests cover:\+
+
+
+\begin{DoxyItemize}
+\item Intel HEX parsing (valid, checksum failure, missing EOF, real first line)
+\item 512-\/byte command packet packing
+\item PLL register math (count, ordering, Start\+\_\+N at 24.\+0 GHz)
+\item Sweep-\/time /\+ sampling-\/number tables (verified against GUI {\ttfamily Set\+Active\+Parameters})
+\item Tx/\+\+Rx mask validation
+\item Full session initialize sequence (open → claim → CPUCS → firmware → reopen → board info)
+\item Configure:\+ opcodes in expected order, all 22 Bulk\+Out commands
+\item capture\+Iq:\+ sinks bytes, returns coherent metadata
+\item Iq\+Writer:\+ bin size matches, JSON contains expected fields, escape characters
+\end{DoxyItemize}
+
+Run {\ttfamily ctest -\/-\/output-\/on-\/failure} after {\ttfamily build\+\_\+native.\+sh}.\hypertarget{md__r_e_a_d_m_e_autotoc_md9}{}\doxysection{\texorpdfstring{Known limitations /\+ deferred}{Known limitations /\+ deferred}}\label{md__r_e_a_d_m_e_autotoc_md9}
+
+\begin{DoxyItemize}
+\item CW mode ({\ttfamily -\/-\/modulation cw}) — not implemented; {\ttfamily Send\+\_\+\+PLL\+\_\+\+CW} lives in MATLAB only.
+\item On-\/device DSP (FFT, range-\/\+Doppler) — explicitly out of scope per {\ttfamily PLAN.\+md}.
+\item Async libusb transfers — sync-\/only in MVP. Move to {\ttfamily libusb\+\_\+submit\+\_\+transfer} ring if sustained throughput proves insufficient.
+\item Windows host build — not supported. Use WSL.
+\end{DoxyItemize}
+
+See {\ttfamily progress/\+\+PROGRESS\+\_\+\texorpdfstring{$\ast$}{*}.md} for the implementation log. 

@@ -1,0 +1,303 @@
+% UsbDevice class documentation — PUP EN24C T2R4 Linux port
+%
+% Self-contained: compile with pdflatex usbdevice_doc.tex
+% To include in a larger report: copy everything between \begin{document}
+% and \end{document} (and add the \usepackage lines to your preamble).
+%
+\documentclass[a4paper, 11pt]{article}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, fit, backgrounds}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{parskip}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% --- colour palette ---
+\definecolor{clshead}{RGB}{44,62,80}    % dark blue-grey for concrete class header
+\definecolor{clsbody}{RGB}{236,240,241} % light grey for class body
+\definecolor{ifacehead}{RGB}{41,128,185}% blue for interface header
+
+\begin{document}
+
+% ============================================================
+\section*{USB Interface Layer --- \texttt{UsbDevice} Class}
+% ============================================================
+
+\subsection*{Overview}
+
+The \texttt{UsbDevice} class is the software component that directly manages
+the physical USB connection between the host computer (Raspberry Pi 4/5,
+running Linux) and the \textbf{PUP EN24C T2R4 radar module}.
+
+Physically, a \textbf{USB 3.0 cable} connects the two units.
+The radar contains a \textbf{Cypress USB microcontroller} (acting as the
+USB device controller); on the host side, \texttt{UsbDevice} drives it using
+the open-source \textbf{libusb-1.0} library---no proprietary Windows driver
+is required.
+
+Two USB transfer modes are used:
+\begin{itemize}
+  \item \textbf{Control transfers} --- small, low-rate command/response packets
+        used to send radar configuration (carrier frequency, sweep bandwidth,
+        transmitter/receiver selection, etc.).
+  \item \textbf{Bulk transfers} --- high-throughput, unidirectional streams used
+        to push IQ (in-phase/quadrature) sample data continuously from the
+        radar to the host during a capture.
+\end{itemize}
+
+\bigskip
+
+% ============================================================
+\subsection*{Class Structure (UML)}
+% ============================================================
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[
+    font=\small\ttfamily,
+    % Style for a header cell (coloured bar at top of each UML compartment)
+    hdr/.style={
+        draw, rectangle,
+        minimum width=7.2cm, text width=7.0cm,
+        inner sep=5pt, align=center,
+        fill=clshead, text=white,
+        font=\small\bfseries\ttfamily
+    },
+    % Blue header for the interface
+    ihdr/.style={hdr, fill=ifacehead},
+    % Style for a body compartment (methods / fields list)
+    body/.style={
+        draw, rectangle,
+        minimum width=7.2cm, text width=6.8cm,
+        inner sep=5pt, align=left,
+        fill=clsbody
+    },
+]
+
+% ---- IUsbBackend interface ----
+\node[ihdr] (ih)
+    {\textit{\guillemotleft interface\guillemotright} \quad IUsbBackend};
+\node[body, below=0pt of ih] (ib) {
+    + open(vid : uint16, pid : uint16) \\[1pt]
+    + close() \\[1pt]
+    + isOpen() : bool \\[1pt]
+    + claimInterface(iface : int) \\[1pt]
+    + setAltSetting(iface : int, alt : int) \\[1pt]
+    + controlTransfer(bmRequestType, bRequest, \\
+    \quad\quad wValue, wIndex, data, len, timeout) \\[1pt]
+    + bulkWrite(endpoint, data, len, timeout) \\[1pt]
+    + bulkRead(endpoint, buf, len, timeout) \\[1pt]
+    + reopenAfterRenumeration(candidates, n, timeout)
+};
+
+% ---- UsbDevice concrete class ----
+\node[hdr, below=2.2cm of ib] (uh) {UsbDevice};
+\node[body, below=0pt of uh] (uf) {
+    \textit{--- private fields ---} \\[2pt]
+    -- ctx\_ : libusb\_context* \\[1pt]
+    -- handle\_ : libusb\_device\_handle* \\[1pt]
+    -- claimed\_iface\_ : int
+};
+\node[body, below=0pt of uf] (um) {
+    \textit{--- public methods ---} \\[2pt]
+    + UsbDevice() \quad\textit{// initialises libusb context} \\[1pt]
+    + \textasciitilde UsbDevice() \quad\textit{// auto-closes on destruction} \\[2pt]
+    \textit{(implements all IUsbBackend methods)}
+};
+
+% Dashed open-triangle arrow = "implements interface"
+\draw[
+    -{Triangle[open, length=9pt, width=9pt]},
+    dashed, thick
+] (uh.north) -- (ib.south)
+    node[midway, right=4pt, font=\footnotesize\rmfamily\itshape, text=gray]
+    {implements};
+
+\end{tikzpicture}
+\caption{UML class diagram. \texttt{UsbDevice} is the concrete
+         \texttt{libusb-1.0} implementation of the \texttt{IUsbBackend}
+         interface. A test-double (\texttt{FakeUsbBackend}) can substitute
+         at the same interface boundary without touching hardware.}
+\end{figure}
+
+\clearpage
+
+% ============================================================
+\subsection*{Method Reference}
+% ============================================================
+
+\begin{table}[h!]
+\centering
+\small
+\renewcommand{\arraystretch}{1.45}
+\begin{tabularx}{\textwidth}{
+    >{\ttfamily\raggedright}p{4.4cm}
+    >{\raggedright\arraybackslash}X
+    >{\raggedright\arraybackslash}p{2.6cm}
+}
+\toprule
+\normalfont\textbf{Method} &
+\textbf{What it does} &
+\textbf{USB mechanism} \\
+\midrule
+
+open(vid, pid)
+& Scans all USB devices visible to the OS and opens the first one whose
+  Vendor ID and Product ID match. Before firmware is loaded, the radar
+  appears as the Cypress boot-loader (VID\,\texttt{0x04B4},
+  PID\,\texttt{0x8613}).
+& Device enumeration \\
+
+close()
+& Releases the claimed interface, closes the device handle. Safe to call
+  on an already-closed device (no-op).
+& --- \\
+
+isOpen()
+& Returns \texttt{true} if a device handle is currently held.
+& --- \\
+
+claimInterface(n)
+& Takes exclusive ownership of USB interface \textit{n}.  On Linux,
+  automatically detaches any kernel driver that is already holding the
+  interface. Must be called before any data transfer.
+& Interface claim \\
+
+setAltSetting(iface, alt)
+& Selects alternate setting \textit{alt} on interface \textit{iface}.
+  The Cypress chip exposes the high-throughput bulk data endpoints only
+  on alternate setting~1; alternate setting~0 carries no endpoints
+  (zero bandwidth).
+& Alternate setting \\
+
+controlTransfer(\ldots)
+& Issues a USB control transfer: sends a short vendor-defined command to
+  the radar or reads a short response. Used for all radar configuration
+  packets (PLL registers, modulation, sweep timing, TX/RX enable masks)
+  and for the firmware-load request (request code \texttt{0xA0}).
+& USB Control transfer \\
+
+bulkWrite(ep, data, len)
+& Sends a block of bytes to the radar on bulk OUT endpoint \textit{ep}
+  (hardware endpoint \texttt{EP2}, address \texttt{0x02}).
+  Radar configuration commands are packed into 512-byte packets and
+  delivered here.
+& USB Bulk OUT \\
+
+bulkRead(ep, buf, len)
+& Reads a block of IQ sample data from the radar on bulk IN endpoint
+  \textit{ep} (hardware endpoint \texttt{EP6}, address \texttt{0x86}).
+  This is the main high-rate data path during capture. A partial read
+  on timeout returns whatever bytes arrived rather than raising an error,
+  so the capture loop can retry gracefully.
+& USB Bulk IN \\
+
+reopenAfter\-Renumeration
+& After firmware is downloaded, the Cypress chip resets and re-appears
+  on the bus with a new USB address (and possibly a different PID).
+  This method releases the old handle and polls every 100\,ms until the
+  device is visible again, then re-opens it. Raises an error if the
+  timeout elapses.
+& Re-enumeration \\
+
+\bottomrule
+\end{tabularx}
+\caption{Public API of \texttt{UsbDevice}. Methods are called in the order
+         shown in the lifecycle diagram (Figure~\ref{fig:lifecycle}).}
+\end{table}
+
+\clearpage
+
+% ============================================================
+\subsection*{Connection Lifecycle}
+% ============================================================
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[
+    node distance=0.6cm,
+    font=\small,
+    % Main flow steps
+    step/.style={
+        draw, rectangle, rounded corners=4pt,
+        minimum width=8.5cm, minimum height=0.82cm,
+        align=center, fill=clsbody, thick
+    },
+    % Side annotations
+    ann/.style={
+        font=\footnotesize\itshape, text=gray,
+        text width=4.8cm, align=left
+    },
+    % Arrow style
+    arr/.style={-{Latex[length=7pt, width=5pt]}, thick},
+    % Horizontal leader to annotation
+    ldr/.style={densely dotted, gray}
+]
+
+% --- nodes ---
+\node[step] (plug)
+    {Radar plugged in via USB 3.0};
+
+\node[step, below=of plug] (open)
+    {\texttt{open(0x04B4, 0x8613)} \quad find Cypress boot-loader device};
+
+\node[step, below=of open] (fw)
+    {Download firmware into chip RAM via \texttt{controlTransfer} (0xA0 protocol)};
+
+\node[step, below=of fw] (reopen)
+    {\texttt{reopenAfterRenumeration} \quad wait for chip to restart};
+
+\node[step, below=of reopen] (claim)
+    {\texttt{claimInterface(0)} \quad take exclusive USB access};
+
+\node[step, below=of claim] (alt)
+    {\texttt{setAltSetting(0, 1)} \quad activate bulk data endpoints};
+
+\node[step, below=of alt] (cfg)
+    {\texttt{controlTransfer} + \texttt{bulkWrite} \quad configure PLL / waveform / TX--RX mask};
+
+\node[step, below=of cfg] (loop)
+    {\texttt{bulkRead} loop on EP6 IN \quad stream IQ samples to host};
+
+\node[step, below=of loop] (close)
+    {\texttt{close()} \quad release interface and device handle};
+
+% --- arrows ---
+\foreach \a/\b in {plug/open, open/fw, fw/reopen, reopen/claim,
+                   claim/alt, alt/cfg, cfg/loop, loop/close}
+    \draw[arr] (\a) -- (\b);
+
+% Self-loop on bulkRead
+\draw[arr, rounded corners=6pt]
+    (loop.east) -- ++(0.6,0) -- ++(0,0.62) -- ++(-0.6,0);
+\node[font=\scriptsize\itshape, text=gray, right=0.65cm of loop]
+    {repeat};
+
+% --- annotations ---
+\draw[ldr] (fw.east) -- ++(0.3,0)
+    node[ann, right] at ($(fw.east)+(0.3,0)$)
+    {The chip has no flash storage; firmware is loaded into RAM at every power-up.};
+
+\draw[ldr] (reopen.east) -- ++(0.3,0)
+    node[ann, right] at ($(reopen.east)+(0.3,0)$)
+    {Chip disconnects and reconnects with new USB address (re-enumeration).};
+
+\draw[ldr] (loop.east) -- ++(1.4,0)
+    node[ann, right] at ($(loop.east)+(1.4,0)$)
+    {Continues until capture duration elapses; data saved as interleaved int16 \texttt{.bin}.};
+
+\end{tikzpicture}
+\caption{Sequence of \texttt{UsbDevice} operations from hardware plug-in to IQ
+         data capture. The firmware-download and re-enumeration steps are the
+         most hardware-specific; all subsequent steps are standard USB
+         host-side operations.}
+\label{fig:lifecycle}
+\end{figure}
+
+\end{document}

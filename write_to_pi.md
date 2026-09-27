@@ -7,6 +7,8 @@
 
 scp -r fc_version_3-0 axel@192.168.137.2:Drone_Integration_Program/
 
+scp -r axel@192.168.137.2:~/Drone_Integration_Program .
+
 ## How to set up direct ethernet connection with raspberry pi
 
 ### Step 1: Set up subnet between PC and Pi.

@@ -143,7 +143,11 @@ def main():
             # RADAR CAPTURE
             # ------------------------------------------------
 
-            if drone.rc_channel_15 and drone.rc15_last_low:
+            if drone.rc_channel_15 > 1800 and drone.rc15_last_low:
+
+                radar.flush(runtime)
+
+                time.sleep(5)
 
                 radar.start_capture(runtime)
 
@@ -151,7 +155,7 @@ def main():
 
                 drone.rc15_last_low = 0
 
-            if not drone.rc_channel_15:
+            if drone.rc_channel_15 < 1200:
 
                 drone.rc15_last_low = 1
 

@@ -1,0 +1,114 @@
+{
+	"configurations" : 
+	[
+		{
+			"abstractTargets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "PkgConfig::LIBUSB::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-PkgConfig__LIBUSB-Debug-d76e3864fcaed4ef1849.json",
+					"name" : "PkgConfig::LIBUSB",
+					"projectIndex" : 0
+				}
+			],
+			"directories" : 
+			[
+				{
+					"abstractTargetIndexes" : 
+					[
+						0
+					],
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-9ad1a58d4644cf6543fa.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"abstractTargetIndexes" : 
+					[
+						0
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "pupradar_capture",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "pupradar_board_info::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-pupradar_board_info-Debug-341c19e93b5148b173d3.json",
+					"name" : "pupradar_board_info",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "pupradar_capture::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-pupradar_capture-Debug-b0702cd2b8c7987c99d6.json",
+					"name" : "pupradar_capture",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "pupradar_core::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-pupradar_core-Debug-df0d8f2175a6cee4ef65.json",
+					"name" : "pupradar_core",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "pupradar_tests::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-pupradar_tests-Debug-f9fdce075eed6fe4d0e2.json",
+					"name" : "pupradar_tests",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "pupradar_usb::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-pupradar_usb-Debug-25d90fb53f5cf5c94b15.json",
+					"name" : "pupradar_usb",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/axel/Drone_Integration_Program/build",
+		"source" : "/home/axel/Drone_Integration_Program/SDR_main-main/linux"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 9
+	}
+}

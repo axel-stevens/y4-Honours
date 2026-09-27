@@ -14,11 +14,6 @@ class Radar:
 
     def start_capture(self, runtime):
 
-        if self.capturing:
-            return
-
-        self.capturing = True
-
         self.capture_count += 1
 
         self.last_capture_time = runtime
@@ -27,15 +22,29 @@ class Radar:
 
         print("Radar capture started")
 
+        subprocess.run(
+            f"sudo ~/Drone_Integration_Program/SDR_main-main/linux/build-arm64/pupradar_capture --firmware ~/Drone_Integration_Program/SDR_main-main/linux/firmware/SDR_USB_FW.hex --duration 1 --fc-low 24.00e9 --fc-high 26.00e9 --sweep-time 1 --samp-num 1 --out ~/SDR-data/1609_intergration/{self.capture_count}_time_{str(self.last_capture_time).replace(".", "_")} --rx 4",
+            shell=True,
+            executable="/bin/bash",
+            check=True,
+        )
+
+    def flush(self, runtime):
+
+        if self.capturing:
+            return
+
+        self.capturing = True
+
+        print("Radar flushing")
+
         # Start radar here
-        # subprocess.run(
-        #     """
-        #     sudo ./build-arm64/pupradar_capture --firmware firmware/SDR_USB_FW.hex --duration 5 --fc-low 24.00e9 --fc-high 26e9 --sweep-time 1 --samp-num 4 --out ~/SDR-data/0209_pi/0209_2GHz_128_0-5ms_loopback_rx1_01 --rx 1
-        #     """,
-        #     shell=True,
-        #     executable="/bin/bash",
-        #     check=True,
-        # )
+        subprocess.run(
+            f"sudo ~/Drone_Integration_Program/SDR_main-main/linux/build-arm64/pupradar_capture --firmware ~/Drone_Integration_Program/SDR_main-main/linux/firmware/SDR_USB_FW.hex --duration 1 --fc-low 24.00e9 --fc-high 26.00e9 --sweep-time 1 --samp-num 1 --out ~/SDR-data/1609_intergration/flush --rx 4",
+            shell=True,
+            executable="/bin/bash",
+            check=True,
+        )
 
     def stop_capture(self):
 

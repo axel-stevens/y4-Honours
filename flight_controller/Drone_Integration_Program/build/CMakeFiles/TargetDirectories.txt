@@ -1,0 +1,8 @@
+/home/axel/Drone_Integration_Program/build/CMakeFiles/pupradar_core.dir
+/home/axel/Drone_Integration_Program/build/CMakeFiles/pupradar_usb.dir
+/home/axel/Drone_Integration_Program/build/CMakeFiles/pupradar_capture.dir
+/home/axel/Drone_Integration_Program/build/CMakeFiles/pupradar_board_info.dir
+/home/axel/Drone_Integration_Program/build/CMakeFiles/pupradar_tests.dir
+/home/axel/Drone_Integration_Program/build/CMakeFiles/test.dir
+/home/axel/Drone_Integration_Program/build/CMakeFiles/edit_cache.dir
+/home/axel/Drone_Integration_Program/build/CMakeFiles/rebuild_cache.dir

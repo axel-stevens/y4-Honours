@@ -1,0 +1,22 @@
+{
+  "format": "pupradar_capture/v1",
+  "timestamp_utc": "2026-05-14T04:39:28Z",
+  "firmware_path": "firmware/SDR_USB_FW.hex",
+  "f_low_hz": 24000000000,
+  "f_high_hz": 24250000000,
+  "bandwidth_hz": 250000000,
+  "fs_hz": 256000,
+  "sweep_time_s": 0.001,
+  "samples_per_sweep_per_rx": 256,
+  "num_tx": 1,
+  "num_rx": 1,
+  "tx_mask": 1,
+  "rx_mask": 1,
+  "requested_duration_s": 5,
+  "actual_duration_s": 5.060540721,
+  "bytes_captured": 4244674,
+  "reads_completed": 75,
+  "sample_dtype": "int16_interleaved_iq",
+  "endian": "little",
+  "board_info_words_hex": ["FA05", "53F0", "2402", "0000", "FBBF"]
+}
