@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
 import csv
+import os
 import RPi.GPIO as GPIO
 import time
 import signal
+from datetime import datetime
 
 from files.radar import Radar
 from files.Drone import Drone
@@ -32,7 +34,16 @@ drone = Drone()
 # ============================================================
 
 
-def initialise_csv(filename):
+def initialise_csv():
+
+    # One file per run so a restart never overwrites a previous flight
+    log_dir = os.path.expanduser("~/.local/flight_logs")
+    os.makedirs(log_dir, exist_ok=True)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = os.path.join(log_dir, f"flight_log_{timestamp}.csv")
+
+    print(f"Logging to {filename}")
 
     file = open(filename, "w", newline="")
 
@@ -57,9 +68,11 @@ def initialise_csv(filename):
             "battery_current",
             "battery_remaining",
             "rc_channel_15",
+            "radar_state",
             "radar_capturing",
             "radar_capture_count",
             "radar_last_capture_time",
+            "radar_file",
         ]
     )
 
@@ -87,9 +100,11 @@ def log_data(writer, runtime, drone, radar):
             drone.battery_current,
             drone.battery_remaining,
             drone.rc_channel_15,
+            radar.state,
             radar.capturing,
             radar.capture_count,
             radar.last_capture_time,
+            radar.current_capture_file or "",
         ]
     )
 
@@ -121,7 +136,7 @@ def main():
     # Initialise CSV
     # --------------------------------------------------------
 
-    csv_file, csv_writer = initialise_csv("flight_log.csv")
+    csv_file, csv_writer = initialise_csv()
 
     try:
 
@@ -143,15 +158,14 @@ def main():
             # RADAR CAPTURE
             # ------------------------------------------------
 
+            radar.update(runtime)
+
+            # Rising edge on channel 15 requests a capture. If the radar
+            # is still busy with the previous one, the request is ignored.
             if drone.rc_channel_15 > 1800 and drone.rc15_last_low:
 
-                radar.flush(runtime)
-
-                time.sleep(5)
-
-                radar.start_capture(runtime)
-
-                radar.stop_capture()
+                if not radar.request_capture(runtime):
+                    print(f"Radar busy ({radar.state}), capture request ignored")
 
                 drone.rc15_last_low = 0
 
@@ -193,6 +207,8 @@ def main():
 def shutdown():
 
     print("\nCleaning up...")
+
+    radar.stop()
 
     GPIO.cleanup()
 
