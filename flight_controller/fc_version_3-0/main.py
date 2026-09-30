@@ -138,6 +138,12 @@ def main():
 
     csv_file, csv_writer = initialise_csv()
 
+    # --------------------------------------------------------
+    # Initialise radar (uploads firmware, runs once)
+    # --------------------------------------------------------
+
+    radar.initialise_capture(time.monotonic() - start_time)
+
     try:
 
         while True:

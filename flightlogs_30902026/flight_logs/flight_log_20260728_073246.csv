@@ -1,0 +1,2 @@
+runtime,latitude,longitude,gps_fix,satellites,altitude,relative_altitude,groundspeed,roll,pitch,yaw,armed,flight_mode,battery_voltage,battery_current,battery_remaining,rc_channel_15,radar_state,radar_capturing,radar_capture_count,radar_last_capture_time,radar_file
+0.08856334499978402,-34.8317867,141.9531071,1,0,-61772.0,9.084,0.0,0.008763536810874939,0.003057804424315691,2.579439163208008,False,,0.055,0.88,95,982,INITIALISING,False,0,,/home/axel/SDR-data/1609_intergration/initialise_radar_capture

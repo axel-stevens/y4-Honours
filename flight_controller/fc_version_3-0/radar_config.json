@@ -4,9 +4,9 @@
     "output_dir": "~/SDR-data/1609_intergration",
     "use_sudo": true,
     "settle_time": 5,
-    "buffer_time": 1,
+    "buffer_time": 0,
     "capture": {
-        "duration": 1,
+        "duration": 3,
         "fc_low": 24.00e9,
         "fc_high": 26.00e9,
         "sweep_time": 1,

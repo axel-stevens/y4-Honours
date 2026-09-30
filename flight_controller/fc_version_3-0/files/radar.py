@@ -10,13 +10,16 @@ DEFAULT_CONFIG = Path(__file__).resolve().parent.parent / "radar_config.json"
 # RADAR STATES
 # ============================================================
 #
+# INITIALISING -> IDLE                       (once, at startup)
 # IDLE -> FLUSHING -> SETTLING -> CAPTURING -> COOLDOWN -> IDLE
 #
+# INITIALISING  startup capture running, uploads firmware to the radar
 # FLUSHING   flush process running
 # SETTLING   waiting settle_time seconds after the flush
 # CAPTURING  capture process running
 # COOLDOWN   waiting buffer_time seconds before another capture is allowed
 
+INITIALISING = "INITIALISING"
 IDLE = "IDLE"
 FLUSHING = "FLUSHING"
 SETTLING = "SETTLING"
@@ -35,6 +38,9 @@ class Radar:
         self.buffer_time = self.config["buffer_time"]
 
         self.state = IDLE
+
+        # Set once the startup capture has uploaded the firmware
+        self.initialised = False
 
         # Running pupradar_capture process (flush or capture), if any
         self.process = None
@@ -59,7 +65,7 @@ class Radar:
 
         return self.state == IDLE
 
-    def _build_command(self, mode, out_name):
+    def _build_command(self, mode, out_name, firmware=False):
 
         cfg = self.config
         params = cfg[mode]
@@ -86,6 +92,9 @@ class Radar:
             "--rx",
             str(params["rx"]),
         ]
+
+        if firmware:
+            cmd.append("--download-firmware")
 
         if cfg.get("use_sudo", False):
             cmd.insert(0, "sudo")
@@ -117,14 +126,35 @@ class Radar:
         # Starts the flush -> settle -> capture sequence.
         # Returns False if the radar is still busy with the previous one.
 
-        if not self.ready():
+        if not self.initialised or not self.ready():
             return False
 
-        print("Radar flushing")
+        # print("Radar flushing")
 
-        self.process = subprocess.Popen(self._build_command("flush", "flush"))
+        # self.process = subprocess.Popen(self._build_command("flush", "flush"))
 
         self._set_state(FLUSHING, runtime)
+
+        return True
+
+    def initialise_capture(self, runtime):
+
+        # One-off startup capture that uploads the firmware. Every later
+        # flush/capture omits --firmware so it is never re-uploaded.
+        # Returns False if already initialised or the radar is busy.
+
+        if self.initialised or not self.ready():
+            return False
+
+        print("Radar initialising (uploading firmware)")
+
+        cmd = self._build_command("capture", "initialise_radar_capture", firmware=True)
+
+        self.process = subprocess.Popen(cmd)
+
+        self.current_capture_file = cmd[cmd.index("--out") + 1]
+
+        self._set_state(INITIALISING, runtime)
 
         return True
 
@@ -154,10 +184,18 @@ class Radar:
 
         # Call once per main loop iteration. Never blocks.
 
-        if self.state == FLUSHING:
+        if self.state == INITIALISING:
 
-            if self._process_finished("flush"):
-                self._set_state(SETTLING, runtime)
+            if self._process_finished("initialise"):
+                print("Radar initialised")
+                self.initialised = True
+                self.current_capture_file = None
+                self._set_state(IDLE, runtime)
+
+        elif self.state == FLUSHING:
+
+            # if self._process_finished("flush"):
+            self._set_state(SETTLING, runtime)
 
         elif self.state == SETTLING:
 

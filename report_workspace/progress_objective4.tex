@@ -1,0 +1,63 @@
+\section{Objective 4: Synchronise Logging of Flight Telemetry and Radar Measurements}
+
+To synchronise flight telemetry and radar measurements, a pilot-initiated control signal must be interpreted, processed, and transmitted through the system. The signal travels from the pilot transmitter to the receiver, then to the flight controller, and finally to the \gls{sbc}, which triggers \gls{sdr} logging. This signal path is shown in Figure~\ref{fig:activation-signal-flow}.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Activation signal diagram.drawio.png}
+    \caption{Activation signal flow starting at the pilot transmitter and ending at the \gls{sdr}.}
+    \label{fig:activation-signal-flow}
+\end{figure}
+
+Progress toward this objective has included researching and procuring a suitable \gls{sbc}, completing its initial setup, and conducting a communication trial between the \gls{sbc} and a simulated flight-controller signal.
+
+\subsection[SBC Selection]{\gls{sbc} Selection}
+First, requirements of the \gls{sbc} were identified. The hardware requirements for the \gls{sbc} were derived from the \gls{sdr} datasheet, which specifies the need for a high-speed USB 2.0 interface (480 Mb/s)~\cite{luswavePUPDUAL24C}. Additionally, the \gls{sbc} should provide sufficient processing capability to support potential future expansion of onboard processing capability, placing requirements on CPU performance and RAM capacity.
+
+Consequently, a Raspberry Pi 5 with 16 GB of RAM was selected and procured. In addition to satisfying the hardware requirements, Raspberry Pi devices were selected because of their well-supported software ecosystem and prior use in drone-mounted radar research applications~\cite{kawkaSwarmDronesDetection2025,lopezUnmannedAerialVehicleBased2022,coulibalyBlockchainSoftwareDefinedRadio2025,aliDesignImplementationFMCW2017}. A protective case and active cooler were also acquired to secure the device on board the drone and manage \gls{cpu} temperature during \gls{sdr} operation.
+
+\subsection{Raspberry Pi 5 Setup}
+
+The Raspberry Pi 5 was physically assembled and configured with a lightweight Ubuntu 22.04 operating system. The installation process used an imager to write the Ubuntu disk image to a 64 GB microSD card. The card was then inserted into the Raspberry Pi 5, and the system was booted to verify the operating-system installation.
+
+A remote development workflow was then configured to develop and test the Python script used to read the \gls{gpio} pin. Native development on the Raspberry Pi was avoided due to its lower performance compared with a desktop computer. Instead, \gls{ssh} was configured and integrated with an \gls{ide} to enable remote development.
+
+\gls{ssh} provides a secure remote connection between a host and a remote computer. In this setup, the desktop computer was used as the development machine, and the Raspberry Pi 5 was used as the remote host. The setup commands are shown in Listing~\ref{lst:ssh-setup}. These commands install the \gls{ssh} server, enable the \gls{ssh} service at boot, and allow incoming \gls{ssh} connections through the firewall. The successful \gls{ssh} connection is shown in \hyperlink{appendix:ssh-connection}{Appendix X}.
+
+\begin{lstlisting}[language=bash,caption={The commands used to setup SSH connection between the Raspberry Pi and a remote computer.},label={lst:ssh-setup}]
+sudo apt install openssh-server
+sudo systemctl enable ssh
+sudo ufw allow ssh
+\end{lstlisting}
+
+The \gls{ssh} connection was then integrated with VS Code using the Microsoft \textit{Remote - \gls{ssh}} extension. The \gls{ssh} configuration file on the development laptop was updated with the Raspberry Pi's IP address and username, after which VS Code was connected to the Raspberry Pi through the remote \gls{ssh} interface.
+
+\subsection[Initial Communication via GPIO Trial]{Initial Communication via \gls{gpio} Trial}
+
+To allow the Raspberry Pi to read \gls{gpio} pins, the required \gls{gpio} packages were installed. The installation command is shown in Listing~\ref{lst:gpio-package-install}. The \texttt{python3-gpiozero} package provides a high-level \gls{gpio} interface, \texttt{python3-lgpio} provides Python bindings and low-level \gls{gpio} access used as a backend for \texttt{gpiozero}, and \texttt{gpiod} provides terminal tools for inspecting and manipulating \gls{gpio} pins.
+
+\begin{lstlisting}[language=bash,caption={Bash command used to install python \gls{gpio} library.},label={lst:gpio-package-install}]
+sudo apt install python3-gpiozero python3-lgpio gpiod
+\end{lstlisting}
+
+After installing the packages, a Python script was created to read a \gls{gpio} pin and respond when an external component pulls the signal high. The script is shown in Listing~\ref{lst:gpio-script}.
+
+\begin{lstlisting}[language=python,caption={Python script used to run on the Raspberry Pi to monitor one of the \gls{gpio} pins.},label={lst:gpio-script}]
+from gpiozero import Device, Button
+from gpiozero.pins.lgpio import LGPIOFactory
+from signal import pause
+
+Device.pin_factory = LGPIOFactory()
+
+signal_pin = Button(17, pull_up=False)
+
+signal_pin.when_pressed = lambda: print("GPIO HIGH!")
+
+print("Watching GPIO17...")
+
+pause()
+\end{lstlisting}
+
+To verify the program, an Arduino Uno R3 was used to generate an input signal for a \gls{gpio} pin. Because the Raspberry Pi 5 uses 3.3 V logic and the Arduino Uno R3 outputs 5 V logic, a resistor divider was used to reduce the signal to approximately 3.3 V and protect the Raspberry Pi. The selected divider used a 1 k$\Omega$ upper resistor and a 2 k$\Omega$ lower resistor. After the connection was made, the Raspberry Pi 5 detected the signal and printed the expected message to the terminal, confirming successful \gls{gpio} detection.
+
+Overall, Objective 4 has progressed through the procurement, initialisation, and setup of a Raspberry Pi 5 capable of reading a simulated flight-controller activation signal. The \gls{gpio} script was developed using a VS Code \gls{ssh} workflow. Further work will involve processing this signal and translating it into an activation command for the \gls{sdr}.

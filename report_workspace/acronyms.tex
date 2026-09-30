@@ -1,0 +1,74 @@
+% Acronym settings
+\newglossarystyle{acronymtable}{
+  \setglossarystyle{long}
+  \renewenvironment{theglossary}
+    {\renewcommand{\arraystretch}{1.3}%
+        \begin{longtable}{p{0.2\linewidth}p{0.75\linewidth}}}
+    {\end{longtable}}
+  \renewcommand*{\glossaryheader}{\textbf{Acronym} & \textbf{Definition} \\ \hline \\}
+  \renewcommand*{\glossentry}[2]{\glstarget{##1}{\glossentryname{##1}} & \glossentrydesc{##1} \\}
+}
+
+\setglossarystyle{acronymtable}
+
+% Acronym definitions
+\newacronym{cad}{CAD}{computer-aided design}
+\newacronym{casa}{CASA}{Civil Aviation Safety Authority}
+\newacronym{ast}{AST}{Advanced Systems \& Technologies}
+\newacronym{cli}{CLI}{command-line interface}
+\newacronym{cots}{COTS}{commercial off-the-shelf}
+\newacronym{cuas}{C-UAS}{counter-uncrewed aerial system}
+\newacronym{cw}{CW}{continuous wave}
+\newacronym{dl}{DL}{deep learning}
+\newacronym{em}{EM}{electromagnetic}
+\newacronym{emi}{EMI}{electromagnetic interference}
+\newacronym{fft}{FFT}{fast Fourier transform}
+\newacronym{fmcw}{FMCW}{frequency modulated continuous wave}
+\newacronym{gcs}{GCS}{ground control station}
+\newacronym{gpr}{GPR}{ground penetrating radar}
+\newacronym{gps}{GPS}{global positioning system}
+\newacronym{gui}{GUI}{graphical user interface}
+\newacronym{ied}{IED}{improvised explosive device}
+\newacronym{if}{IF}{intermediate frequency}
+\newacronym{lidar}{lidar}{light detection and ranging}
+\newacronym{ml}{ML}{machine learning}
+\newacronym{mtow}{MTOW}{maximum takeoff weight}
+\newacronym{rf}{RF}{radio frequency}
+\newacronym{sbc}{SBC}{single-board computer}
+\newacronym{sd}{SD}{secure digital}
+\newacronym{sdr}{SDR}{software-defined radar}
+\newacronym{uav}{UAV}{uncrewed aerial vehicle}
+\newacronym{usb}{USB}{universal serial bus}
+\newacronym{ide}{IDE}{integrated development environment}
+\newacronym{ssh}{SSH}{secure shell}
+\newacronym{gpio}{GPIO}{general purpose input/output}
+\newacronym{sar}{SAR}{synthetic aperture radar}
+\newacronym{cpu}{CPU}{central processing unit}
+\newacronym{os}{OS}{operating system}
+\newacronym{pc}{PC}{personal computer}
+\newacronym{dem}{DEM}{digital elevation model}
+\newacronym{insar}{InSAR}{interferometric synthetic aperture radar}
+\newacronym{hale}{HALE}{high-altitude long-endurance}
+\newacronym{ai}{AI}{artificial intelligence}
+\newacronym{iq}{IQ}{in-phase and quadrature}
+\newacronym{vid}{VID}{vendor identifier}
+\newacronym{pid}{PID}{product identifier}
+\newacronym{gnd}{GND}{ground}
+\newacronym{vcc}{VCC}{voltage common collector}
+\newacronym{pwm}{PWM}{pulse-width modulation}
+\newacronym{esc}{ESC}{electronic speed controller}
+\newacronym{bec}{BEC}{battery eliminator circuit}
+\newacronym{cv}{CV}{constant voltage}
+\newacronym{cc}{CC}{constant current}
+\newacronym{rfp}{RFP}{request for proposal}
+\newacronym{sld}{SLD}{single-line diagram}
+\newacronym{ac}{AC}{alternating current}
+\newacronym{dc}{DC}{direct current}
+\newacronym{api}{API}{application programming interface}
+\newacronym{asa}{ASA}{acrylonitrile styrene acrylate}
+\newacronym{pla}{PLA}{polylactic acid} 
+\newacronym{3d}{3D}{three dimensional}
+\newacronym{pcb}{PCB}{printed circuit board}
+\newacronym{lipo}{LiPo}{lithium-polymer}
+\newacronym{jst}{JST}{Japan solderless terminal}
+\newacronym{si}{SI}{International System of Units}

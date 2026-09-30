@@ -1,0 +1,570 @@
+\documentclass[11pt,a4paper]{report}
+
+% -----------------------------------------------------------------------------
+% Fast preview builds
+% -----------------------------------------------------------------------------
+% Change "full" to one of the build names below to render only that part.
+% Leave this as "full" for the final report.
+%
+% Top-level builds:
+%   frontmatter, introduction, literature-review, theory, objectives,
+%   conclusions-recommendations, references, ai-statement, appendices
+%
+% Finer builds for the combined objectives chapter:
+%   objective-1, objective-2, objective-3, objective-4
+\providecommand{\PrismBuild}{full}
+
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage{setspace}
+\setstretch{1.1}
+
+% Core packages
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{listings}
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny,
+    breaklines=true,
+    frame=single,
+    columns=fullflexible,
+    literate={—}{{-}}1 {–}{{-}}1 {≤}{{$\le$}}1 {≥}{{$\ge$}}1 {→}{{$\to$}}1 {…}{{...}}3
+}
+\usepackage{tikz-cd}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, fit, backgrounds, calc}
+\usepackage{multicol}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{pdfpages} % Required package
+\usepackage{pdflscape}
+\usepackage{adjustbox}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+\usepackage[acronym]{glossaries}
+\usepackage{comment}
+\usepackage{etoolbox}
+
+\input{acronyms}
+\makenoidxglossaries
+
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\renewcommand{\arraystretch}{0.9}
+\newlength{\bibsep}
+
+% Translate the single \PrismBuild setting above into document-part switches.
+% Keeping this logic here means chapter source files remain normal LaTeX files.
+\newif\ifPrismBuildMatched
+\newif\ifPrismFrontMatter
+\newif\ifPrismMainMatter
+\newif\ifPrismIntroduction
+\newif\ifPrismLiteratureReview
+\newif\ifPrismTheory
+\newif\ifPrismMethods
+\newif\ifPrismMethodsOne
+\newif\ifPrismMethodsTwo
+\newif\ifPrismMethodsThree
+\newif\ifPrismMethodsFour
+\newif\ifPrismConclusionsRecommendations
+\newif\ifPrismReferences
+\newif\ifPrismAIStatement
+\newif\ifPrismAppendices
+
+\newcommand{\PrismSelectBuild}[2]{%
+    \ifdefstring{\PrismBuild}{#1}{\PrismBuildMatchedtrue#2}{}%
+}
+\newcommand{\PrismSelectAll}{%
+    \PrismFrontMattertrue
+    \PrismMainMattertrue
+    \PrismIntroductiontrue
+    \PrismLiteratureReviewtrue
+    \PrismTheorytrue
+    \PrismMethodstrue
+    \PrismMethodsOnetrue
+    \PrismMethodsTwotrue
+    \PrismMethodsThreetrue
+    \PrismMethodsFourtrue
+    \PrismConclusionsRecommendationstrue
+    \PrismReferencestrue
+    \PrismAIStatementtrue
+    \PrismAppendicestrue
+}
+\newcommand{\PrismSelectAllMethods}{%
+    \PrismMainMattertrue
+    \PrismMethodstrue
+    \PrismMethodsOnetrue
+    \PrismMethodsTwotrue
+    \PrismMethodsThreetrue
+    \PrismMethodsFourtrue
+}
+\PrismSelectBuild{full}{\PrismSelectAll}
+\PrismSelectBuild{frontmatter}{\PrismFrontMattertrue}
+\PrismSelectBuild{introduction}{\PrismMainMattertrue\PrismIntroductiontrue}
+\PrismSelectBuild{literature-review}{\PrismMainMattertrue\PrismLiteratureReviewtrue}
+\PrismSelectBuild{theory}{\PrismMainMattertrue\PrismTheorytrue}
+\PrismSelectBuild{objectives}{\PrismSelectAllMethods}
+\PrismSelectBuild{objective-1}{\PrismMainMattertrue\PrismMethodstrue\PrismMethodsOnetrue}
+\PrismSelectBuild{objective-2}{\PrismMainMattertrue\PrismMethodstrue\PrismMethodsTwotrue}
+\PrismSelectBuild{objective-3}{\PrismMainMattertrue\PrismMethodstrue\PrismMethodsThreetrue}
+\PrismSelectBuild{objective-4}{\PrismMainMattertrue\PrismMethodstrue\PrismMethodsFourtrue}
+% Backwards-compatible aliases for the previous preview names.
+\PrismSelectBuild{methods}{\PrismSelectAllMethods}
+\PrismSelectBuild{methods-objective-1}{\PrismMainMattertrue\PrismMethodstrue\PrismMethodsOnetrue}
+\PrismSelectBuild{methods-objective-2}{\PrismMainMattertrue\PrismMethodstrue\PrismMethodsTwotrue}
+\PrismSelectBuild{methods-objective-3}{\PrismMainMattertrue\PrismMethodstrue\PrismMethodsThreetrue}
+\PrismSelectBuild{methods-objective-4}{\PrismMainMattertrue\PrismMethodstrue\PrismMethodsFourtrue}
+\PrismSelectBuild{project-progress}{\PrismSelectAllMethods}
+\PrismSelectBuild{progress-objective-1}{\PrismMainMattertrue\PrismMethodstrue\PrismMethodsOnetrue}
+\PrismSelectBuild{progress-objective-2}{\PrismMainMattertrue\PrismMethodstrue\PrismMethodsTwotrue}
+\PrismSelectBuild{progress-objective-3}{\PrismMainMattertrue\PrismMethodstrue\PrismMethodsThreetrue}
+\PrismSelectBuild{progress-objective-4}{\PrismMainMattertrue\PrismMethodstrue\PrismMethodsFourtrue}
+\PrismSelectBuild{progress-summary}{\PrismSelectAllMethods}
+\PrismSelectBuild{conclusions-recommendations}{\PrismMainMattertrue\PrismConclusionsRecommendationstrue}
+\PrismSelectBuild{conclusions}{\PrismMainMattertrue\PrismConclusionsRecommendationstrue}
+% Backwards-compatible aliases for the previous final-chapter preview names.
+\PrismSelectBuild{completion-plan}{\PrismMainMattertrue\PrismConclusionsRecommendationstrue}
+\PrismSelectBuild{summary}{\PrismMainMattertrue\PrismConclusionsRecommendationstrue}
+\PrismSelectBuild{references}{\PrismReferencestrue}
+\PrismSelectBuild{ai-statement}{\PrismAIStatementtrue}
+\PrismSelectBuild{appendices}{\PrismAppendicestrue}
+
+\ifPrismBuildMatched\else
+    \PackageError{prism-build}{Unknown build selection `\PrismBuild'}
+    {Use one of the build names listed beside \string\PrismBuild\space near the top of main.tex.}
+\fi
+
+% Remove chapter number labels while keeping chapter titles
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]{\normalfont\huge\bfseries}{\thechapter}{1em}{}
+\titlespacing*{\chapter}{0pt}{-35pt}{0pt}
+\titlespacing*{\section}{0pt}{0.45\baselineskip}{0pt}
+\titlespacing*{\subsection}{0pt}{0.35\baselineskip}{0.1\baselineskip}
+\titlespacing*{\subsubsection}{0pt}{0.25\baselineskip}{0.08\baselineskip}
+\titlespacing*{\paragraph}{0pt}{0.2\baselineskip}{0.5em}
+
+% Compact lists and captions
+\setlist{nosep,leftmargin=*}
+\captionsetup{skip=3pt,belowskip=-2pt}
+\captionsetup[figure]{skip=8pt,belowskip=0pt}
+\setlength{\abovecaptionskip}{8pt}
+\setlength{\belowcaptionskip}{0pt}
+
+% Paragraphs
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.3\baselineskip}
+\setlength{\headheight}{14pt}
+
+% Confidentiality footer
+\newif\ifshowchapterheader
+\showchapterheaderfalse
+\renewcommand{\chaptermark}[1]{\markboth{Chapter \thechapter: #1}{}}
+\fancypagestyle{commercialconfidential}{%
+    \fancyhf{}%
+    \fancyhead[R]{\ifshowchapterheader\footnotesize\textbf{\nouppercase{\leftmark}}\fi}%
+    \fancyfoot[L]{\footnotesize\textbf{Commercial In Confidence}}%
+    \fancyfoot[C]{\thepage}%
+    \renewcommand{\headrulewidth}{0pt}%
+    \renewcommand{\footrulewidth}{0.4pt}%
+}
+\fancypagestyle{plain}{%
+    \fancyhf{}%
+    \fancyhead[R]{\ifshowchapterheader\footnotesize\textbf{\nouppercase{\leftmark}}\fi}%
+    \fancyfoot[L]{\footnotesize\textbf{Commercial In Confidence}}%
+    \fancyfoot[C]{\thepage}%
+    \renewcommand{\headrulewidth}{0pt}%
+    \renewcommand{\footrulewidth}{0.4pt}%
+}
+
+\begin{document}
+\pagestyle{commercialconfidential}
+
+\ifPrismFrontMatter
+\pagenumbering{roman}
+
+\begin{titlepage}
+\centering
+\thispagestyle{empty}
+
+\vspace*{0.28cm}
+
+% \includegraphics[width=8.7cm]{figures/adelaide_university_logo_from_plan.png}\par
+\vspace{0.55cm}
+
+{\Large College of Engineering and Information Technology\par}
+\vspace{0.85cm}
+
+{\LARGE\bfseries Flying Radar: A Drone-Based\\[0.3em]
+Software-Defined Radar \par}
+\vspace{0.52cm}
+
+\noindent\rule{0.83\textwidth}{0.6pt}
+\vspace{0.95cm}
+
+{\Large\bfseries\textcolor{red!70!black}{Commercial In Confidence}\par}
+\vspace{0.65cm}
+
+{\Large ENGI 4900: Final Report\par}
+\vspace{0.75cm}
+
+{\large
+\begin{tabular}{rl}
+\textbf{Authors:} & Hoi Yan Leung (a1890865)\\
+& Lysander Tonkin (a1888005)\\
+& Kyle Miller (a1887019)\\
+& Axel Stevens (a1887987)\\[0.75cm]
+\textbf{Supervisor:} & Brian Ng\\[0.35cm]
+\textbf{Advisors:} & Luke Rosenberg\\
+& Chow Yii Pui\\[0.55cm]
+\textbf{Group:} & 2026s1-EME.EE-BWN-UG-14487
+\end{tabular}\par}
+\vfill
+
+\vspace{0.35cm}
+
+% \includegraphics[width=5.2cm]{prism-uploads/images (1).png}\par
+
+{\large 13 Nov 2026\par}
+36/36 Pages
+
+
+\end{titlepage}
+
+\chapter*{Summary of AI Use}
+\addcontentsline{toc}{chapter}{Summary of AI Use}
+
+Categories of \gls{ai} tool use in this assignment are as indicated in the following table.
+
+\begin{table}[!htbp]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{\gls{ai} tool use category} & \textbf{Used} \\
+\midrule
+Spelling & $\checkmark$ \\
+Grammar & $\checkmark$ \\
+Other copy editing & \\
+Literature review support & \\
+Visuals & \\
+Substantive editing & \\
+Idea generation & \\
+Translation & \\
+Research technical support & $\checkmark$ \\
+No \gls{ai} tool was used & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\chapter*{Acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+
+The authors acknowledge and sincerely thank Dr Brian Ng for his supervision, technical guidance, and ongoing support throughout the project. The authors also thank Luke Rosenberg and Chow Yii Pui for their advice and technical input during the development of the drone-mounted radar platform.
+
+The authors acknowledge Lockheed Martin Australia Advanced Systems \& Technologies for supporting the project, providing the radar payload, and contributing technical context for the development of a replicable UAV-mounted software-defined radar platform.
+
+The authors also thank the Adelaide University academic and technical staff, ENGI 4900 course coordinators, and moderation team for their guidance, feedback, and support throughout the project.
+
+% \chapter*{Executive Summary}
+% \addcontentsline{toc}{chapter}{Executive Summary}
+% \input{ch0_executive_summary}
+% \glsresetall
+% \clearpage
+
+\tableofcontents
+\clearpage
+
+\listoffigures
+\addcontentsline{toc}{chapter}{List of Figures}
+\clearpage
+
+\listoftables
+\addcontentsline{toc}{chapter}{List of Tables}
+
+% Keep the original acronym list in the preserved front matter even while the
+% report body is intentionally empty.
+\glsadd{ai}
+\glsadd{sdr}
+\glsadd{uav}
+\glsadd{ast}
+\glsadd{sbc}
+\glsadd{usb}
+\glsadd{iq}
+\glsadd{cad}
+\glsadd{cots}
+\glsadd{gps}
+\glsadd{sar}
+\glsadd{insar}
+\glsadd{fmcw}
+\glsadd{dem}
+\glsadd{hale}
+\glsadd{cuas}
+\glsadd{gpr}
+\glsadd{ied}
+\glsadd{cw}
+\glsadd{rf}
+\glsadd{api}
+\glsadd{3d}
+\glsadd{sld}
+\glsadd{cli}
+\glsadd{asa}
+\glsadd{pla}
+\glsadd{pcb}
+\glsadd{lipo}
+\glsadd{ac}
+\glsadd{dc}
+\glsadd{jst}
+\glsadd{cpu}
+\glsadd{gpio}
+\glsadd{ssh}
+\glsadd{ide}
+\glsadd{sd}
+\glsadd{vid}
+\glsadd{pid}
+\clearpage
+\printnoidxglossary[type=\acronymtype,title=List of Acronyms]
+\addcontentsline{toc}{chapter}{List of Acronyms}
+\clearpage
+
+\begin{landscape}
+\chapter*{Contribution Statement}
+\addcontentsline{toc}{chapter}{Contribution Statement}
+
+This contribution statement records the specific contribution of each team member to the technical work and preparation of this progress report. Contributions are grouped according to the simplified CRediT categories of Approach, Technical output, Writing, and Project management.
+
+% Negative vertical space forces the table to start on this page rather than skipping down
+% \nopagebreak
+
+
+\begingroup
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{longtable}{>{\raggedright\arraybackslash}p{2.0cm} >{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{4.9cm} >{\raggedright\arraybackslash}p{5.1cm} >{\raggedright\arraybackslash}p{3.6cm}}
+\caption*{Table CS1: Declaration of group contributions to the report.} \\
+\toprule
+\textbf{Author} & \textbf{Team Role} & \textbf{Approach} & \textbf{Technical Output} & \textbf{Writing} & \textbf{Project Management} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Author} & \textbf{Team Role} & \textbf{Approach} & \textbf{Technical Output} & \textbf{Writing} & \textbf{Project Management} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{6}{r}{\textsl{Continued on next page}} \\
+\endfoot
+\bottomrule
+\endlastfoot
+\rule{0pt}{4\baselineskip} & & & & & \\
+\midrule
+\rule{0pt}{4\baselineskip} & & & & & \\
+\midrule
+\rule{0pt}{4\baselineskip} & & & & & \\
+\midrule
+\rule{0pt}{4\baselineskip} & & & & & \\
+\end{longtable}
+\endgroup
+\end{landscape}
+
+
+
+\begin{table}[!htbp]
+\centering
+\caption*{Table CS2: Acknowledgement of AI Tool Use}
+\label{tab:ai-tool-use-acknowledgement}
+\renewcommand{\arraystretch}{1.25}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{0.24\textwidth}}
+\toprule
+\textbf{Group member name} & \textbf{Specific sub-sections or paragraphs where AI was used} & \textbf{AI Tool Use Category/ies} \\
+\midrule
+Hoi Yan Leung & Software implementation documentation and selected grammar/spelling checks. & Spelling; grammar; research technical support \\
+Lysander Tonkin & Selected spelling and grammar checks in drafted report text. & Spelling; grammar \\
+Kyle Miller & Selected spelling and grammar checks in drafted report text. & Spelling; grammar \\
+Axel Stevens & Selected spelling and grammar checks in drafted report text. & Spelling; grammar \\
+\bottomrule
+\end{tabularx}
+\normalsize
+\end{table}
+
+\begin{table}[!htbp]
+\centering
+\caption*{Table CS3: Group Member Comments}
+\renewcommand{\arraystretch}{1.6}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.30\textwidth} X@{}}
+\toprule
+\textbf{Group member name} & \textbf{Comments} \\
+\midrule
+Hoi Yan Leung & Oversaw technical \gls{sdr} work, developed theory section of the report and made substantial technical progress towards \gls{sdr} and \gls{sbc} interfacing.\\
+\midrule
+Lysander Tonkin & Coordinated the initial group formation and refined the technical objectives for task delegation. Made progress towards mechanical system design.\\
+\midrule
+Kyle Miller & Coordinated the development of the report. Completed editing and refinement. Made progress towards the power system for the project.\\
+\midrule
+Axel Stevens & Reworked literature review subsections and completion plan. Made progress towards data synchronisation.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+By signing below students are acknowledging that the contributions recorded above are a true representation of the contribution made by each individual.
+
+\begin{table}[!htbp]
+\centering
+\caption*{Table CS4: Signature Acknowledgement of Contribution}
+\label{tab:signature-acknowledgement}
+\renewcommand{\arraystretch}{2.0}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.35\textwidth} >{\raggedright\arraybackslash}p{0.22\textwidth} X@{}}
+\toprule
+\textbf{Name} & \textbf{Student ID} & \textbf{Signature} \\
+\midrule
+Hoi Yan Leung & a1890865 & \\
+\midrule
+Lysander Tonkin & a1888005 & \\
+\midrule
+Kyle Miller & a1887019 & \\
+\midrule
+Axel Stevens & a1887987 & \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+
+\fi
+
+% \ifPrismMainMatter
+% \clearpage
+% \setcounter{page}{1}
+% \pagenumbering{arabic}
+% \showchapterheadertrue
+
+
+% \ifPrismIntroduction
+% \setcounter{chapter}{0}
+% \chapter{Introduction}
+% \input{ch1_introduction}
+% \fi
+
+% \ifPrismLiteratureReview
+% \setcounter{chapter}{1}
+% \chapter{Literature Review}
+% \input{ch2_literature_review}
+% \fi
+
+% \ifPrismTheory
+% \setcounter{chapter}{2}
+% \chapter{Theory}
+% \input{ch3_theory}
+% \fi
+
+\ifPrismMethods
+\setcounter{chapter}{3}
+\chapter{Methods, Results and Discussion}
+\input{ch4_methods}
+\fi
+
+% \ifPrismConclusionsRecommendations
+% \setcounter{chapter}{4}
+% \chapter{Conclusions and Recommendations}
+% \input{ch5_conclusions_recommendations}
+% \fi
+% \clearpage
+% \showchapterheaderfalse
+% \fi
+
+\ifPrismReferences
+% Example bibliography setup
+% Use citations like \cite{moreiraTutorialSyntheticAperture2013} in your chapter files.
+% Preserve the existing reference list while the report body is intentionally empty.
+\nocite{stockelDetectionMonitoringPeople2024,kanzCoherentMultistaticUAVbased2025,
+luswavePUPDUAL24C,raspberry_pi_ltd_raspberry_2026,hobbyking_quanum_2026,
+spektrum_111v_2026,batteries_direct_fuyuang_2026,noauthor_lm2596_2023,
+noauthor_rs_nodate-1,noauthor_rs_nodate,kawkaSwarmDronesDetection2025,
+lopezUnmannedAerialVehicleBased2022,li_uncrewed_2026,
+aguascaARBRESLightWeightCW2013,svedinSmallUAVbasedSAR2021,
+sunSystemDesignAnalysis2021,
+australian_communications_and_media_authority_radiocommunications_2025,
+moreiraTutorialSyntheticAperture2013,rosenSyntheticApertureRadar2000,
+informationNextGenerationWeather,kariEvolutionaryDevelopmentsTodays2024,
+corradiRadarPerceptionAutonomous2022,munchakRemoteSensingPrecipitation2018,
+stimson_introduction_1998,ganeshkumarComprehensiveReviewPayloads2024,
+wangGeometricPositionError2025,huResearchProgressGeosynchronous2021,
+ouchiRecentTrendAdvance2013,najemIncidenceAngleNormalization2024,
+guEstablishmentVerificationVelocity2025,hwangPracticalEnduranceEstimation2018,
+yuCoverageEnvironmentUsing2020,joshiComprehensiveReviewElectric2022,
+ismailElectricPropulsionHybrid2025,zhangComprehensiveReviewElectrochemical2022,
+yiCompensationMethodAirborne2018,zhouHRWSSARMotion2024,
+kangDeepLearningbasedMotion2024,liGANbasedFastFocusing2024,
+coulibalyBlockchainSoftwareDefinedRadio2025,yanXbandMiniSAR2016,
+jean-francoisSARImagingChallenges2022,dingWBand3DIntegrated2020,
+ullmannDetectingClimateChange2024,aliDesignImplementationFMCW2017,
+michailidisSoftwareDefinedRadioDeployments2024,wolffRadartutorial,
+skolnik_introduction_2001,iperf_fr,aurelia2025x6,ltdRaspberryPiSoftware}
+\bibliographystyle{IEEEtran}
+\renewcommand{\bibname}{References}
+\addcontentsline{toc}{chapter}{References}
+\setlength{\bibsep}{2pt}
+\bibliography{References_4}
+\fi
+
+\ifPrismAIStatement
+\clearpage
+\chapter*{Statement of AI Use}
+\addcontentsline{toc}{chapter}{Statement of AI Use}
+\subsubsection*{Spelling and Grammar}
+The project team used ChatGPT (https://chat.openai.com/) and Claude (https://claude.ai/) for this Progress Report to check spelling and grammar in selected text drafted by the team. The use of AI tool was limited to identifying spelling and grammar errors. The tools were not used to draft new report sections, produce summaries or paraphrases, restructure the report, interpret results, draw conclusions. The project team reviewed all suggestions before making any changes and retained copies of the original text submitted to the AI tools.
+
+The following prompt was used in May 2026:
+
+\begin{quote}
+Please review the following paragraph and identify spelling and grammar errors only. Do not rewrite the text, change the meaning, improve the flow, shorten sentences, add content, or make style or substantive editing suggestions.
+\end{quote}
+
+Initials of group members who used this support: HL, LT, KM, AS.
+
+\subsubsection*{Research Technical Support}
+
+The project team used Claude Code to analyse the legacy MATLAB driver, implement radar commands, and produce code documentation. All code and documentation generated by AI underwent human review and approval. AI use in this form was approved verbally by Dr Brian Ng. The following prompt was used in April 2026:
+
+\begin{quote}
+Document all functions in the following file using Doxygen-style comments:
+
+\begin{verbatim}
+C:\Users\eliza\SDR_main\SDR_main\linux\src\UsbDevice.cpp
+\end{verbatim}
+
+\text{Documentation requirements:}
+\begin{itemize}
+    \item Add a Doxygen comment block above every function definition.
+    \item Include:
+    \begin{itemize}
+        \item \texttt{@brief}
+        \item \texttt{@param} for all parameters
+        \item \texttt{@return} where applicable
+        \item \texttt{@note} or \texttt{@warning} if relevant
+    \end{itemize}
+    \item Keep descriptions concise but technically clear.
+\end{itemize}
+\end{quote}
+
+Initials of group members who used this support: HL
+\fi
+
+% \ifPrismAppendices
+% \clearpage
+% \appendix
+% \input{ch8_appendix}
+% \fi
+
+\end{document}
