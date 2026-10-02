@@ -1,0 +1,1 @@
+/usr/bin/aarch64-linux-gnu-g++ -g -Wl,--dependency-file=CMakeFiles/pupradar_board_info.dir/link.d CMakeFiles/pupradar_board_info.dir/src/board_info.cpp.o -o pupradar_board_info  libpupradar_usb.a libpupradar_core.a /usr/lib/aarch64-linux-gnu/libusb-1.0.so

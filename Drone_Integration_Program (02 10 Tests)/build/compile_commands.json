@@ -1,0 +1,74 @@
+[
+{
+  "directory": "/home/axel/Drone_Integration_Program/build",
+  "command": "/usr/bin/aarch64-linux-gnu-g++  -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/include -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/third_party -g -std=c++17 -fPIC -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Woverloaded-virtual -Wformat=2 -o CMakeFiles/pupradar_core.dir/src/IntelHex.cpp.o -c /home/axel/Drone_Integration_Program/SDR_main-main/linux/src/IntelHex.cpp",
+  "file": "/home/axel/Drone_Integration_Program/SDR_main-main/linux/src/IntelHex.cpp",
+  "output": "CMakeFiles/pupradar_core.dir/src/IntelHex.cpp.o"
+},
+{
+  "directory": "/home/axel/Drone_Integration_Program/build",
+  "command": "/usr/bin/aarch64-linux-gnu-g++  -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/include -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/third_party -g -std=c++17 -fPIC -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Woverloaded-virtual -Wformat=2 -o CMakeFiles/pupradar_core.dir/src/Protocol.cpp.o -c /home/axel/Drone_Integration_Program/SDR_main-main/linux/src/Protocol.cpp",
+  "file": "/home/axel/Drone_Integration_Program/SDR_main-main/linux/src/Protocol.cpp",
+  "output": "CMakeFiles/pupradar_core.dir/src/Protocol.cpp.o"
+},
+{
+  "directory": "/home/axel/Drone_Integration_Program/build",
+  "command": "/usr/bin/aarch64-linux-gnu-g++  -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/include -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/third_party -g -std=c++17 -fPIC -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Woverloaded-virtual -Wformat=2 -o CMakeFiles/pupradar_core.dir/src/RadarSession.cpp.o -c /home/axel/Drone_Integration_Program/SDR_main-main/linux/src/RadarSession.cpp",
+  "file": "/home/axel/Drone_Integration_Program/SDR_main-main/linux/src/RadarSession.cpp",
+  "output": "CMakeFiles/pupradar_core.dir/src/RadarSession.cpp.o"
+},
+{
+  "directory": "/home/axel/Drone_Integration_Program/build",
+  "command": "/usr/bin/aarch64-linux-gnu-g++  -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/include -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/third_party -g -std=c++17 -fPIC -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Woverloaded-virtual -Wformat=2 -o CMakeFiles/pupradar_core.dir/src/IqWriter.cpp.o -c /home/axel/Drone_Integration_Program/SDR_main-main/linux/src/IqWriter.cpp",
+  "file": "/home/axel/Drone_Integration_Program/SDR_main-main/linux/src/IqWriter.cpp",
+  "output": "CMakeFiles/pupradar_core.dir/src/IqWriter.cpp.o"
+},
+{
+  "directory": "/home/axel/Drone_Integration_Program/build",
+  "command": "/usr/bin/aarch64-linux-gnu-g++  -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/include -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/third_party -isystem /usr/include/libusb-1.0 -g -std=c++17 -fPIC -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Woverloaded-virtual -Wformat=2 -o CMakeFiles/pupradar_usb.dir/src/UsbDevice.cpp.o -c /home/axel/Drone_Integration_Program/SDR_main-main/linux/src/UsbDevice.cpp",
+  "file": "/home/axel/Drone_Integration_Program/SDR_main-main/linux/src/UsbDevice.cpp",
+  "output": "CMakeFiles/pupradar_usb.dir/src/UsbDevice.cpp.o"
+},
+{
+  "directory": "/home/axel/Drone_Integration_Program/build",
+  "command": "/usr/bin/aarch64-linux-gnu-g++  -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/include -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/third_party -isystem /usr/include/libusb-1.0 -g -std=c++17 -fPIE -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Woverloaded-virtual -Wformat=2 -o CMakeFiles/pupradar_capture.dir/src/main.cpp.o -c /home/axel/Drone_Integration_Program/SDR_main-main/linux/src/main.cpp",
+  "file": "/home/axel/Drone_Integration_Program/SDR_main-main/linux/src/main.cpp",
+  "output": "CMakeFiles/pupradar_capture.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/axel/Drone_Integration_Program/build",
+  "command": "/usr/bin/aarch64-linux-gnu-g++  -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/include -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/third_party -isystem /usr/include/libusb-1.0 -g -std=c++17 -fPIE -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Woverloaded-virtual -Wformat=2 -o CMakeFiles/pupradar_board_info.dir/src/board_info.cpp.o -c /home/axel/Drone_Integration_Program/SDR_main-main/linux/src/board_info.cpp",
+  "file": "/home/axel/Drone_Integration_Program/SDR_main-main/linux/src/board_info.cpp",
+  "output": "CMakeFiles/pupradar_board_info.dir/src/board_info.cpp.o"
+},
+{
+  "directory": "/home/axel/Drone_Integration_Program/build",
+  "command": "/usr/bin/aarch64-linux-gnu-g++  -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/tests -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/include -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/third_party -g -std=c++17 -fPIE -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Woverloaded-virtual -Wformat=2 -o CMakeFiles/pupradar_tests.dir/tests/test_main.cpp.o -c /home/axel/Drone_Integration_Program/SDR_main-main/linux/tests/test_main.cpp",
+  "file": "/home/axel/Drone_Integration_Program/SDR_main-main/linux/tests/test_main.cpp",
+  "output": "CMakeFiles/pupradar_tests.dir/tests/test_main.cpp.o"
+},
+{
+  "directory": "/home/axel/Drone_Integration_Program/build",
+  "command": "/usr/bin/aarch64-linux-gnu-g++  -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/tests -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/include -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/third_party -g -std=c++17 -fPIE -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Woverloaded-virtual -Wformat=2 -o CMakeFiles/pupradar_tests.dir/tests/test_intel_hex.cpp.o -c /home/axel/Drone_Integration_Program/SDR_main-main/linux/tests/test_intel_hex.cpp",
+  "file": "/home/axel/Drone_Integration_Program/SDR_main-main/linux/tests/test_intel_hex.cpp",
+  "output": "CMakeFiles/pupradar_tests.dir/tests/test_intel_hex.cpp.o"
+},
+{
+  "directory": "/home/axel/Drone_Integration_Program/build",
+  "command": "/usr/bin/aarch64-linux-gnu-g++  -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/tests -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/include -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/third_party -g -std=c++17 -fPIE -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Woverloaded-virtual -Wformat=2 -o CMakeFiles/pupradar_tests.dir/tests/test_protocol.cpp.o -c /home/axel/Drone_Integration_Program/SDR_main-main/linux/tests/test_protocol.cpp",
+  "file": "/home/axel/Drone_Integration_Program/SDR_main-main/linux/tests/test_protocol.cpp",
+  "output": "CMakeFiles/pupradar_tests.dir/tests/test_protocol.cpp.o"
+},
+{
+  "directory": "/home/axel/Drone_Integration_Program/build",
+  "command": "/usr/bin/aarch64-linux-gnu-g++  -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/tests -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/include -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/third_party -g -std=c++17 -fPIE -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Woverloaded-virtual -Wformat=2 -o CMakeFiles/pupradar_tests.dir/tests/test_radar_session.cpp.o -c /home/axel/Drone_Integration_Program/SDR_main-main/linux/tests/test_radar_session.cpp",
+  "file": "/home/axel/Drone_Integration_Program/SDR_main-main/linux/tests/test_radar_session.cpp",
+  "output": "CMakeFiles/pupradar_tests.dir/tests/test_radar_session.cpp.o"
+},
+{
+  "directory": "/home/axel/Drone_Integration_Program/build",
+  "command": "/usr/bin/aarch64-linux-gnu-g++  -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/tests -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/include -I/home/axel/Drone_Integration_Program/SDR_main-main/linux/third_party -g -std=c++17 -fPIE -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Woverloaded-virtual -Wformat=2 -o CMakeFiles/pupradar_tests.dir/tests/test_iq_writer.cpp.o -c /home/axel/Drone_Integration_Program/SDR_main-main/linux/tests/test_iq_writer.cpp",
+  "file": "/home/axel/Drone_Integration_Program/SDR_main-main/linux/tests/test_iq_writer.cpp",
+  "output": "CMakeFiles/pupradar_tests.dir/tests/test_iq_writer.cpp.o"
+}
+]

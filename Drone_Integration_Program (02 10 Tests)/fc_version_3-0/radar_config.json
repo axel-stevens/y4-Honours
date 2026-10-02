@@ -1,0 +1,24 @@
+{
+    "binary": "~/Drone_Integration_Program/SDR_main-main/linux/build-arm64/pupradar_capture",
+    "firmware": "~/Drone_Integration_Program/SDR_main-main/linux/firmware/SDR_USB_FW.hex",
+    "output_dir": "~/SDR-data",
+    "use_sudo": true,
+    "settle_time": 0,
+    "buffer_time": 0,
+    "capture": {
+        "duration": 5,
+        "fc_low": 24.00e9,
+        "fc_high": 26.00e9,
+        "sweep_time": 1,
+        "samp_num": 1,
+        "rx": 1
+    },
+    "flush": {
+        "duration": 1,
+        "fc_low": 24.00e9,
+        "fc_high": 26.00e9,
+        "sweep_time": 1,
+        "samp_num": 1,
+        "rx": 1
+    }
+}

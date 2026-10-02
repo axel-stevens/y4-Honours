@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/axel/Drone_Integration_Program/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

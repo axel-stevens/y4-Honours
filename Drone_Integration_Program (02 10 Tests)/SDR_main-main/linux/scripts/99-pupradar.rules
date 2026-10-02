@@ -1,0 +1,10 @@
+# udev rule: grant all users access to the PUPradar device.
+# Replace POST_FW_PID with the firmware-defined PID after first plug-in
+# (run lsusb to discover). The pre-firmware FX2LP default (8613) is also
+# included so the loader can issue 0xA0 control transfers without root.
+#
+# Install:  sudo cp 99-pupradar.rules /etc/udev/rules.d/
+#           sudo udevadm control --reload-rules && sudo udevadm trigger
+#
+SUBSYSTEM=="usb", ATTR{idVendor}=="04b4", ATTR{idProduct}=="8613", MODE="0666", GROUP="plugdev", TAG+="uaccess"
+SUBSYSTEM=="usb", ATTR{idVendor}=="04b4", ATTR{idProduct}=="1004", MODE="0666", GROUP="plugdev", TAG+="uaccess"
