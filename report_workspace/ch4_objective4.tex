@@ -142,222 +142,10 @@ At this stage of development, the flight controller interfaces with the \gls{sbc
 
 The input logic is controlled by the \texttt{RCInput} class, which is shown in Listing~\ref{lst:RCInput-class}
 
-\begin{lstlisting}[language=Python, caption=RCInput class used to control PWM input logic, label={lst:RCInput-class}]
-import RPi.GPIO as GPIO
-import time
-
-from .config import RC7_PIN, RC8_PIN
-from .config import PWM_HIGH, PWM_LOW
-
-
-class RCInput:
-
-    def __init__(self):
-
-        self.rc7_pulse_width = 0
-        self.rc8_pulse_width = 0
-
-        self.rc7_high = False
-        self.rc8_high = False
-
-        self.rc7_rising_time = None
-        self.rc8_rising_time = None
-
-        self.rc7_last_low = 0
-        self.rc8_last_low = 0
-
-        GPIO.setup(RC7_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-
-        GPIO.setup(RC8_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-
-        GPIO.add_event_detect(RC7_PIN, GPIO.BOTH, callback=self.rc7_callback)
-
-        GPIO.add_event_detect(RC8_PIN, GPIO.BOTH, callback=self.rc8_callback)
-
-    def rc7_callback(self, channel):
-
-        if GPIO.input(channel):
-
-            # Rising edge
-            self.rc7_rising_time = time.monotonic_ns()
-
-        else:
-
-            # Falling edge
-            if self.rc7_rising_time is not None:
-
-                falling_time = time.monotonic_ns()
-
-                self.rc7_pulse_width = (falling_time - self.rc7_rising_time) / 1000
-
-                self.rc7_rising_time = None
-
-                if self.rc7_pulse_width > PWM_HIGH:
-
-                    self.rc7_high = True
-
-                elif self.rc7_pulse_width < PWM_LOW:
-
-                    self.rc7_high = False
-
-    def rc8_callback(self, channel):
-
-        if GPIO.input(channel):
-
-            # Rising edge
-            self.rc8_rising_time = time.monotonic_ns()
-
-        else:
-
-            # Falling edge
-            if self.rc8_rising_time is not None:
-
-                falling_time = time.monotonic_ns()
-
-                self.rc8_pulse_width = (falling_time - self.rc8_rising_time) / 1000
-
-                self.rc8_rising_time = None
-
-                if self.rc8_pulse_width > PWM_HIGH:
-
-                    self.rc8_high = True
-
-                elif self.rc8_pulse_width < PWM_LOW:
-
-                    self.rc8_high = False
-\end{lstlisting}
 
 The main flow of the program is controlled by the main.py script, which is shown in Listing \ref{lst:pwm_interface_main}. The script initialises the Raspberry Pi GPIO interface and creates instances of the RC input, radar, GPS, and display classes. It then continuously monitors the RC channels, starting a radar capture when the appropriate input transitions high and activating GPS when the corresponding input is high. Runtime and capture information are written to output.txt, while the display is periodically updated with the current system state. When the program is interrupted or terminated, it performs a shutdown routine that cleans up the environment. 
 
-\begin{lstlisting}[language=Python, caption=Main file of \gls{pwm} interface script, label={lst:pwm_interface_main}]
-#!/usr/bin/env python3
 
-import RPi.GPIO as GPIO
-import time
-import signal
-
-from files.rc_input import RCInput
-from files.radar import Radar
-from files.gps import GPS
-from files.display import display
-from files.config import DISPLAY_REFRESH
-
-# ============================================================
-# GLOBAL STATE
-# ============================================================
-
-start_time = time.monotonic()
-
-# ============================================================
-# INITIALISE
-# ============================================================
-
-GPIO.setmode(GPIO.BCM)
-
-rc = RCInput()
-
-radar = Radar()
-
-gps = GPS()
-
-# ============================================================
-# OUTPUT
-# ============================================================
-
-
-def update_output(gps, radar):
-    with open("output.txt", "w") as file:
-        file.write(f"GPS Activation time: {gps.activation_time}\n")
-        file.write(f"Radar capture times: {radar.capture_times}\n")
-
-
-# ============================================================
-# MAIN LOOP
-# ============================================================
-
-
-def main():
-
-    global drone_armed
-    global start_time
-
-    print("Starting drone radar interface...")
-    open("output.txt", "w")  # overwrite previous file
-
-    try:
-
-        while True:
-
-            runtime = time.monotonic() - start_time
-
-            # ------------------------------------------------
-            # Radar Capture
-            # ------------------------------------------------
-
-            if rc.rc7_high and rc.rc7_last_low:
-
-                radar.start_capture(runtime)
-                update_output(gps, radar)
-                radar.stop_capture()
-                rc.rc7_last_low = 0
-
-            if not rc.rc7_high:
-                rc.rc7_last_low = 1
-
-            # ------------------------------------------------
-            # GPS
-            # ------------------------------------------------
-
-            if rc.rc8_high:
-
-                gps.activate()
-                update_output(gps, radar)
-
-            # ------------------------------------------------
-            # DISPLAY
-            # ------------------------------------------------
-
-            display(rc, radar, gps, runtime)
-
-            time.sleep(DISPLAY_REFRESH)
-
-    except KeyboardInterrupt:
-
-        shutdown()
-
-
-# ============================================================
-# SHUTDOWN
-# ============================================================
-
-
-def shutdown():
-
-    print("\nCleaning up...")
-
-    GPIO.cleanup()
-
-
-def signal_handler(signal_number, frame):
-
-    shutdown()
-
-    exit(0)
-
-
-signal.signal(signal.SIGINT, signal_handler)
-
-signal.signal(signal.SIGTERM, signal_handler)
-
-
-# ============================================================
-# START
-# ============================================================
-
-if __name__ == "__main__":
-
-    main()
-\end{lstlisting}
 
 
 \begin{enumerate}
@@ -438,10 +226,7 @@ Likewise from the second iteration, a single python 3 program on
 the \gls{sbc} handled both the flight controller and 
 the \gls{sdr} in one loop. 
 
-Again, the code was split by device, a \texttt{Drone} class, which
-handled the flight controller interface, a \texttt{Radar} class, which
-handled the radar interface, and a small \texttt{main.py} script to
-run the overall program. 
+Again, the code was split by device, a \texttt{Drone} class, which handled the flight controller interface, a \texttt{Radar} class, which handled the radar interface, and a small \texttt{main.py} script to run the overall program. 
 
 The benefit to the program being one one system was the fact that
 all the timing was able to use a single clock, which was \texttt{runtime} (seconds
@@ -487,40 +272,32 @@ ID's of the key messages is shown in Table \ref{tab:mavlink_messages}.
 \end{table}
 
 
-on each loop in the \texttt{main.py} file, \text{update()} drained
-every queued message with non blocking \texttt{recv\_match(blocking=False)},
-and so the program was never stalled by a slow linkm as the stored
-value was always the latest received. 
+on each loop in the \texttt{main.py} file, \text{update()} drained every queued message with non blocking \texttt{recv\_match(blocking=False)}, and so the program was never stalled by a slow link as the stored value was always the latest received. 
 
-Raw Mavlink fields were converted to \gls{si} units upon reception,
-including converting lattitude and longitude from degE7 to degrees, 
-altitude from milimetres to metres, and voltage from millivolts to volts.
+Raw Mavlink fields were converted to \gls{si} units upon reception, including converting lattitude and longitude from degE7 to degrees, altitude from milimetres to metres, and voltage from millivolts to volts.
 
-The armed status of the drone was read from the \texttt{MAV\_MODE\_FLAG\_SAFETY\_ARMED} 
-bit of \texttt{HEARTBEAT.base\_mode}, and the flight mode
-was decoded with \texttt{mode\_string\_v10}. The \texttt{gps\_ready} state was changed based on whether a fix to three 
-or more satellites was present. 
+The armed status of the drone was read from the \texttt{MAV\_MODE\_FLAG\_SAFETY\_ARMED} bit of \texttt{HEARTBEAT.base\_mode}, and the flight modewas decoded with \texttt{mode\_string\_v10}. The \texttt{gps\_ready} state was changed based on whether a fix to three or more satellites was present. 
 
-Same from iteration 2, the radar was triggered from a switch on the pilot's 
-transmitter which was mapped to channel 15. However, instead of reading in 
-a PWM signal output from the flight controller, the signal was read through the \texttt{RC\_CHANNELS}
-MAVlink message. 
+Same from iteration 2, the radar was triggered from a switch on the pilot's transmitter which was mapped to channel 15. However, instead of reading in a PWM signal output from the flight controller, the signal was read through the \texttt{RC\_CHANNELS} MAVlink message. 
 
-The trigger logic remained the same; rising edge detection. A capture was 
-requested by the main script to the radar only when the pulse width was above 1800 $ \mus$.
-The capture logic was sticky; the switch had to be seen as low before a new 
-capture could be requested (which was a pulse width below 1200 $\mu s$). The 
-sticky logic prevented one switch from firing repeatedly, ignored the noise
-in the invalid range, and prevented a switch left high at startup from requesting 
-a capture. Both pulse width parameters can be changed easily in the config file. 
-Buffering was not used; if the radar was still busy, the request was rejected 
-and a message printed, instead of the request being queued. The reason for this 
-was
+The trigger logic remained the same; rising edge detection. A capture was requested by the main script to the radar only when the pulse width was above 1800 $\mu s$. The capture logic was sticky; the switch had to be seen as low before a new capture could be requested (which was a pulse width below 1200 $\mu s$). The sticky logic prevented one switch from firing repeatedly, ignored the noise in the invalid range, and prevented a switch left high at startup from requesting a capture. Both pulse width parameters can be changed easily in the config file. Buffering was not used; if the radar was still busy, the request was rejected and a message printed, instead of the request being queued. The reason for this was predictability; the timespan of the radar capture is too long for buffering to be feasible. 
 
+The previous iteration used a \gls{gpio} activation signal from the flight controller. This was replaced in iteration 3 with reading the \gls{rc} channel directly through MAVLink. Doing this simplified physical wiring greatly as with MAVLink all communication is handled over a single \gls{usb} connection. The GPIO activation signal was also dependent on the safety switch status of the drone; it had to be off for an output to occur. This issue is not present in the MAVLink setup. 
 
+On each script startup a telemetry log in the form of a .csv file was created from the program, named with the start date and time, so that a telemetry log never overwrote a previous log. Each row in the log held sixteen telemetry fields and five radar fields of data, in addition to the program runtime. Among the five radar fields was the file name of the radar capture (if one occured), so that each radar capture could be matched directly to the telemetry rows. 
 
+To view live data for verification and testing, a terminal dashboard (which was viewed over \gls{ssh}) showed flight state, \gls{gps}, attitude, battery voltage, the pulse width of the RC channel tied to the activation of the \gls{sdr}, and the radar status. The display was refreshed at one Hz; a parameter changable in the config file. 
 
 \textit{SDR Interface}
+
+The \gls{sbc} and radar did not communicate directly. Insead, the capture executable file was ran by the \texttt{radar} class in the program as a subprocess. This was to ensure appropriate seperation between the two systems in order to minimise complexity. Under this method, the \gls{sbc} was only responsible for scheduling and bookkeeping of the radar captures. 
+
+The capture settings for the radar existed in a \gls{json} file which was read by the program at startup, so that parameters could change between flights without editing code. Among these settings were the executable and firmware paths, output folder for the radar captures, duration of capture, and sweep time.
+
+[Capture sequence as a state machine. Will be changed in code so write here after that's done]
+
+Each capture file was named according to its capture number and runtime on capture. Together with the per-row radar columns in the CSV file, this gave two independent ways to align the radar capture data with the telemetry data sets.
+
 
 \textit{GPS and SDR Processing and Plotting}
 
