@@ -1,0 +1,87 @@
+%==============================================================================
+% Appendix for Objective 4
+% Everything below this line is appendix material. Chapters are lettered
+% (A, B, ...) and sections numbered A.1, A.2, ... Reference from the body text
+% with e.g. Appendix~\ref{app:obj4} or Appendix~\ref{app:obj4-code}.
+%==============================================================================
+\clearpage
+\appendix
+\renewcommand{\chaptermark}[1]{\markboth{Appendix \thechapter: #1}{}}
+
+\chapter{Objective 4: Supporting Material}
+\label{app:obj4}
+
+\section{SSH Setup}
+\label{app:obj4-ssh-setup}
+
+\begin{lstlisting}[language=bash,caption={The commands used to setup SSH connection between the Raspberry Pi and a remote computer.},label={lst:ssh-setup}]
+sudo apt install openssh-server
+sudo systemctl enable ssh
+sudo ufw allow ssh
+\end{lstlisting}
+
+\section{GPIO Packages Install}
+\label{app:obj4-gpio-packages}
+
+\begin{lstlisting}[language=Bash,caption={Bash command used to install python \gls{gpio} library.},label={lst:gpio-package-install}]
+sudo apt install python3-lgpio gpiod
+\end{lstlisting}
+
+\section{Virtual Environment and \texttt{rpi-lgpio} Install}
+\label{app:obj4-rpi-lgpio-install}
+
+\begin{lstlisting}[language=Bash,caption={Commands used to create the python virtual environment and install \texttt{rpi-lgpio}.},label={lst:rpi-lgpio-install}]
+wget http://abyz.me.uk/lg/lg.zip
+unzip lg.zip
+cd lg
+make
+sudo make install
+python3 -m venv gpio-env
+source gpio-env/bin/activate
+pip install rpi-lgpio
+\end{lstlisting}
+
+\section{GPIO Read Script}
+\label{app:obj4-gpio-script}
+
+\begin{lstlisting}[language=python,caption={Python script used to run on the Raspberry Pi to monitor one of the \gls{gpio} pins.},label={lst:gpio-script}]
+#!/usr/bin/env python3
+import RPi.GPIO as GPIO # Uses rpi-lgpio backend automatically
+from time import sleep
+import signal
+
+# Setup
+GPIO_PIN = 17
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(GPIO_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
+print("Sensing 3.3V High...")
+
+try:
+    while True:
+        if GPIO.input(GPIO_PIN):
+            print("Pin High")
+            sleep(1)
+except KeyboardInterrupt:
+    print("Stopping...")
+finally:
+    GPIO.cleanup()
+pause()
+\end{lstlisting}
+
+\section{Test Data and Logs}
+\label{app:obj4-data}
+
+% Template: table
+% \begin{table}[!htbp]
+%     \centering
+%     \caption{<caption>}
+%     \label{tab:app-obj4-<name>}
+%     \begin{tabular}{ll}
+%         \toprule
+%         <col> & <col> \\
+%         \midrule
+%         <val> & <val> \\
+%         \bottomrule
+%     \end{tabular}
+% \end{table}

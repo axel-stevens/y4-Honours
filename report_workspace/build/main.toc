@@ -8,14 +8,22 @@
 \contentsline {section}{\numberline {4.1}Objective 4: Synchronise Logging of Flight Telemetry and Radar Measurements}{x}{section.4.1}%
 \contentsline {subsection}{\numberline {4.1.1}Introduction}{x}{subsection.4.1.1}%
 \contentsline {subsection}{\numberline {4.1.2}Methodology}{xi}{subsection.4.1.2}%
-\contentsline {subsubsection}{SBC Setup and Iteration 1: GPIO Read}{xi}{subsection.4.1.2}%
-\contentsline {subsubsection}{Iteration 2: PWM Read}{xiii}{lstnumber.4.4.22}%
-\contentsline {subsubsection}{Iteration 3: Mavlink}{xvi}{Item.12}%
-\contentsline {subsection}{\numberline {4.1.3}Results and Discussion}{xviii}{subsection.4.1.3}%
-\contentsline {subsubsection}{Development test 1: GPIO Read}{xviii}{subsection.4.1.3}%
-\contentsline {subsubsection}{Development test 2: RC Switch to PWM Capture Cycle}{xviii}{subsection.4.1.3}%
-\contentsline {subsubsection}{Development test 3: Full telemetry live handoff and full capture cycle}{xviii}{subsection.4.1.3}%
-\contentsline {subsubsection}{Ground Test: Full Integration with other subsystems on the ground demonstrating full capture cycle and logging}{xviii}{subsection.4.1.3}%
-\contentsline {subsection}{\numberline {4.1.4}Summary}{xviii}{subsection.4.1.4}%
-\contentsline {chapter}{References}{xviii}{subsection.4.1.4}%
-\contentsline {chapter}{Statement of AI Use}{xix}{chapter*.15}%
+\contentsline {subsubsection}{Hardware and Setup}{xi}{subsection.4.1.2}%
+\contentsline {subsubsection}{Development Approach}{xii}{subsection.4.1.2}%
+\contentsline {subsubsection}{Flight Controller Configuration}{xii}{subsection.4.1.2}%
+\contentsline {subsubsection}{Final System}{xiii}{subsection.4.1.2}%
+\contentsline {subsubsection}{Post-Processing}{xv}{table.caption.14}%
+\contentsline {subsection}{\numberline {4.1.3}Results and Discussion}{xv}{subsection.4.1.3}%
+\contentsline {subsubsection}{Development test 1: GPIO Read}{xv}{subsection.4.1.3}%
+\contentsline {subsubsection}{Development test 2: RC Switch to PWM Capture Cycle}{xv}{subsection.4.1.3}%
+\contentsline {subsubsection}{Development test 3: Full telemetry live handoff and full capture cycle}{xv}{subsection.4.1.3}%
+\contentsline {subsubsection}{Ground Test: Full Integration with other subsystems on the ground demonstrating full capture cycle and logging}{xv}{subsection.4.1.3}%
+\contentsline {subsection}{\numberline {4.1.4}Summary}{xv}{subsection.4.1.4}%
+\contentsline {chapter}{References}{xv}{subsection.4.1.4}%
+\contentsline {chapter}{Statement of AI Use}{xvi}{chapter*.15}%
+\contentsline {chapter}{\numberline {A}Objective 4: Supporting Material}{xvii}{appendix.A}%
+\contentsline {section}{\numberline {A.1}SSH Setup}{xvii}{section.A.1}%
+\contentsline {section}{\numberline {A.2}GPIO Packages Install}{xvii}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Virtual Environment and \texttt {rpi-lgpio} Install}{xvii}{section.A.3}%
+\contentsline {section}{\numberline {A.4}GPIO Read Script}{xvii}{section.A.4}%
+\contentsline {section}{\numberline {A.5}Test Data and Logs}{xviii}{section.A.5}%

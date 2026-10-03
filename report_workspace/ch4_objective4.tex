@@ -20,207 +20,33 @@ Progress toward this objective has included researching and procuring a suitable
 
 
 
-\subsubsection{SBC Setup and Iteration 1: GPIO Read}
+\subsubsection{Hardware and Setup}
 
-\textit{SBC Setup} 
-
-First, requirements of the \gls{sbc} were identified. The hardware requirements for the \gls{sbc} were derived from the \gls{sdr} datasheet, which specifies the need for a high-speed USB 2.0 interface (480 Mb/s)~\cite{luswavePUPDUAL24C}. Additionally, the \gls{sbc} should provide sufficient processing capability to support potential future expansion of onboard processing capability, placing requirements on CPU performance and RAM capacity.
-
-Consequently, a Raspberry Pi 5 with 16 GB of RAM was selected and procured. In addition to satisfying the hardware requirements, Raspberry Pi devices were selected because of their well-supported software ecosystem and prior use in drone-mounted radar research applications~\cite{kawkaSwarmDronesDetection2025,lopezUnmannedAerialVehicleBased2022,coulibalyBlockchainSoftwareDefinedRadio2025,aliDesignImplementationFMCW2017}. A protective case and active cooler were also acquired to secure the device on board the drone and manage \gls{cpu} temperature during \gls{sdr} operation.
-
-The Raspberry Pi 5 was physically assembled and configured with a lightweight Ubuntu 22.04 operating system. The installation process used an imager to write the Ubuntu disk image to a 64 GB microSD card. The card was then inserted into the Raspberry Pi 5, and the system was booted to verify the operating-system installation.
-
-A remote development workflow was then configured to develop and test the Python script used to read the \gls{gpio} pin. Native development on the Raspberry Pi was avoided due to its lower performance compared with a desktop computer. Instead, \gls{ssh} was configured and integrated with an \gls{ide} to enable remote development.
-
-\gls{ssh} provides a secure remote connection between a host and a remote computer. In this setup, the desktop computer was used as the development machine, and the Raspberry Pi 5 was used as the remote host. The setup commands are shown in Listing~\ref{lst:ssh-setup}. These commands install the \gls{ssh} server, enable the \gls{ssh} service at boot, and allow incoming \gls{ssh} connections through the firewall. The successful \gls{ssh} connection is shown in \hyperlink{appendix:ssh-connection}{Appendix X}.
-
-\begin{lstlisting}[language=bash,caption={The commands used to setup SSH connection between the Raspberry Pi and a remote computer.},label={lst:ssh-setup}]
-sudo apt install openssh-server
-sudo systemctl enable ssh
-sudo ufw allow ssh
-\end{lstlisting}
-
-The \gls{ssh} connection was then integrated with VS Code using the Microsoft \textit{Remote - \gls{ssh}} extension. The \gls{ssh} configuration file on the development laptop was updated with the Raspberry Pi's IP address and username, after which VS Code was connected to the Raspberry Pi through the remote \gls{ssh} interface.
-
-\textit{Iteration 1: GPIO Read}
-
-To allow the Raspberry Pi to read \gls{gpio} pins, the required \gls{gpio} packages were installed. The installation command is shown in Listing~\ref{lst:gpio-package-install}. The package \texttt{python3-lgpio} provides Python bindings and low-level \gls{gpio} access, and \texttt{gpiod} provides terminal tools for inspecting and manipulating \gls{gpio} pins.
-
-\begin{lstlisting}[language=Bash,caption={Bash command used to install python \gls{gpio} library.},label={lst:gpio-package-install}]
-sudo apt install python3-lgpio gpiod
-\end{lstlisting}
-
-The \texttt{lgpio} package is used interface with \gls{gpio} pins on a level too low in abstraction for the application. The package to use for interfacing with the pins at a higher abstraction level was called \texttt{rpi-lgpio}, which uses \texttt{lgpio} as a backened. The package can only be installed with \texttt{pip}, so a Python virtual environment was created. The virtual environment setup and installation of \texttt{rpi-lgpio} is shown in Listing~\ref{lst:rpi-lgpio-install}
-
-\begin{lstlisting}[language=Bash, caption=commands used to create the python virtual environment and install \texttt{rpi-lgpio},label={lst:rpi-lgpio-install}]
-wget http://abyz.me.uk/lg/lg.zip
-unzip lg.zip
-cd lg
-make
-sudo make install
-python3 -m venv gpio-env
-source gpio-env/bin/activate
-pip install rpi-lgpio
-
-\end{lstlisting}
-
-After installing the packages, a Python script was created to read a \gls{gpio} pin and respond when an external component pulls the signal high. The script is shown in Listing~\ref{lst:gpio-script}.
-
-\begin{lstlisting}[language=python,caption={Python script used to run on the Raspberry Pi to monitor one of the \gls{gpio} pins.},label={lst:gpio-script}]
-#!/usr/bin/env python3
-import RPi.GPIO as GPIO # Uses rpi-lgpio backend automatically
-from time import sleep
-import signal
-
-# Setup
-GPIO_PIN = 17
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(GPIO_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-
-print("Sensing 3.3V High...")
-
-try:
-    while True:
-        if GPIO.input(GPIO_PIN):
-            print("Pin High")
-            sleep(1)
-except KeyboardInterrupt:
-    print("Stopping...")
-finally:
-    GPIO.cleanup()
-pause()
-\end{lstlisting}
-
-To verify the program, an Arduino Uno R3 was used to generate an input signal for a \gls{gpio} pin. Because the Raspberry Pi 5 uses 3.3 V logic and the Arduino Uno R3 outputs 5 V logic, a resistor divider was used to reduce the signal to approximately 3.3 V and protect the Raspberry Pi.
-
-This process concluded the development of the first software that was made for the flight controller. 
+First, requirements of the \gls{sbc} were identified. The hardware requirements for the \gls{sbc} were derived from the \gls{sdr} datasheet, which specifies the need for a high-speed USB 2.0 interface (480 Mb/s)~\cite{luswavePUPDUAL24C}. Additionally, the \gls{sbc} should provide sufficient processing capability to support potential future expansion of onboard processing capability, placing requirements on CPU performance and RAM capacity. Consequently, a Raspberry Pi 5 with 16 GB of RAM was selected and procured. In addition to satisfying the hardware requirements, Raspberry Pi devices were selected because of their well-supported software ecosystem and prior use in drone-mounted radar research applications~\cite{kawkaSwarmDronesDetection2025,lopezUnmannedAerialVehicleBased2022,coulibalyBlockchainSoftwareDefinedRadio2025,aliDesignImplementationFMCW2017}. A protective case and active cooler were also acquired to secure the device on board the drone and manage \gls{cpu} temperature during \gls{sdr} operation.
 
 
+The Raspberry Pi 5 was physically assembled and configured with a lightweight Ubuntu 22.04 operating system. The installation process used an imager to write the Ubuntu disk image to a 64 GB microSD card. The card was then inserted into the Raspberry Pi 5, and the system was booted to verify the operating-system installation. A remote development workflow was then configured to develop and test the Python script used to read the \gls{gpio} pin. Native development on the Raspberry Pi was avoided due to its lower performance compared with a desktop computer. Instead, \gls{ssh} was configured and integrated with an \gls{ide} to enable remote development. The setup commands are shown in Appendix \ref{app:obj4-ssh-setup}. To allow the Raspberry Pi to read \gls{gpio} pins, the required \gls{gpio} packages were installed. The setup commands are shown in Appendix \ref{app:obj4-gpio-packages}. The virtual environment setup and installation of \texttt{rpi-lgpio} is shown in Appendix \ref{app:obj4-rpi-lgpio-install}. After installing the packages, a Python script was created to read a \gls{gpio} pin and respond when an external component pulls the signal high. The script is shown in Appendix \ref{app:obj4-gpio-script}. To verify the program, an Arduino Uno R3 was used to generate an input signal for a \gls{gpio} pin. Because the Raspberry Pi 5 uses 3.3 V logic and the Arduino Uno R3 outputs 5 V logic, a resistor divider was used to reduce the signal to approximately 3.3 V and protect the Raspberry Pi.
 
-\subsubsection{Iteration 2: PWM Read}
+
+\subsubsection{Development Approach}
+
+
 
 After the first software iteration was tested and confirmed working as expected, a new iteration was created. This iteration now reads in the specific signal sent from the flight controller output to the GPIO pins, which is \gls{pwm}. This iteration was split into several parallel tasks. On the flight controller side, outputting a specific PWM channel from an activation switch on the transmitter was a task, as was configuring the flight controller for telemetry logging. On the \gls{sbc} side, a refined script to interface with the flight controllers signals was made, and setting up the \gls{sbc} to interface with the Radar (including the function to run the SDR capture and setting up the software requirements to run the SDR) was it's own task. These four tasks are outlined in this section.
 
-
-
-\textit{Tie Flight Controller Activation Switch to RC Switch}
-
-Before doing anything, the flight controller had to be conencted to a Desktop PC to be able to interface with the device properly. This was done by installing and using Mission Planner.
-
-Upon configuring, the task then became to tie a PWM output channel to an RC switch on the transmitter. THis PWM output channel would then be read by the SBC, which would activate/deactivate the radar capture accordingly. 
-
-On the transmitter in possession, there were 8 physical switches. The switch that was deemed suitable was tied to RC channel 15 using the transmitter settings.
-
-In Mission Planner, RC Channel 15 was then tied to servo output 8. After configuring, the output signal was scoped with an oscilloscope and confirmed working as intended. 
-
-This development concluded with a successful tying of the transmitter physical switch to a servo output channel on the flight controller, enabling the transmitter to have a physical switch dedicated to radar capture.
-What to bring up:
-\begin{enumerate}
-    \item Signal flow point that we are at
-    \item What PWM is
-    \item Tying the PWM channel on the drone and outputting from the flight controller
-\end{enumerate}
-
-\textit{Configure Flight Controller Telemetry Logging}
-
-It was also imperative to gain an understanding of how the flight controller recorded telemetry and configure the logging in such a way to suit the application. That was the objective of this section. 
-
-It was found that when the host PC connects to the flihgt controller, the flight controller makes a .tlog file and continues to write to the .tlog file until the connection is terminated.
-
-The telemetry log only records \gls{gps} when the drone is armed. This setting did not suit the project, as the drone needed to be disarmed for the majority of the project. To enable \gls{gps} logging while disarmed, a parameter was changed in the config file in Mission Planner. 
-
-\begin{enumerate}
-    \item How the flight controller logs telemetry
-    \item Setting when to record telemetry
-    \item getting the telemetry logs off from the flight controller
-\end{enumerate}
-
-
-\textit{PWM Interface Script}
-
 At this stage of development, the flight controller interfaces with the \gls{sbc} via \gls{pwm}. Whether a signal is logic HIGH or logic LOW is determined by the pulse width of the transmission. For the flight controller signal, a pulse width below 1300 $\mu s$ is logic LOW, and a pulse width above 1700 $\mu s$ is logic HIGH. This is the logic embedded into the script that the \gls{sbc} uses to interface with the flight controller. 
 
-The input logic is controlled by the \texttt{RCInput} class, which is shown in Listing~\ref{lst:RCInput-class}
+
+\subsubsection{Flight Controller Configuration}
+
+Before doing anything, the flight controller had to be conencted to a Desktop PC to be able to interface with the device properly. This was done by installing and using Mission Planner. Upon configuring, the task then became to tie a PWM output channel to an RC switch on the transmitter. THis PWM output channel would then be read by the SBC, which would activate/deactivate the radar capture accordingly. 
+
+On the transmitter in possession, there were 8 physical switches. The switch that was deemed suitable was tied to RC channel 15 using the transmitter settings. In Mission Planner, RC Channel 15 was then tied to servo output 8. After configuring, the output signal was scoped with an oscilloscope and confirmed working as intended. This development concluded with a successful tying of the transmitter physical switch to a servo output channel on the flight controller, enabling the transmitter to have a physical switch dedicated to radar capture. 
+
+It was also imperative to gain an understanding of how the flight controller recorded telemetry and configure the logging in such a way to suit the application. That was the objective of this section. It was found that when the host PC connects to the flihgt controller, the flight controller makes a .tlog file and continues to write to the .tlog file until the connection is terminated. The telemetry log only records \gls{gps} when the drone is armed. This setting did not suit the project, as the drone needed to be disarmed for the majority of the project. To enable \gls{gps} logging while disarmed, a parameter was changed in the config file in Mission Planner. 
 
 
-The main flow of the program is controlled by the main.py script, which is shown in Listing \ref{lst:pwm_interface_main}. The script initialises the Raspberry Pi GPIO interface and creates instances of the RC input, radar, GPS, and display classes. It then continuously monitors the RC channels, starting a radar capture when the appropriate input transitions high and activating GPS when the corresponding input is high. Runtime and capture information are written to output.txt, while the display is periodically updated with the current system state. When the program is interrupted or terminated, it performs a shutdown routine that cleans up the environment. 
-
-
-
-
-\begin{enumerate}
-    \item The PWM interface
-    \item Overview of the classes 
-    \item Main function flow
-\end{enumerate}
-
-\textit{SDR Interface function Rev1}
-
-The PWM interface script was modified to enable the use of Bash commands to activate the script that initiates radar capture. Following this, the class to handle the radar capture script was implemented. This function is shown in Listing \ref{lst:radarclass_pwm}. The Radar class manages the state of radar captures and records basic capture information. When a capture is started, it prevents duplicate captures, increments the capture count, records the capture time, and adds it to a list of previous capture times. The \texttt{stop\_capture()} method ends the active capture, while the commented \texttt{subprocess.run()} shows where the external radar acquisition command can be executed.
-
-\begin{lstlisting}[language=Python, caption=Radar capture class implemented in pwm interface script, label={lst:radarclass_pwm}]
-import time
-import subprocess
-
-
-class Radar:
-
-    def __init__(self):
-
-        self.capturing = False
-        self.capture_count = 0
-        self.last_capture_time = None
-
-        self.capture_times = []
-
-    def start_capture(self, runtime):
-
-        if self.capturing:
-            return
-
-        self.capturing = True
-
-        self.capture_count += 1
-
-        self.last_capture_time = runtime
-
-        self.capture_times.append(self.last_capture_time)
-
-        print("Radar capture started")
-
-        # Start radar here
-        # subprocess.run(
-        #     """
-        #     sudo ./build-arm64/pupradar_capture --firmware firmware/SDR_USB_FW.hex --duration 5 --fc-low 24.00e9 --fc-high 26e9 --sweep-time 1 --samp-num 4 --out ~/SDR-data/0209_pi/0209_2GHz_128_0-5ms_loopback_rx1_01 --rx 1
-        #     """,
-        #     shell=True,
-        #     executable="/bin/bash",
-        #     check=True,
-        # )
-
-    def stop_capture(self):
-
-        if not self.capturing:
-            return
-
-        self.capturing = False
-
-        print("Radar capture stopped")
-\end{lstlisting}
-
-
-
-\begin{enumerate}
-    \item Getting Python to run shell code
-    \item Setting the sticky capture function
-    \item The execution capture cycle
-\end{enumerate}
-
-
-
-
-
-\subsubsection{Iteration 3: Mavlink}
+\subsubsection{Final System}
 
 Likewise from the second iteration, a single python 3 program on 
 the \gls{sbc} handled both the flight controller and 
@@ -299,7 +125,7 @@ The capture settings for the radar existed in a \gls{json} file which was read b
 Each capture file was named according to its capture number and runtime on capture. Together with the per-row radar columns in the CSV file, this gave two independent ways to align the radar capture data with the telemetry data sets.
 
 
-\textit{GPS and SDR Processing and Plotting}
+\subsubsection{Post-Processing}
 
 
 
@@ -314,3 +140,4 @@ Each capture file was named according to its capture number and runtime on captu
 \subsubsection{Ground Test: Full Integration with other subsystems on the ground demonstrating full capture cycle and logging}
 
 \subsection{Summary}
+
