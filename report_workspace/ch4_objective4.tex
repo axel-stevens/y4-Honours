@@ -1,6 +1,8 @@
 \section{Objective 4: Synchronise Logging of Flight Telemetry and Radar Measurements}
+\label{sec:obj4}
 
 \subsection{Introduction}
+\label{sec:obj4-intro}
 
 To synchronise flight telemetry and radar measurements, a pilot-initiated control signal must be interpreted, processed, and transmitted through the system. The signal travels from the pilot transmitter to the receiver, then to the flight controller, and finally to the \gls{sbc}, which triggers \gls{sdr} logging. This signal path is shown in Figure~\ref{fig:activation-signal-flow}.
 
@@ -11,46 +13,57 @@ To synchronise flight telemetry and radar measurements, a pilot-initiated contro
     \label{fig:activation-signal-flow}
 \end{figure}
 
-Progress toward this objective has included researching and procuring a suitable \gls{sbc}, completing its initial setup, and conducting a communication trial between the \gls{sbc} and a simulated flight-controller signal.
+The work done in this objective included researching and procuring a suitable \gls{sbc}, configuring the flight controller, designing a software to interface with the flight controller and radar, and implementing a post processing script.
 
 \subsection{Methodology}
+\label{sec:obj4-method}
 
-
-\includegraphics[width=0.8\textwidth]{ch4-4_images/Control System Development Cycle.drawio.png}
 
 
 
 \subsubsection{Hardware and Setup}
+\label{sec:obj4-hardware-setup}
 
-First, requirements of the \gls{sbc} were identified. The hardware requirements for the \gls{sbc} were derived from the \gls{sdr} datasheet, which specifies the need for a high-speed USB 2.0 interface (480 Mb/s)~\cite{luswavePUPDUAL24C}. Additionally, the \gls{sbc} should provide sufficient processing capability to support potential future expansion of onboard processing capability, placing requirements on CPU performance and RAM capacity. Consequently, a Raspberry Pi 5 with 16 GB of RAM was selected and procured. In addition to satisfying the hardware requirements, Raspberry Pi devices were selected because of their well-supported software ecosystem and prior use in drone-mounted radar research applications~\cite{kawkaSwarmDronesDetection2025,lopezUnmannedAerialVehicleBased2022,coulibalyBlockchainSoftwareDefinedRadio2025,aliDesignImplementationFMCW2017}. A protective case and active cooler were also acquired to secure the device on board the drone and manage \gls{cpu} temperature during \gls{sdr} operation.
+First, requirements of the \gls{sbc} were identified. The hardware requirements for the \gls{sbc} were derived from the \gls{sdr} datasheet, which specifies the need for a high-speed USB 2.0 interface (480 Mb/s)~\cite{luswavePUPDUAL24C}. Additionally, the \gls{sbc} should provide sufficient processing capability to support potential future expansion of onboard processing capability, placing requirements on \gls{cpu} performance and \gls{ram} capacity. Consequently, a Raspberry Pi 5 with 16 GB of \gls{ram} was selected and procured. In addition to satisfying the hardware requirements, Raspberry Pi devices were selected because of their well-supported software ecosystem and prior use in drone-mounted radar research applications~\cite{kawkaSwarmDronesDetection2025,lopezUnmannedAerialVehicleBased2022,coulibalyBlockchainSoftwareDefinedRadio2025,aliDesignImplementationFMCW2017}. A protective case and active cooler were also acquired to secure the device on board the drone and manage \gls{cpu} temperature during \gls{sdr} operation.
 
-
-The Raspberry Pi 5 was physically assembled and configured with a lightweight Ubuntu 22.04 operating system. The installation process used an imager to write the Ubuntu disk image to a 64 GB microSD card. The card was then inserted into the Raspberry Pi 5, and the system was booted to verify the operating-system installation. A remote development workflow was then configured to develop and test the Python script used to read the \gls{gpio} pin. Native development on the Raspberry Pi was avoided due to its lower performance compared with a desktop computer. Instead, \gls{ssh} was configured and integrated with an \gls{ide} to enable remote development. The setup commands are shown in Appendix \ref{app:obj4-ssh-setup}. To allow the Raspberry Pi to read \gls{gpio} pins, the required \gls{gpio} packages were installed. The setup commands are shown in Appendix \ref{app:obj4-gpio-packages}. The virtual environment setup and installation of \texttt{rpi-lgpio} is shown in Appendix \ref{app:obj4-rpi-lgpio-install}. After installing the packages, a Python script was created to read a \gls{gpio} pin and respond when an external component pulls the signal high. The script is shown in Appendix \ref{app:obj4-gpio-script}. To verify the program, an Arduino Uno R3 was used to generate an input signal for a \gls{gpio} pin. Because the Raspberry Pi 5 uses 3.3 V logic and the Arduino Uno R3 outputs 5 V logic, a resistor divider was used to reduce the signal to approximately 3.3 V and protect the Raspberry Pi.
+The Raspberry Pi 5 was physically assembled and configured with a lightweight Ubuntu 22.04 operating system. A remote development workflow was then configured to develop and test the Python script used to read the \gls{gpio} pin. Native development on the Raspberry Pi was avoided due to its lower performance compared with a desktop computer. Instead, \gls{ssh} was configured and integrated with an \gls{ide} to enable remote development. The setup commands are shown in Appendix \ref{app:obj4-ssh-setup}. To allow the Raspberry Pi to read \gls{gpio} pins, the required \gls{gpio} packages were installed. The setup commands are shown in Appendix \ref{app:obj4-gpio-packages}. One of the packages required a Python virtual environment. The setup and installation of this package and a Python virtual environment is shown in Appendix \ref{app:obj4-rpi-lgpio-install}. After installing the packages, a Python script was created to read a \gls{gpio} pin and respond when an external component pulls the signal high. The script is shown in Appendix \ref{app:obj4-gpio-script}. To verify the program, an Arduino Uno R3 was used to generate an input signal for a \gls{gpio} pin. After the setup was confirmed working, the objective moved toward the development stage. 
 
 
 \subsubsection{Development Approach}
+\label{sec:obj4-dev-approach}
+
+The development approach followed the diagram shown in Figure \ref{fig:ch4-obj4control-dev-cycle}. Section \ref{sec:obj4-hardware-setup} detailed the \gls{sbc} setup and the \gls{gpio} read. The next development of the objective read the flight controllers PWM signal directly from the \gls{gpio} pins, afterward this was revised for MAVLink to be used as the interfacing protocol in place of the \gls{gpio} pins.
 
 
 
-After the first software iteration was tested and confirmed working as expected, a new iteration was created. This iteration now reads in the specific signal sent from the flight controller output to the GPIO pins, which is \gls{pwm}. This iteration was split into several parallel tasks. On the flight controller side, outputting a specific PWM channel from an activation switch on the transmitter was a task, as was configuring the flight controller for telemetry logging. On the \gls{sbc} side, a refined script to interface with the flight controllers signals was made, and setting up the \gls{sbc} to interface with the Radar (including the function to run the SDR capture and setting up the software requirements to run the SDR) was it's own task. These four tasks are outlined in this section.
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{ch4-4_images/Control System Development Cycle.drawio.png}
+    \caption{Control system development cycle}
+    \label{fig:ch4-obj4control-dev-cycle}
+\end{figure}
 
-At this stage of development, the flight controller interfaces with the \gls{sbc} via \gls{pwm}. Whether a signal is logic HIGH or logic LOW is determined by the pulse width of the transmission. For the flight controller signal, a pulse width below 1300 $\mu s$ is logic LOW, and a pulse width above 1700 $\mu s$ is logic HIGH. This is the logic embedded into the script that the \gls{sbc} uses to interface with the flight controller. 
+The flight controller uses \gls{pwm}  as the method to encode data to be sent. The protocol encodes data in the pulse width of square wave signals and is typically used for servo control (citation needed). Whether a signal was logic HIGH or logic LOW was determined by the pulse width of the transmission. For the flight controller signal, a pulse width below 1300 $\mu s$ was logic LOW, and a pulse width above 1700 $\mu s$ was logic HIGH. 
+
+Initially, the \gls{pwm} signal was read directly from servo output pins into the \gls{gpio} pins on the \gls{sbc}. This was eventually replaced with a direct USB connection using the MAVLink protocol to read in the RC channel signal directly from the flight controller communications, instead of reading a servo output.
+
+After the MAVLink software was created, a seperate post-processing script in Python to be used on a desktop PC to process the data was developed. This concluded the development cycle of the control system.
+
+
 
 
 \subsubsection{Flight Controller Configuration}
+\label{sec:obj4-fc-config}
 
-Before doing anything, the flight controller had to be conencted to a Desktop PC to be able to interface with the device properly. This was done by installing and using Mission Planner. Upon configuring, the task then became to tie a PWM output channel to an RC switch on the transmitter. THis PWM output channel would then be read by the SBC, which would activate/deactivate the radar capture accordingly. 
+The flight controller needed to be configured to read in a signal from the transmitter and tie that signal to a specific channel. On the transmitter in possession, there were 8 physical switches. The switch that was deemed suitable was tied to RC channel 15 using the transmitter settings. RC Channel 15 was then tied to servo output 8. After configuring, the output signal was scoped with an oscilloscope and confirmed working as intended. 
 
-On the transmitter in possession, there were 8 physical switches. The switch that was deemed suitable was tied to RC channel 15 using the transmitter settings. In Mission Planner, RC Channel 15 was then tied to servo output 8. After configuring, the output signal was scoped with an oscilloscope and confirmed working as intended. This development concluded with a successful tying of the transmitter physical switch to a servo output channel on the flight controller, enabling the transmitter to have a physical switch dedicated to radar capture. 
-
-It was also imperative to gain an understanding of how the flight controller recorded telemetry and configure the logging in such a way to suit the application. That was the objective of this section. It was found that when the host PC connects to the flihgt controller, the flight controller makes a .tlog file and continues to write to the .tlog file until the connection is terminated. The telemetry log only records \gls{gps} when the drone is armed. This setting did not suit the project, as the drone needed to be disarmed for the majority of the project. To enable \gls{gps} logging while disarmed, a parameter was changed in the config file in Mission Planner. 
+It was also found that when the host PC connects to the flight controller, the flight controller makes a .tlog file and continues to write to the .tlog file until the connection is terminated. The telemetry log only records \gls{gps} when the drone is armed. This setting did not suit the project, as the drone needed to be disarmed for the majority of the project. To enable \gls{gps} logging while disarmed, a parameter was changed in the config file on the flight controller.
 
 
 \subsubsection{Final System}
+\label{sec:obj4-final-system}
 
-Likewise from the second iteration, a single python 3 program on 
-the \gls{sbc} handled both the flight controller and 
-the \gls{sdr} in one loop. 
+Likewise from the second iteration, a single python 3 program on the \gls{sbc} handled both the flight controller and the \gls{sdr} in one loop. 
 
 Again, the code was split by device, a \texttt{Drone} class, which handled the flight controller interface, a \texttt{Radar} class, which handled the radar interface, and a small \texttt{main.py} script to run the overall program. 
 
@@ -126,18 +139,25 @@ Each capture file was named according to its capture number and runtime on captu
 
 
 \subsubsection{Post-Processing}
+\label{sec:obj4-post-processing}
 
 
 
 \subsection{Results and Discussion}
+\label{sec:obj4-results}
 
 \subsubsection{Development test 1: GPIO Read}
+\label{sec:obj4-devtest1-gpio-read}
 
 \subsubsection{Development test 2: RC Switch to PWM Capture Cycle}
+\label{sec:obj4-devtest2-pwm-capture}
 
 \subsubsection{Development test 3: Full telemetry live handoff and full capture cycle}
+\label{sec:obj4-devtest3-telemetry-handoff}
 
 \subsubsection{Ground Test: Full Integration with other subsystems on the ground demonstrating full capture cycle and logging}
+\label{sec:obj4-ground-test}
 
 \subsection{Summary}
+\label{sec:obj4-summary}
 
