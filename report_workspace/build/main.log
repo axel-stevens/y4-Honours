@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.9.1)  4 OCT 2026 11:33
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.9.1)  4 OCT 2026 12:56
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1044,7 +1044,7 @@ LaTeX Warning: Citation `aliDesignImplementationFMCW2017' on page x undefined on
 [10
 
  <./ch4-4_images/Activation signal diagram.drawio.png>]
-<ch4-4_images/Control System Development Cycle.drawio.png, id=261, 1011.78pt x 1128.215pt>
+<ch4-4_images/Control System Development Cycle.drawio.png, id=260, 1011.78pt x 1128.215pt>
 File: ch4-4_images/Control System Development Cycle.drawio.png Graphic file (type png)
 <use ch4-4_images/Control System Development Cycle.drawio.png>
 Package pdftex.def Info: ch4-4_images/Control System Development Cycle.drawio.png  used on input line 41.
@@ -1232,13 +1232,13 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 Here is how much of TeX's memory you used:
  34360 strings out of 480171
  626023 string characters out of 5894490
- 1246082 words of memory out of 5000000
+ 1246087 words of memory out of 5000000
  51558 multiletter control sequences out of 15000+600000
  481104 words of font info for 73 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
- 98i,15n,103p,1681b,2123s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 98i,15n,103p,1400b,2123s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/axel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1095.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on build/main.pdf (18 pages, 362810 bytes).
+Output written on build/main.pdf (18 pages, 363505 bytes).
 PDF statistics:
  447 PDF objects out of 1000 (max. 8388607)
  391 compressed objects within 4 object streams
