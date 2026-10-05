@@ -23,14 +23,15 @@ points = list(zip(df["latitude"], df["longitude"]))
 # Draw flight path
 folium.PolyLine(points, weight=3).add_to(m)
 
-for i, (lat, lon) in enumerate(points):
-    folium.CircleMarker(
-        location=[lat, lon],
-        radius=3,
-        color="blue",
-        fill=True,
-        fill_opacity=0.8,
-        tooltip=f"#{i}",
-    ).add_to(m)
+for i, row in df.iterrows():
+    if row["radar_capturing"] == True:
+        folium.CircleMarker(
+            location=[row["latitude"], row["longitude"]],
+            radius=3,
+            color="blue",
+            fill=True,
+            fill_opacity=0.8,
+            tooltip=f"#{i}",
+        ).add_to(m)
 # Save map
 m.save("synced_data.html")
