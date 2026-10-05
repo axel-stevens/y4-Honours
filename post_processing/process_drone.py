@@ -2,6 +2,7 @@ from pymavlink import mavutil
 import matplotlib.pyplot as plt
 import os
 import numpy as np
+import folium
 
 log = mavutil.mavlink_connection("2026-08-27 14-22-52.tlog")
 
@@ -32,7 +33,6 @@ latitude = latitude[mask]
 longitude = longitude[mask]
 time = time[mask]
 
-import folium
 
 # Centre map on first GPS position
 m = folium.Map(location=[latitude[0], longitude[0]], zoom_start=15)

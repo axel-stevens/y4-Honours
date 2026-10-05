@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "/home/axel/year_4/honours/y4-Honours/SDR_main/linux"
+    "cmake.sourceDirectory": "/home/axel/year_4/honours/y4-Honours/SDR_main/linux",
+    "python-envs.defaultEnvManager": "ms-python.python:system"
 }
