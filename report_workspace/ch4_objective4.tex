@@ -119,6 +119,15 @@ Each capture file was named according to its capture number and runtime on captu
 \subsubsection{Post-Processing}
 \label{sec:obj4-post-processing}
 
+Two seperate post-processing scripts were built in Python. One that takes in the generated .csv file from the \gls{sbc} titled \texttt{process\_sbc.py} , and one that takes in the generated .tlog file from the flight controller titled \texttt{process\_drone.py}. Both are used to verify mutual validity. The scripts are run on a desktop \gls{pc}, not the \gls{sbc}. \gls{sdr} data is not processed in this stage, the main objective of this stage is to synchronise the radar and telemetry data sets. 
+
+The \texttt{process\_sbc.py} script takes the \gls{sbc}'s synced .csv file and draws the flight path on an interactive map. When a new radar capture starts, a marker is placed on the interactive flight map at the location. The \texttt{process\_drone.py} script uses the flight controller's raw.tlog file and pulls latitude and longitude from it and draws the same map with start and end markers. 
+
+Both scripts erase the first row of data, as the longitude and latitude start at invalid value 0. This is because the flight controller initially outputs default values before beginning data recording. All of the necessary conversion is handled in the main \gls{sbc} program, so no conversions are made in \texttt{process\_sbc.py}. Conversions are made in \texttt{process\_drone.py}. 
+
+
+
+
 
 
 \subsection{Results and Discussion}
