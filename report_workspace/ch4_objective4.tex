@@ -119,31 +119,22 @@ Each capture file was named according to its capture number and runtime on captu
 \subsubsection{Post-Processing}
 \label{sec:obj4-post-processing}
 
-Two seperate post-processing scripts were built in Python. One that takes in the generated .csv file from the \gls{sbc} titled \texttt{process\_sbc.py} , and one that takes in the generated .tlog file from the flight controller titled \texttt{process\_drone.py}. Both are used to verify mutual validity. The scripts are run on a desktop \gls{pc}, not the \gls{sbc}. \gls{sdr} data is not processed in this stage, the main objective of this stage is to synchronise the radar and telemetry data sets. 
+A post-processing script that takes the \gls{sbc}'s synced .csv file and draws the flight path on an interactive map was created. The script is shown in Appendix \ref{app:obj4-telem-data-visualisation}. When a new radar capture starts, a marker is placed on the interactive flight map at the location. The script erases the first row of data, as the longitude and latitude start at invalid value 0. This is because the flight controller initially outputs default values before beginning data recording. Coordinates are already in decimal degrees from the \gls{sbc} program, so they are plotted directly.. The script is run on a desktop \gls{pc}, not the \gls{sbc}. Data visualisation is done after capturing, so using a \gls{pc} is appropriate.  \gls{sdr} data is not processed in this stage. An example output is shown in Figure~\ref{fig:ch4-4_data_vis_output}.
 
-The \texttt{process\_sbc.py} script takes the \gls{sbc}'s synced .csv file and draws the flight path on an interactive map. When a new radar capture starts, a marker is placed on the interactive flight map at the location. The \texttt{process\_drone.py} script uses the flight controller's raw.tlog file and pulls latitude and longitude from it and draws the same map with start and end markers. 
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.4]{ch4-4_images/flight test screenshot.png}
+\caption{Flight path and radar capture locations from a test flight plotted in the data visualisation script.}
+\label{fig:ch4-4_data_vis_output}
+\end{figure}
 
-Both scripts erase the first row of data, as the longitude and latitude start at invalid value 0. This is because the flight controller initially outputs default values before beginning data recording. All of the necessary conversion is handled in the main \gls{sbc} program, so no conversions are made in \texttt{process\_sbc.py}. Conversions are made in \texttt{process\_drone.py}. 
-
-
-
-
-
+The blue line is a point-to-point line between \gls{gps} data points, and the markers indicate points where radar data was captured. The markers also contain information about each radar capture (capture number, runtime and file name), and there is one marker per radar capture.
 
 \subsection{Results and Discussion}
 \label{sec:obj4-results}
 
-\subsubsection{Development test 1: GPIO Read}
-\label{sec:obj4-devtest1-gpio-read}
 
-\subsubsection{Development test 2: RC Switch to PWM Capture Cycle}
-\label{sec:obj4-devtest2-pwm-capture}
 
-\subsubsection{Development test 3: Full telemetry live handoff and full capture cycle}
-\label{sec:obj4-devtest3-telemetry-handoff}
-
-\subsubsection{Ground Test: Full Integration with other subsystems on the ground demonstrating full capture cycle and logging}
-\label{sec:obj4-ground-test}
 
 \subsection{Summary}
 \label{sec:obj4-summary}
