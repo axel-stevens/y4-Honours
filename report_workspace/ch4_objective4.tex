@@ -133,7 +133,69 @@ The blue line is a point-to-point line between \gls{gps} data points, and the ma
 \subsection{Results and Discussion}
 \label{sec:obj4-results}
 
+\subsubsection{GPS Drift}
 
+Windows of time where the drone was stationary during the ground integration tests were taken as data samples used to measure stationary \gls{gps} drift, where "stationary" was interpreted as having a groundspeed of $0.1 \text{ ms}^{-1}$. The mean latitude and longitude of the stationary windows are shown in Table~\ref{tab:ch4-gps_drift_position}. 
+
+\begin{table}[H]
+\centering
+\caption{Mean position of each stationary window}
+\label{tab:ch4-gps_drift_position}
+\begin{tabular}{lccc}
+\toprule
+Window & Duration (s) & Mean latitude ($^\circ$) & Mean longitude ($^\circ$) \\
+\midrule
+Log 1 A & 72  & $-34.9183751$ & $138.6055408$ \\
+Log 2 A & 33  & $-34.9183822$ & $138.6055543$ \\
+Log 3 A & 16  & $-34.9183846$ & $138.6055478$ \\
+Log 3 B & 125 & $-34.9183355$ & $138.6055030$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The standard deviation of the distance from the mean, and the maximum distance of the mean are shown in Table~\ref{tab:ch4-gps_drift}.
+
+\begin{table}[H]
+\centering
+\caption{Horizontal GPS drift about the mean position for each stationary window}
+\label{tab:ch4-gps_drift}
+\begin{tabular}{lcc}
+\toprule
+Window & Std.\ dev.\ from mean (m) & Max.\ distance from mean (m) \\
+\midrule
+Log 1 A & 0.61 & 1.14 \\
+Log 2 A & 0.05 & 0.11 \\
+Log 3 A & 0.07 & 0.17 \\
+Log 3 B & 0.34 & 0.65 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The horizontal standard deviation ranged from 0.05 to 0.61 m, with the worst case maximum distance from the mean being 1.14 m.
+
+
+\subsubsection{RC Switch Trigger Latency}
+
+
+\begin{table}[H]
+\centering
+\caption{Trigger-to-capture latency after removing the 4\,s settle-delay settings error from logs 1--4}
+\label{tab:ch4-capture_latency}
+\begin{tabular}{lccc}
+\toprule
+Group & Events & Mean latency (s) & Std.\ dev.\ (ms) \\
+\midrule
+Logs 1--4 & 10 & 2.0084 & 0.41 \\
+Log 5     & 3  & 2.0030 & 0.24 \\
+\midrule
+All       & 13 & 2.0071 & 2.4  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Computational Overhead}
+
+[Measure when in possession of Pi]
 
 
 \subsection{Summary}
