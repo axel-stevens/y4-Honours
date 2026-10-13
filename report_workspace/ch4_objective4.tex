@@ -133,6 +133,8 @@ The blue line is a point-to-point line between \gls{gps} data points, and the ma
 \subsection{Results and Discussion}
 \label{sec:obj4-results}
 
+[Introooo]
+
 \subsubsection{GPS Drift}
 
 Windows of time where the drone was stationary during the ground integration tests were taken as data samples used to measure stationary \gls{gps} drift, where "stationary" was interpreted as having a groundspeed of $0.1 \text{ ms}^{-1}$. The mean latitude and longitude of the stationary windows are shown in Table~\ref{tab:ch4-gps_drift_position}. 
@@ -173,8 +175,12 @@ Log 3 B & 0.34 & 0.65 \\
 
 The horizontal standard deviation ranged from 0.05 to 0.61 m, with the worst case maximum distance from the mean being 1.14 m.
 
+Log 2-A and Log 3-A had highest stability, with standard deviations of 0.05 m and 0.07 m respectively. The largest drift was shown by Log 1-A, which had standard deviation of 0.61 m. The position moved steadily away from the starting point, eraching 1.82 m after 72 s, despite groundspeed remaining below 0.03 m/s. Log 3 B was in between, with a standard deviation of 0.34 m. Since all windows had the same approximate number of satellites, the difference in drift does not correspond (in this case) to the satellite count. The two shortest windows had the lowest GPS drift, so it is evident that drift builds over time.
+
 
 \subsubsection{RC Switch Trigger Latency}
+
+An average of how long it took for the radar to capture between activating the trigger and starting the capture was taken for all five flight log tests. Between the first four tests and the last one, the settling time of the radar before capture was changed, which affected the latency. As such in the results, the first four tests the mean latency is subtracted by 4 s to offset the settling time. The results are shown in Table~\ref{tab:ch4-capture_latency}.
 
 
 \begin{table}[H]
@@ -192,6 +198,8 @@ All       & 13 & 2.0071 & 2.4  \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+The mean latency across all tests is approximately 2s. The low standard deviations of 0.24 and 0.41 within each configuration shows that the trigger path is deterministic and repeatable. The higher standard deviation when all the data is combined is a reflection of the two sets being mixed dispite being in differnt configurations.  The program logged data at 1 Hz, so the switch could have flipped up to 1 ssecond extra before the logged row, so the true latency is thus between approximately 2 and 3 seconds, and the numbers shown in Table~\ref{tab:ch4-capture_latency} is a lower bound. 
 
 \subsection{Computational Overhead}
 
