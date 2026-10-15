@@ -1,5 +1,7 @@
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {4.1}{\ignorespaces Activation signal flow starting at the pilot transmitter and ending at the \gls {sdr}.\relax }}{x}{figure.caption.13}%
 \contentsline {figure}{\numberline {4.2}{\ignorespaces Control system development cycle\relax }}{xi}{figure.caption.14}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Flight path and radar capture locations from a test flight plotted in the data visualisation script.\relax }}{xiv}{figure.caption.16}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces State diagram of radar control sequence\relax }}{xiv}{figure.caption.16}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Flight path and radar capture locations from a test flight plotted in the data visualisation script.\relax }}{xiv}{figure.caption.17}%
+\addvspace {10\p@ }
 \addvspace {10\p@ }

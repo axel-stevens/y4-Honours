@@ -12,17 +12,21 @@
 \contentsline {subsubsection}{Development Approach}{xi}{subsection.4.1.2}%
 \contentsline {subsubsection}{Flight Controller Configuration}{xii}{figure.caption.14}%
 \contentsline {subsubsection}{Final System}{xii}{figure.caption.14}%
-\contentsline {subsubsection}{Post-Processing}{xiv}{table.caption.15}%
-\contentsline {subsection}{\numberline {4.1.3}Results and Discussion}{xiv}{subsection.4.1.3}%
+\contentsline {subsubsection}{Post-Processing}{xiv}{figure.caption.16}%
+\contentsline {subsection}{\numberline {4.1.3}Results and Discussion}{xv}{subsection.4.1.3}%
 \contentsline {subsubsection}{GPS Drift}{xv}{subsection.4.1.3}%
-\contentsline {subsubsection}{RC Switch Trigger Latency}{xv}{table.caption.18}%
-\contentsline {subsection}{\numberline {4.1.4}Computational Overhead}{xvi}{subsection.4.1.4}%
-\contentsline {subsection}{\numberline {4.1.5}Summary}{xvi}{subsection.4.1.5}%
-\contentsline {chapter}{References}{xvi}{subsection.4.1.5}%
-\contentsline {chapter}{Statement of AI Use}{xvii}{chapter*.20}%
-\contentsline {chapter}{\numberline {A}Objective 4: Supporting Material}{xviii}{appendix.A}%
-\contentsline {section}{\numberline {A.1}SSH Setup}{xviii}{section.A.1}%
-\contentsline {section}{\numberline {A.2}GPIO Packages Install}{xviii}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Virtual Environment and \texttt {rpi-lgpio} Install}{xviii}{section.A.3}%
-\contentsline {section}{\numberline {A.4}GPIO Read Script}{xviii}{section.A.4}%
-\contentsline {section}{\numberline {A.5}Telemetry Data Visualisation Script}{xix}{section.A.5}%
+\contentsline {subsubsection}{RC Switch Trigger Latency}{xvi}{table.caption.19}%
+\contentsline {subsubsection}{Computational Overhead}{xvi}{table.caption.20}%
+\contentsline {subsection}{\numberline {4.1.4}Summary}{xvii}{subsection.4.1.4}%
+\contentsline {chapter}{References}{xvii}{subsection.4.1.4}%
+\contentsline {chapter}{Statement of AI Use}{xviii}{chapter*.22}%
+\contentsline {chapter}{\numberline {5}System Design}{xix}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Problem Definitions}{xix}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Project Objectives}{xix}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Plan for Work}{xix}{section.5.3}%
+\contentsline {chapter}{\numberline {A}Objective 4: Supporting Material}{xx}{appendix.A}%
+\contentsline {section}{\numberline {A.1}SSH Setup}{xx}{section.A.1}%
+\contentsline {section}{\numberline {A.2}GPIO Packages Install}{xx}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Virtual Environment and \texttt {rpi-lgpio} Install}{xx}{section.A.3}%
+\contentsline {section}{\numberline {A.4}GPIO Read Script}{xx}{section.A.4}%
+\contentsline {section}{\numberline {A.5}Telemetry Data Visualisation Script}{xxi}{section.A.5}%

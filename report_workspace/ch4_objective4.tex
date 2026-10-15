@@ -111,7 +111,15 @@ The \gls{sbc} and radar did not communicate directly. Instead, the capture execu
 
 The capture settings for the radar existed in a \gls{json} file which was read by the program at startup, so that parameters could change between flights without editing code. Among these settings were the executable and firmware paths, output folder for the radar captures, duration of capture, and sweep time.
 
-[Capture sequence as a state machine. Will be changed in code so write here after that's done]
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{ch4-4_images/radar state diagram.drawio.png}
+    \label{fig:radar_state_diagram}
+    \caption{State diagram of radar control sequence}
+
+\end{figure}
 
 Each capture file was named according to its capture number and runtime on capture. Together with the per-row radar columns in the CSV file, this gave two independent ways to align the radar capture data with the telemetry data sets.
 
@@ -133,7 +141,7 @@ The blue line is a point-to-point line between \gls{gps} data points, and the ma
 \subsection{Results and Discussion}
 \label{sec:obj4-results}
 
-[Introooo]
+To verify the control system, three tests were conducted, evaluating the key requirements of the system; \gls{gps}, radar capture response, and computational overhead. The GPS drift and radar tests were done using existing testing data; the five tests from the ground integration testing. This was due to it being infeasible to carry the drone out for another ground integration test solely for the purpose of obtaining benchmarks on one subsystem. The computational overhead test was conducted on a seperate occasion, as it was possible to do so from indoors. 
 
 \subsubsection{GPS Drift}
 
@@ -175,7 +183,7 @@ Log 3 B & 0.34 & 0.65 \\
 
 The horizontal standard deviation ranged from 0.05 to 0.61 m, with the worst case maximum distance from the mean being 1.14 m.
 
-Log 2-A and Log 3-A had highest stability, with standard deviations of 0.05 m and 0.07 m respectively. The largest drift was shown by Log 1-A, which had standard deviation of 0.61 m. The position moved steadily away from the starting point, eraching 1.82 m after 72 s, despite groundspeed remaining below 0.03 m/s. Log 3 B was in between, with a standard deviation of 0.34 m. Since all windows had the same approximate number of satellites, the difference in drift does not correspond (in this case) to the satellite count. The two shortest windows had the lowest GPS drift, so it is evident that drift builds over time.
+Log 2-A and Log 3-A had highest stability, with standard deviations of 0.05 m and 0.07 m respectively. The largest drift was shown by Log 1-A, which had standard deviation of 0.61 m. The position moved steadily away from the starting point, reaching 1.82 m after 72 s, despite groundspeed remaining below 0.03 m/s. Log 3 B was in between, with a standard deviation of 0.34 m. Since all windows had the same approximate number of satellites, the difference in drift does not correspond (in this case) to the satellite count. The two shortest windows had the lowest GPS drift, so it is evident that drift builds over time. However, drift is not necissarily directly proportional to duration, as the highest drift was recorded by Log 1-A, which has a shorter duration than Log 3-B.
 
 
 \subsubsection{RC Switch Trigger Latency}
@@ -199,13 +207,34 @@ All       & 13 & 2.0071 & 2.4  \\
 \end{tabular}
 \end{table}
 
-The mean latency across all tests is approximately 2s. The low standard deviations of 0.24 and 0.41 within each configuration shows that the trigger path is deterministic and repeatable. The higher standard deviation when all the data is combined is a reflection of the two sets being mixed dispite being in differnt configurations.  The program logged data at 1 Hz, so the switch could have flipped up to 1 ssecond extra before the logged row, so the true latency is thus between approximately 2 and 3 seconds, and the numbers shown in Table~\ref{tab:ch4-capture_latency} is a lower bound. 
+The mean latency across all tests is approximately 2s. The low standard deviations of 0.24 and 0.41 within each configuration shows that the trigger path is repeatable. The higher standard deviation when all the data is combined is a reflection of the two sets being mixed dispite being in differnt configurations.  The program logged data at 1 Hz, so the switch could have flipped up to 1 ssecond extra before the logged row, so the true latency is thus between approximately 2 and 3 seconds, and the numbers shown in Table~\ref{tab:ch4-capture_latency} is a lower bound. 
 
-\subsection{Computational Overhead}
+\subsubsection{Computational Overhead}
 
-[Measure when in possession of Pi]
+To address the tight computational requirements of the airborne system, a computational overhead test was conducted. Three seperate tests were run. The first test was recorded while the system was sitting idle and not running the program. The second test was recorded during program runtime and no radar captures were made. The third test was recorded during program runtime while continously capturing radar data. The first test provides a baseline for the system usage, the second a baseline for the program, and the third the behaviour of the system during operation. The results for the three tests are shown in Table~\ref{tab:pi_overhead}
+
+
+\begin{table}[htbp]
+  \centering
+  \caption{Raspberry Pi resource usage for each test condition}
+  \label{tab:pi_overhead}
+  \begin{tabularx}{\textwidth}{l *{6}{>{\centering\arraybackslash}X}}
+    \toprule
+    Condition & Samples & Duration (s) & System CPU (\%) & Script CPU (\%) & RAM used (\%) & Temp. ($^\circ$C) \\
+    \midrule
+    Baseline (script off)     & 313 & 313.5 & 0.07 & --   & 3.60 & 48.17 \\
+    Script running            & 163 & 163.3 & 0.12 & 0.16 & 3.77 & 47.00 \\
+    Script running, capturing & 171 & 171.3 & 0.30 & 0.17 & 3.85 & 47.57 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+Each test made a continual recording of the percentage CPU used by the system, percentage CPU used by the program, percentage RAM used by the system, and the temperature of the system. The system CPU usage increases steadily across the three tests, but remains at less than 1\% usage. The script \gls{cpu} usage is higher than the system \gls{cpu} usage on one occasion. This is not an error, and is due to the system \gls{cpu} usage being averaged over all four \gls{cpu} cores, while the script is measured against one core. The RAM usage increases from 3.6\% to 3.85\%, and the average temperature remains approximately constant. From this it can be concluded that the program utilises a substantially small amount of computational resources, and so downsizing the \gls{sbc} in a future iteration is a feasible option, saving mass of the system.
+
 
 
 \subsection{Summary}
 \label{sec:obj4-summary}
+
+Objective 4 aimed at implementing the full control cycle for the airborne \gls{sdr} system. Where a switch from the transmitter propagates though the system and activates a radar capture. Objective 4 also aimed at synchronising the radar and telemetry data sets, allowing the radar capture to be georeferenced. A Raspberry Pi 5 was chosen due to the \gls{sdr} \gls{usb} 2.0 requirement and for room for future onboard processing. The interface was designed at three phases, and ultimately ended with a MAVLink connection over \gls{usb}. The MAVLink version of the program simplified the wiring and removed the safety switch dependency present in the previous two versions. Logging of telemetry and radar state is done by one Python 3 program and data is logged to one .csv file per program run. The activation logic is a latched trigger which runs a flush, settle, capture and cooldown sequence of radar capture. The now georeferenced radar data is plotted on a seperate \gls{pc} program on an HTML map for visualisation. The stationary \gls{gps} drift of the system had a standard deviation of 0.05 to 0.61 m and a worst case of 1.14 m from the mean. The trigger to capture latency averaged 2.007 seconds across 13 documented capture events, however due to the refresh cycle of the system the true capture latency is 2-3 seconds (which can be adjusted). The computational overhead of the program was negligible, the \gls{cpu} usage remained below 1\% and the \gls{ram} usage rose from 3.6\% to 3.85\%, which suggests feasibility for a smaller \gls{sbc} system. The limitations are the settle-delay setting error in the first four flight logs, and the reused ground data tests. Future work involves either downscaling the hardware or creating a more sophisticated program that allows the full use of the computational power. 
 
