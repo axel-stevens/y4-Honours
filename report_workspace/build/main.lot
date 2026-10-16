@@ -1,8 +1,9 @@
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces MAVLink messages requested from the flight controller and their use.\relax }}{xiii}{table.caption.15}%
-\contentsline {table}{\numberline {4.2}{\ignorespaces Mean position of each stationary window\relax }}{xv}{table.caption.18}%
-\contentsline {table}{\numberline {4.3}{\ignorespaces Horizontal GPS drift about the mean position for each stationary window\relax }}{xv}{table.caption.19}%
-\contentsline {table}{\numberline {4.4}{\ignorespaces Trigger-to-capture latency after removing the 4\,s settle-delay settings error from logs 1--4\relax }}{xvi}{table.caption.20}%
-\contentsline {table}{\numberline {4.5}{\ignorespaces Raspberry Pi resource usage for each test condition\relax }}{xvi}{table.caption.21}%
+\contentsline {table}{\numberline {4.1}{\ignorespaces MAVLink messages requested from the flight controller and their use.\relax }}{xiv}{table.caption.15}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces Mean position of each stationary window\relax }}{xvi}{table.caption.18}%
+\contentsline {table}{\numberline {4.3}{\ignorespaces Horizontal GPS drift about the mean position for each stationary window\relax }}{xvi}{table.caption.19}%
+\contentsline {table}{\numberline {4.4}{\ignorespaces Trigger-to-capture latency after removing the 4\,s settle-delay settings error from logs 1--4\relax }}{xvii}{table.caption.20}%
+\contentsline {table}{\numberline {4.5}{\ignorespaces Raspberry Pi resource usage for each test condition\relax }}{xvii}{table.caption.21}%
 \addvspace {10\p@ }
+\contentsline {table}{\numberline {5.1}{\ignorespaces problems, constraints and the objective addressing each\relax }}{xx}{table.caption.23}%
 \addvspace {10\p@ }

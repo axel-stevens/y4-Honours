@@ -1,10 +1,82 @@
 \chapter{System Design}
+\label{ch:system-design}
 
 
 
 \section{Problem Definitions}
+\label{sec:problem-definitions}
+
+The radar in possession is a Luswave PUP K-band \gls{sdr}, controlled from a laptop over \gls{usb}. Integrating it with a \gls{uav} brings constraints on mass, size, power, mounting and autonomous operation. The five primary problems that must be addressed are as follows; the ability to control and operate the radar while it is mounted, a secure mount with an unobstructed downward field of view, a power distribution system enabling power to the radar and any peripheral components, the ability to synchronise drone telemetry data sets with radar captures, and the project and operational constraints such as the requirement for the system to be \gls{cots}, have K-band operation, and the remote-pilot licensing and university rules. The five problems are shown in Table~\ref{tab:problem_definitions}. The problems constraints are further explained in their respective completion sections and Section~\ref{sec:project-objectives}. Corresponding to the problems are technical objectives aimed at addressing them, the completion of which culminating with the completion of the project. 
+
+\begin{table}[htbp]
+  \centering
+  \caption{problems, constraints and the objective addressing each}
+  \label{tab:problem_definitions}
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}X >{\centering\arraybackslash}p{2.2cm}}
+    \toprule
+    Problem & Definition and Constraints & Addressed by \\
+    \midrule
+    Radar control &
+      No onboard host computer; legacy vendor drivers discontinued and two incompatible, poorly documented MATLAB APIs; SDR requires USB~2.0 high-speed (480~Mb/s) &
+      Objective 1 \\
+    Mechanical mounting &
+      Secure mount with an unobstructed downward field of view, clear of the airframe and landing gear; payload budget of 1.083~kg against the Aurelia X6's 5~kg payload limit &
+      Objective 2 \\
+    Power supply &
+      Independent of the flight power system; 22.2~V auxiliary supply stepped down to 6~V (SDR) and 5~V (SBC) within tolerance; overcurrent protection and payload disconnect; 11.7~Wh per 30-minute flight &
+      Objective 3 \\
+    Data synchronisation &
+      Radar and telemetry recorded by separate devices on separate clocks; each capture requires position and attitude for georeferencing; pilot must trigger captures from the transmitter without a ground operator &
+      Objective 4 \\
+    Operational &
+      Predominantly COTS and replicable; K-band operation; remote-pilot licensing and university rules restricted validation to ground testing &
+      All \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+For system-level and operational constraints, components are predominantly \gls{cots} and replicable, so that a future research team can rebuild the system, addressing the literature gap of non-repeatability. The band of the radar does not impose a constraint, as K-band operation is commercial. Remote-pilot licensing and university rules on drone flights ruled out flight testing as a viable option. 
 
 \section{Project Objectives}
+\label{sec:project-objectives}
+
+The project aim was divided into four technical objectives covering the software, mechanical, electrical, and telemetry requirements of the integrated system aimed at addressing the problem definitions. These objectives defined the major development activities undertaken throughout the project and provide the structure for the technical chapters of this report. The associated work breakdown structure is provided in \hyperlink{appendix:wbs-progress}{Appendix A}.
+
+\subsection[Objective 1: Develop SDR-to-SBC Interface for Radar Control and Data Acquisition]{Objective 1: Develop \gls{sdr}-to-\gls{sbc} Interface for Radar Control and Data Acquisition}
+\label{sec:objective1}
+
+The first objective was to develop a software interface between the \gls{sdr} and an onboard \gls{sbc} to enable radar configuration, control, and data acquisition without reliance on the original desktop-computer environment. The interface was required to initiate and manage radar acquisition, configure relevant operating parameters, retrieve raw radar data, and store the resulting data in defined memory locations for subsequent analysis. The objective also required the data-acquisition process to preserve sufficient timing information for the radar measurements to be associated with the corresponding flight data.
+
+Completion of this objective was assessed by demonstrating that the \gls{sbc} could reliably communicate with the \gls{sdr}, configure the required radar parameters, acquire radar measurements, and store the resulting data for post-processing.
+
+\subsection{Objective 2: Design and Integrate a Mechanical Mounting and Protection System for the Payload}
+\label{sec:objective2}
+
+The second objective was to design and verify a mechanical integration system that allowed the radar payload and supporting hardware to be installed on the selected \gls{uav} without compromising aircraft operation or radar measurement capability. This required assessment of the available mounting locations, payload geometry, clearances, mass distribution, cable routing, and radar field of view.
+
+A \gls{cad} model of the integrated platform was used to develop and evaluate the mechanical arrangement before manufacture. The design incorporated a gimbal-mounted radar antenna, custom manufactured mounting components, and protected mounting locations for the onboard electronics. The completed arrangement was required to remain within the payload capability of the \gls{uav}, avoid interference with the airframe and landing gear, provide adequate mechanical restraint, and maintain an unobstructed radar field of view.
+
+Completion of this objective was assessed through manufacture, installation, fit-up inspection, clearance verification, and mechanical testing of the integrated payload.
+
+\subsection{Objective 3: Design, Build, and Verify the Onboard Power System}
+\label{sec:objective3}
+
+The third objective was to design, construct, and verify an independent onboard power system for the \gls{sdr}, \gls{sbc}, gimbal, and associated payload electronics. The system was required to provide the voltage, current, and energy demanded by each load for the required operating duration while remaining compatible with the mass and space constraints of the aircraft.
+
+Development of the power system included characterisation of the electrical loads, selection of an appropriate energy source, design of the power-distribution architecture, selection of voltage-conversion and protection components, and staged verification of the completed system. Electrical compatibility, voltage regulation, thermal performance, safety, and physical integration were considered throughout the design.
+
+Completion of this objective was assessed by demonstrating that the constructed power system could reliably supply the integrated payload under representative operating conditions.
+
+\subsection{Objective 4: Synchronise Logging of Flight Telemetry and Radar Measurements}
+\label{sec:objective4}
+
+The fourth objective was to establish a method for recording and synchronising radar measurements with \gls{uav} telemetry. The required telemetry included information describing the aircraft position, altitude, velocity, attitude, heading, and flight state so that radar measurements collected from the moving platform could be interpreted during post-processing.
+
+This required configuration of the flight-control and onboard computing systems, implementation of a mechanism for initiating radar acquisition, and development of a method for aligning independently recorded radar and telemetry datasets. Timing information and identifiable system events were used to establish the relationship between the two data streams.
+
+Completion of this objective was assessed by demonstrating that radar measurements and the corresponding flight telemetry could be recorded and subsequently aligned to a common time reference for post-flight analysis.
 
 \section{Plan for Work}
+\label{sec:plan-for-work}
 
