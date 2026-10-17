@@ -1,0 +1,39 @@
+\section{Objective 2: Design and Integrate a Mechanical Mounting and Protection System for the Payload}
+
+Objective 2 addresses the mechanical integration of the radar payload with the selected \gls{uav} platform. The method follows a staged process of platform assessment, payload measurement, \gls{cad} modelling, prototype manufacture, installation, and ground-based verification. This ensures that the radar is securely mounted while flight stability is maintained, the electronics are protected, and an unobstructed field of view is preserved.
+
+\subsection{Platform and Payload Assessment}
+
+The first stage assesses the Aurelia X6 to identify suitable payload mounting locations. The underside of the drone is prioritised because it provides the clearest downward-facing radar view and reduces obstruction from the airframe. The payload bay, underside clearance, landing gear, wiring paths, and existing mounting points are inspected to determine the most suitable integration approach.
+
+The payload is divided into external and internal subsystems. The external subsystem includes the radar antenna, gimbal, and custom mounting brackets, while the internal subsystem includes the single-board computer, power components, wiring, connectors, and supporting electronics within the payload bay. This arrangement positions the radar antenna for measurement performance while keeping the supporting electronics protected inside the drone structure.
+
+Mechanical and geometric requirements are determined through direct measurement and \gls{cad} inspection. Key dimensions, component masses, mounting points, cable routes, clearance allowances, and the expected centre of mass are recorded to define the mounting geometry and confirm compatibility with the \gls{uav} payload capacity~\cite{aurelia2025x6}.
+
+\subsection{Mounting System Design}
+
+A \gls{cad} model of the integrated payload system is developed to assess the mechanical layout before manufacture. The model includes the underside of the drone, payload bay, radar antenna, gimbal, internal electronics, brackets, and clearance regions. It is used to check for spatial conflicts, fastener access, cable routing, and radar field-of-view obstruction.
+
+The radar antenna is mounted beneath the airframe using a gimbal-supported arrangement. The gimbal improves antenna stability, reduces the effect of drone attitude changes on the radar pointing direction, and maintains clearance from the drone body and landing gear.
+
+Custom brackets are designed to interface the radar antenna with the gimbal. These components are intended for \gls{3d} printing to support rapid manufacture and design iteration. The bracket geometry is based on measured radar and gimbal dimensions, including screw-hole locations, cable exit directions, required offsets, and antenna orientation. The design aims to minimise mass while maintaining sufficient stiffness and fastener support.
+
+The internal electronics layout is also developed in \gls{cad}. Components are positioned on standoffs inside the payload bay to provide secure mounting and maintain access to connectors, storage media, and wiring. Cable routes are planned to avoid strain, prevent loose wiring, and ensure that cables do not interfere with the gimbal or radar field of view.
+
+\subsection{Prototype, Manufacture and Installation}
+
+Once the \gls{cad} model satisfies the initial spatial, mass, and thermal requirements, prototype components will be manufactured using 3D printing. Additive manufacturing is selected because it allows custom geometry to be produced quickly and revised after fit-up testing.
+
+The printed radar brackets will first be assembled with the radar and gimbal on the bench to confirm fastener alignment, antenna orientation, cable clearance, and gimbal movement before drone installation. Any fit-up issues will be incorporated into the \gls{cad} model before the next prototype is produced.
+
+The internal payload layout will then be assembled by mounting the electronics on standoffs within the payload bay. Wiring paths will be checked so cables can be restrained and connectors remain accessible. Once the internal and external subsystems are confirmed, the payload will be installed onto the Aurelia X6 by securing the enclosure, attaching the gimbal and radar mount, installing the antenna, and restraining wiring with appropriate strain relief.
+
+\subsection{Mechanical Verification}
+
+The completed mounting system will be verified through ground-based checks before flight testing. A static inspection will confirm that the brackets, fasteners, standoffs, electronics, and wiring are secure, and that the payload does not interfere with the landing gear, propellers, airframe, or access panels.
+
+The radar field of view will then be assessed by placing the antenna in its expected operating orientation and comparing it with the \gls{cad} model. The gimbal will be moved through its expected range to confirm that the radar view is not obstructed by the drone body, landing gear, wiring, support structures, or mount.
+
+Structural stability will be checked by gently loading the mounted payload in the vertical and lateral directions to identify looseness, excessive flexure, cracking, or fastener movement. Any movement or deformation will require reinforcement or redesign before flight testing.
+
+The final check will involve powered ground testing. The gimbal and electronics will be operated while installed on the drone to confirm that the payload remains secure and that wiring does not move into the gimbal path or radar view. Where permitted, a controlled ground-run test will be used to assess vibration effects. The assembly will be placed on a moving platform where the vibrations are controlled to accurately simulate flight dynamics. Mechanical integration will be considered suitable for flight testing once the payload is secure, the radar field of view is clear, the gimbal operates without collision, and all electronics and wiring are restrained.

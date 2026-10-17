@@ -1,36 +1,50 @@
 \contentsline {chapter}{Summary of AI Use}{i}{chapter*.1}%
 \contentsline {chapter}{Acknowledgements}{ii}{chapter*.3}%
-\contentsline {chapter}{List of Figures}{v}{chapter*.5}%
-\contentsline {chapter}{List of Tables}{vi}{chapter*.6}%
-\contentsline {chapter}{List of Acronyms}{viii}{table.0.1}%
-\contentsline {chapter}{Contribution Statement}{ix}{chapter*.9}%
-\contentsline {chapter}{\numberline {4}Methods, Results and Discussion}{xi}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Objective 4: Synchronise Logging of Flight Telemetry and Radar Measurements}{xi}{section.4.1}%
-\contentsline {subsection}{\numberline {4.1.1}Introduction}{xi}{subsection.4.1.1}%
-\contentsline {subsection}{\numberline {4.1.2}Methodology}{xi}{subsection.4.1.2}%
-\contentsline {subsubsection}{Hardware and Setup}{xi}{subsection.4.1.2}%
-\contentsline {subsubsection}{Development Approach}{xii}{subsection.4.1.2}%
+\contentsline {chapter}{List of Figures}{iv}{chapter*.5}%
+\contentsline {chapter}{List of Tables}{v}{chapter*.6}%
+\contentsline {chapter}{List of Acronyms}{vii}{table.0.1}%
+\contentsline {chapter}{Contribution Statement}{viii}{chapter*.9}%
+\contentsline {chapter}{\numberline {4}Methods, Results and Discussion}{x}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Objective 4: Synchronise Logging of Flight Telemetry and Radar Measurements}{x}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Introduction}{x}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Methodology}{x}{subsection.4.1.2}%
+\contentsline {subsubsection}{Hardware and Setup}{x}{subsection.4.1.2}%
+\contentsline {subsubsection}{Development Approach}{xi}{subsection.4.1.2}%
 \contentsline {subsubsection}{Flight Controller Configuration}{xiii}{figure.caption.14}%
 \contentsline {subsubsection}{Final System}{xiii}{figure.caption.14}%
 \contentsline {subsubsection}{Post-Processing}{xv}{figure.caption.16}%
-\contentsline {subsection}{\numberline {4.1.3}Results and Discussion}{xvi}{subsection.4.1.3}%
+\contentsline {subsection}{\numberline {4.1.3}Results and Discussion}{xv}{subsection.4.1.3}%
 \contentsline {subsubsection}{GPS Drift}{xvi}{subsection.4.1.3}%
-\contentsline {subsubsection}{RC Switch Trigger Latency}{xvii}{table.caption.19}%
+\contentsline {subsubsection}{RC Switch Trigger Latency}{xvi}{table.caption.19}%
 \contentsline {subsubsection}{Computational Overhead}{xvii}{table.caption.20}%
-\contentsline {subsection}{\numberline {4.1.4}Summary}{xviii}{subsection.4.1.4}%
+\contentsline {subsection}{\numberline {4.1.4}Summary}{xvii}{subsection.4.1.4}%
 \contentsline {chapter}{References}{xviii}{subsection.4.1.4}%
 \contentsline {chapter}{Statement of AI Use}{xix}{chapter*.22}%
 \contentsline {chapter}{\numberline {5}System Design}{xx}{chapter.5}%
 \contentsline {section}{\numberline {5.1}Problem Definitions}{xx}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Project Objectives}{xxi}{section.5.2}%
+\contentsline {section}{\numberline {5.2}Plan for Work}{xx}{section.5.2}%
 \contentsline {subsection}{\numberline {5.2.1}Objective 1: Develop SDR-to-SBC Interface for Radar Control and Data Acquisition}{xxi}{subsection.5.2.1}%
-\contentsline {subsection}{\numberline {5.2.2}Objective 2: Design and Integrate a Mechanical Mounting and Protection System for the Payload}{xxi}{subsection.5.2.2}%
-\contentsline {subsection}{\numberline {5.2.3}Objective 3: Design, Build, and Verify the Onboard Power System}{xxi}{subsection.5.2.3}%
-\contentsline {subsection}{\numberline {5.2.4}Objective 4: Synchronise Logging of Flight Telemetry and Radar Measurements}{xxii}{subsection.5.2.4}%
-\contentsline {section}{\numberline {5.3}Plan for Work}{xxii}{section.5.3}%
-\contentsline {chapter}{\numberline {A}Objective 4: Supporting Material}{xxiii}{appendix.A}%
-\contentsline {section}{\numberline {A.1}SSH Setup}{xxiii}{section.A.1}%
-\contentsline {section}{\numberline {A.2}GPIO Packages Install}{xxiii}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Virtual Environment and \texttt {rpi-lgpio} Install}{xxiii}{section.A.3}%
-\contentsline {section}{\numberline {A.4}GPIO Read Script}{xxiii}{section.A.4}%
-\contentsline {section}{\numberline {A.5}Telemetry Data Visualisation Script}{xxiv}{section.A.5}%
+\contentsline {subsubsection}{Research and Evaluation of Existing Interfaces}{xxi}{subsection.5.2.1}%
+\contentsline {subsubsection}{Software Implementation}{xxi}{subsection.5.2.1}%
+\contentsline {subsubsection}{Unit Testing}{xxii}{subsection.5.2.1}%
+\contentsline {subsubsection}{Ground Integration and Testing}{xxii}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Objective 2: Design and Integrate a Mechanical Mounting and Protection System for the Payload}{xxii}{subsection.5.2.2}%
+\contentsline {subsubsection}{Platform and Payload Assessment}{xxii}{subsection.5.2.2}%
+\contentsline {subsubsection}{Mounting System Design}{xxiii}{subsection.5.2.2}%
+\contentsline {subsubsection}{Prototype, Manufacture and Installation}{xxiii}{subsection.5.2.2}%
+\contentsline {subsubsection}{Mechanical Verification}{xxiii}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.3}Objective 3: Design, Build, and Verify the Onboard Power System}{xxiv}{subsection.5.2.3}%
+\contentsline {subsubsection}{Design}{xxiv}{subsection.5.2.3}%
+\contentsline {subsubsection}{Prototyping and Controlled Testing}{xxiv}{subsection.5.2.3}%
+\contentsline {subsubsection}{Construction}{xxv}{subsection.5.2.3}%
+\contentsline {subsubsection}{Integration Testing}{xxv}{subsection.5.2.3}%
+\contentsline {subsection}{\numberline {5.2.4}Objective 4: Synchronise Logging of Flight Telemetry and Radar Measurements}{xxv}{subsection.5.2.4}%
+\contentsline {subsubsection}{SBC Selection and System Setup}{xxv}{subsection.5.2.4}%
+\contentsline {subsubsection}{Telemetry and SDR Data Logging}{xxv}{subsection.5.2.4}%
+\contentsline {subsubsection}{Post Processing and System Verification}{xxvi}{subsection.5.2.4}%
+\contentsline {chapter}{\numberline {A}Objective 4: Supporting Material}{xxvii}{appendix.A}%
+\contentsline {section}{\numberline {A.1}SSH Setup}{xxvii}{section.A.1}%
+\contentsline {section}{\numberline {A.2}GPIO Packages Install}{xxvii}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Virtual Environment and \texttt {rpi-lgpio} Install}{xxvii}{section.A.3}%
+\contentsline {section}{\numberline {A.4}GPIO Read Script}{xxvii}{section.A.4}%
+\contentsline {section}{\numberline {A.5}Telemetry Data Visualisation Script}{xxviii}{section.A.5}%

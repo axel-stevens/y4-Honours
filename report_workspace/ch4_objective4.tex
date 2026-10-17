@@ -1,6 +1,8 @@
 \section{Objective 4: Synchronise Logging of Flight Telemetry and Radar Measurements}
 \label{sec:obj4}
 
+This section provides a detailed account of the fourth objective of the project. The objective and context is introduced, followed by the methodology explained in detail that was followed to complete the objective. Finally, the results of the subsequent verification of the objective completion are discussed. 
+
 \subsection{Introduction}
 \label{sec:obj4-intro}
 
@@ -18,13 +20,14 @@ The work done in this objective included researching and procuring a suitable \g
 \subsection{Methodology}
 \label{sec:obj4-method}
 
+The methodology provides a detailed account of the process underwent to complete the fourth objective. This includes the procurement of the \gls{sbc} and setup. Subsequently, the approach to the program development on the \gls{sbc} is outlined. The configuring of the flight controller is also accounted. The final system is then explained in detail including architecture and design choices. 
 
 
 
 \subsubsection{Hardware and Setup}
 \label{sec:obj4-hardware-setup}
 
-First, requirements of the \gls{sbc} were identified. The hardware requirements for the \gls{sbc} were derived from the \gls{sdr} datasheet, which specifies the need for a high-speed USB 2.0 interface (480 Mb/s)~\cite{luswavePUPDUAL24C}. Additionally, the \gls{sbc} should provide sufficient processing capability to support potential future expansion of onboard processing capability, placing requirements on \gls{cpu} performance and \gls{ram} capacity. Consequently, a Raspberry Pi 5 with 16 GB of \gls{ram} was selected and procured. In addition to satisfying the hardware requirements, Raspberry Pi devices were selected because of their well-supported software ecosystem and prior use in drone-mounted radar research applications~\cite{kawkaSwarmDronesDetection2025,lopezUnmannedAerialVehicleBased2022,coulibalyBlockchainSoftwareDefinedRadio2025,aliDesignImplementationFMCW2017}. A protective case and active cooler were also acquired to secure the device on board the drone and manage \gls{cpu} temperature during \gls{sdr} operation.
+First, requirements of the \gls{sbc} were identified. The hardware requirements for the \gls{sbc} were derived from the \gls{sdr} datasheet, which specified the need for a high-speed USB 2.0 interface (480 Mb/s)~\cite{luswavePUPDUAL24C}. Additionally, the \gls{sbc} should provide sufficient processing capability to support potential future expansion of onboard processing capability, placing requirements on \gls{cpu} performance and \gls{ram} capacity. Consequently, a Raspberry Pi 5 with 16 GB of \gls{ram} was selected and procured. In addition to satisfying the hardware requirements, Raspberry Pi devices were selected because of their well-supported software ecosystem and prior use in drone-mounted radar research applications~\cite{kawkaSwarmDronesDetection2025,lopezUnmannedAerialVehicleBased2022,coulibalyBlockchainSoftwareDefinedRadio2025,aliDesignImplementationFMCW2017}. A protective case and active cooler were also acquired to secure the device on board the drone and manage \gls{cpu} temperature during \gls{sdr} operation.
 
 The Raspberry Pi 5 was physically assembled and configured with a lightweight Ubuntu 22.04 operating system. A remote development workflow was then configured to develop and test the Python script used to read the \gls{gpio} pin. Native development on the Raspberry Pi was avoided due to its lower performance compared with a desktop computer. Instead, \gls{ssh} was configured and integrated with an \gls{ide} to enable remote development. The setup commands are shown in Appendix \ref{app:obj4-ssh-setup}. To allow the Raspberry Pi to read \gls{gpio} pins, the required \gls{gpio} packages were installed. The setup commands are shown in Appendix \ref{app:obj4-gpio-packages}. One of the packages required a Python virtual environment. The setup and installation of this package and a Python virtual environment is shown in Appendix \ref{app:obj4-rpi-lgpio-install}. After installing the packages, a Python script was created to read a \gls{gpio} pin and respond when an external component pulls the signal high. The script is shown in Appendix \ref{app:obj4-gpio-script}. To verify the program, an Arduino Uno R3 was used to generate an input signal for a \gls{gpio} pin. After the setup was confirmed working, the objective moved toward the development stage. 
 
@@ -38,7 +41,7 @@ The development approach followed the diagram shown in Figure \ref{fig:ch4-obj4c
 
 \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=0.6\textwidth]{ch4-4_images/Control System Development Cycle.drawio.png}
+    \includegraphics[width=0.8\textwidth]{ch4-4_images/Control System Development Cycle.drawio.png}
     \caption{Control system development cycle}
     \label{fig:ch4-obj4control-dev-cycle}
 \end{figure}

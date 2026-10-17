@@ -1,0 +1,32 @@
+\section{Objective 4: Synchronise Logging of Flight Telemetry and Radar Measurements}
+
+Objective 4 addresses the synchronised logging of radar measurements and \gls{uav} flight telemetry to ensure that time-aligned datasets are collected for research purposes. The method follows a staged process covering \gls{sbc} selection, operating-system setup, activation-signal testing, telemetry and logging configuration, dataset alignment and system testing. This ensures that radar measurements can be interpreted against the corresponding \gls{uav} position, attitude, altitude, and time history.
+
+\subsection[SBC Selection and System Setup]{\gls{sbc} Selection and System Setup}
+
+The first stage involves selecting a suitable \gls{sbc} for onboard data logging and control. The \gls{sbc} will be chosen based on the \gls{sdr} specifications, including evaluation of the required input/output interfaces and the data throughput demands of the \gls{sdr}~\cite{luswavePUPDUAL24C}. In addition, the selection will consider onboard processing capability, storage capacity, physical size, and power consumption. The selected \gls{sbc} must be able to receive a flight-controller activation signal, initiate radar logging, and store \gls{sdr} data locally.
+
+After selection, an operating system will be installed and configured for onboard use~\cite{ltdRaspberryPiSoftware}. This will include preparing the boot media and enabling the required interfaces. The \gls{sbc} will be configured to detect an external trigger from a designated input pin. A bench test will then be conducted using a signal generator to verify that the \gls{sbc} can detect the trigger and execute a testing script reliably.
+
+\subsection{Activation Signal and Logging Control}
+In this stage, the flight controller will be configured to output an activation signal to the \gls{sbc} upon receiving a command from the ground station. The \gls{sbc} will monitor this trigger through an appropriate input interface and use it to initiate the \gls{sdr} logging routine.
+
+First, the delay between the flight controller receiving a command from the ground station and outputting the activation signal will be characterised. This will be evaluated in a controlled bench setup, where the ground station command is emulated using a signal generator. Both this emulated signal and the activation signal produced by the flight controller will be connected to an oscilloscope to measure the response latency between the two signals, as well as to characterise their voltage levels and pulse durations. Once the activation signal has been characterised, the flight controller and \gls{sbc} will be integrated within the full payload configuration.
+
+\subsection[Telemetry and SDR Data Logging]{Telemetry and \gls{sdr} Data Logging}
+
+This stage will ensure that both telemetry and \gls{sdr} logging are initiated correctly when the flight controller receives a command from the ground station.
+
+The flight controller will be configured to record telemetry required for post-processing, including time, position, altitude, velocity, attitude, heading, and other relevant flight-state information where available. The telemetry log format, sampling rate, file location, and export method will be documented so the process can be repeated during future tests.
+
+Telemetry logging will first be validated by recording data while the drone is stationary on the ground. The recorded data will be inspected to confirm that the required parameters are present, the data are recorded at an acceptable sampling rate, and the timestamps or time references are suitable for synchronisation. Missing or inconsistent fields will require adjustment of the flight-controller logging configuration before proceeding.
+
+In parallel, the API developed in Section~\ref{chap:414} will be used to implement a logging script that enables the radar to capture data for a configurable duration. The complete \gls{sdr} logging system—from receiving a ground station command through to data acquisition—will then be tested on ground to confirm that the activation signal correctly initiates \gls{sdr} recording.
+
+\subsection{Dataset Alignment and System Verification}
+
+A post-processing method will be developed to align radar and telemetry datasets. The primary method will use the recorded logging start time and activation event as a common reference between the systems. Where required, datasets will be aligned further using timestamp comparisons, known test events, or identifiable features in the data. The final alignment process will be documented so radar measurements can be matched with the \gls{uav} position and attitude during analysis.
+
+The synchronisation method will be validated in a stationary ground test using a known reference clock. The flight controller, \gls{sbc}, \gls{sdr}, and activation signal will operate as a single system, with all events timestamped to this reference. The test will confirm the correct initiation of telemetry logging, detection of the activation signal by the \gls{sbc}, and start of radar recording. The radar logging start time will be compared with the known time at which the activation signal was sent to determine the system delay. The resulting data will then be checked for completeness and consistent alignment between the radar and telemetry logs.
+
+Final verification will occur during flight testing. The complete system will operate under flight conditions to confirm that telemetry and radar measurements are recorded simultaneously and can be aligned during post-processing. The system will be considered successful once the flight controller records the required telemetry, the \gls{sbc} initiates \gls{sdr} logging from the activation signal, radar data are stored without interruption, and the datasets can be synchronised for analysis.
