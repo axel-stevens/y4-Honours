@@ -1571,18 +1571,23 @@ INPUT ch4_objective4.tex
 INPUT ./ch4_objective4.tex
 INPUT ./ch4_objective4.tex
 INPUT ch4_objective4.tex
-INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
 INPUT ./ch4-4_images/Activation signal diagram.drawio.png
 INPUT ./ch4-4_images/Activation signal diagram.drawio.png
 INPUT ch4-4_images/Activation signal diagram.drawio.png
 INPUT ./ch4-4_images/Activation signal diagram.drawio.png
 INPUT ./ch4-4_images/Activation signal diagram.drawio.png
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
 INPUT ./ch4-4_images/Control System Development Cycle.drawio.png
 INPUT ./ch4-4_images/Control System Development Cycle.drawio.png
 INPUT ch4-4_images/Control System Development Cycle.drawio.png
 INPUT ./ch4-4_images/Control System Development Cycle.drawio.png
 INPUT ./ch4-4_images/Control System Development Cycle.drawio.png
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmti10.tfm
+INPUT ./ch4-4_images/display.png
+INPUT ./ch4-4_images/display.png
+INPUT ch4-4_images/display.png
+INPUT ./ch4-4_images/display.png
+INPUT ./ch4-4_images/display.png
 INPUT ./ch4-4_images/radar state diagram.drawio.png
 INPUT ./ch4-4_images/radar state diagram.drawio.png
 INPUT ch4-4_images/radar state diagram.drawio.png
@@ -1644,7 +1649,6 @@ INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb
-INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb

@@ -1,7 +1,7 @@
 \chapter{System Design}
 \label{ch:system-design}
 
-This section provides a high level overview of the system that was developed to complete the project, and the problems that were addressed. Section~\ref{sec:problem-definitions} addresses the key constraints of the project, deriving the four technical objectives from the problems. Section~\ref{sec:plan-for-work} provides a high level overview of the methodology that was undertaken in the completion of the four technical objectives. 
+This section provides a high level overview of the system that was developed to complete the project, and the problems that were addressed. Section~\ref{sec:problem-definitions} addresses the key constraints of the project, deriving the four technical objectives from the problems. Section~\ref{sec:plan-for-work} provides an overview of the methodology that was undertaken in the completion of the four technical objectives. 
 
 \section{Problem Definitions}
 \label{sec:problem-definitions}
@@ -10,7 +10,7 @@ The radar in possession was a Luswave PUP K-band \gls{sdr}, controlled from a la
 
 For radar control, there were numerous constraints. The drone does not have an onboard computer. Also, legacy vendor drivers are discontinued and two are incompatible. The MATLAB API is also poorly documented, which presented difficulty. The final key constraint was that the \gls{sdr} required \gls{usb}~2.0 for operating. For mechanical mounting, it was critical to have a secure mount for the radar with an unobstructed downward field of view, clear of the airframe and landing gear. The Aurelia X6 drone had a 5~kg payload limit \cite{aurelia2025x6}, which was another constraint. For the power supply, it was required for it to be independent of the flight power system for modularity. The power supply was required to step 22.2~V down to 6~V to supply the radar, and 5~V to supply the \gls{sbc}. For the data synchornisation, the radar and telemetry were recorded by seperate devices on seperate clocks, and each data set had to be synchronised. Each radar capture also required both position and attitude for georeferencing. Finally, the activation signal for radar capturing was required to be from the pilot's transmitter without a ground operator, to allow the system to be fully operated by one individual. For system-level and operational constraints, components were predominantly \gls{cots} and replicable, so that a future research team can rebuild the system, addressing the literature gap of non-repeatability. The band of the radar did not impose any further constraints, as K-band operation is commercial. Remote-pilot licensing and university rules on drone flights ruled out flight testing as a viable option. The five problems are shown in Table~\ref{tab:problem_definitions}, in addition to the corresponding constraints and the objective that addresses each. 
 
-\begin{table}[htbp]
+\begin{table}[H]
   \centering
   \caption{problems, constraints and the objective addressing each}
   \label{tab:problem_definitions}
@@ -44,7 +44,7 @@ For radar control, there were numerous constraints. The drone does not have an o
 \section{Plan for Work}
 \label{sec:plan-for-work}
 
-This section provides a high level overview of the methodology that each objective underwent during development. 
+This section provides an overview of the methodology that each objective underwent during development. 
 
 \subsection[Objective 1: Develop SDR-to-SBC Interface for Radar Control and Data Acquisition]{Objective 1: Develop \gls{sdr}-to-\gls{sbc} Interface for Radar Control and Data Acquisition}
 
