@@ -24,9 +24,9 @@
 \contentsline {section}{\numberline {6.1}System Architecture}{xxiii}{section.6.1}%
 \contentsline {section}{\numberline {6.2}Subsystem Interfaces}{xxiii}{section.6.2}%
 \contentsline {section}{\numberline {6.3}Requirements and Verification}{xxiv}{section.6.3}%
-\contentsline {chapter}{\numberline {A}Objective 4: Supporting Material}{xxv}{appendix.A}%
-\contentsline {section}{\numberline {A.1}SSH Setup}{xxv}{section.A.1}%
-\contentsline {section}{\numberline {A.2}GPIO Packages Install}{xxv}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Virtual Environment and \texttt {rpi-lgpio} Install}{xxv}{section.A.3}%
-\contentsline {section}{\numberline {A.4}GPIO Read Script}{xxv}{section.A.4}%
-\contentsline {section}{\numberline {A.5}Telemetry Data Visualisation Script}{xxvi}{section.A.5}%
+\contentsline {chapter}{\numberline {A}Objective 4: Supporting Material}{xxvii}{appendix.A}%
+\contentsline {section}{\numberline {A.1}SSH Setup}{xxvii}{section.A.1}%
+\contentsline {section}{\numberline {A.2}GPIO Packages Install}{xxvii}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Virtual Environment and \texttt {rpi-lgpio} Install}{xxvii}{section.A.3}%
+\contentsline {section}{\numberline {A.4}GPIO Read Script}{xxvii}{section.A.4}%
+\contentsline {section}{\numberline {A.5}Telemetry Data Visualisation Script}{xxviii}{section.A.5}%
