@@ -1,155 +1,102 @@
 \chapter{System Design}
 \label{ch:system-design}
 
-This section provides a high level overview of the system that was developed to complete the project, and the problems that were addressed. Section~\ref{sec:problem-definitions} addresses the key constraints of the project, deriving the four technical objectives from the problems. Section~\ref{sec:plan-for-work} provides an overview of the methodology that was undertaken in the completion of the four technical objectives. 
+\section{System Architecture}
+\label{sec:sysdesign-architecture}
 
-\section{Problem Definitions}
-\label{sec:problem-definitions}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{ch4-4_images/high level system diagram.drawio.png}
+  \caption{High level diagram of drone-radar integration system architecture}
+  \label{fig:system-design_system_diagram}
+\end{figure}
 
-The radar in possession was a Luswave PUP K-band \gls{sdr}, controlled from a laptop over \gls{usb}. Integrating it with a \gls{uav} brought constraints on mass, size, power, mounting and autonomous operation. The five primary problems that had to be addressed were as follows; the ability to control and operate the radar while it is mounted, a secure mount with an unobstructed downward field of view, a power distribution system enabling power to the radar and any peripheral components, the ability to synchronise drone telemetry data sets with radar captures, and the project and operational constraints such as the requirement for the system to be \gls{cots}, have K-band operation, and the remote-pilot licensing and university rules. Corresponding to the problems are technical objectives aimed at addressing them, the completion of which culminated with the completion of the project. 
+\section{Subsystem Interfaces}
+\label{sec:sysdesign-interfaces}
 
-For radar control, there were numerous constraints. The drone does not have an onboard computer. Also, legacy vendor drivers are discontinued and two are incompatible. The MATLAB API is also poorly documented, which presented difficulty. The final key constraint was that the \gls{sdr} required \gls{usb}~2.0 for operating. For mechanical mounting, it was critical to have a secure mount for the radar with an unobstructed downward field of view, clear of the airframe and landing gear. The Aurelia X6 drone had a 5~kg payload limit \cite{aurelia2025x6}, which was another constraint. For the power supply, it was required for it to be independent of the flight power system for modularity. The power supply was required to step 22.2~V down to 6~V to supply the radar, and 5~V to supply the \gls{sbc}. For the data synchornisation, the radar and telemetry were recorded by seperate devices on seperate clocks, and each data set had to be synchronised. Each radar capture also required both position and attitude for georeferencing. Finally, the activation signal for radar capturing was required to be from the pilot's transmitter without a ground operator, to allow the system to be fully operated by one individual. For system-level and operational constraints, components were predominantly \gls{cots} and replicable, so that a future research team can rebuild the system, addressing the literature gap of non-repeatability. The band of the radar did not impose any further constraints, as K-band operation is commercial. Remote-pilot licensing and university rules on drone flights ruled out flight testing as a viable option. The five problems are shown in Table~\ref{tab:problem_definitions}, in addition to the corresponding constraints and the objective that addresses each. 
 
+% preamble: \usepackage{tabularx} \usepackage{float}
+% preamble: \usepackage{tabularx} \usepackage{float} \usepackage{array}
 \begin{table}[H]
   \centering
-  \caption{problems, constraints and the objective addressing each}
-  \label{tab:problem_definitions}
-  \renewcommand{\arraystretch}{1.3}
-  \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}X >{\centering\arraybackslash}p{2.2cm}}
-    \toprule
-    Problem & Definition and Constraints & Addressed by \\
-    \midrule
-    Radar control &
-      No onboard host computer; legacy vendor drivers discontinued and two incompatible, poorly documented MATLAB APIs; SDR requires USB~2.0 high-speed (480~Mb/s) &
-      Objective 1 \\
-    Mechanical mounting &
-      Secure mount with an unobstructed downward field of view, clear of the airframe and landing gear; 5 kg payload budget &
-      Objective 2 \\
-    Power supply &
-      Independent of the flight power system; 22.2~V auxiliary supply stepped down to 6~V (SDR) and 5~V (SBC) within tolerance;  &
-      Objective 3 \\
-    Data synchronisation &
-      Radar and telemetry recorded by separate devices on separate clocks; each capture requires position and attitude for georeferencing; pilot must trigger captures from the transmitter without a ground operator &
-      Objective 4 \\
-    Operational &
-      Predominantly COTS and replicable; K-band operation; remote-pilot licensing and university rules restricted validation to ground testing &
-      All \\
-    \bottomrule
+  \footnotesize
+  \renewcommand{\arraystretch}{1.2}
+  \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+  \caption{Interfaces between subsystems}
+  \label{tab:interfaces}
+  \begin{tabularx}{\textwidth}{l Y Y Y Y l Y}
+    \hline
+    ID & From & To & Data / signal & Link, protocol, rate & Objective \\
+    \hline
+    I1 & SDR & Antennas & RF transmit / receive & Coaxial & 1 \\
+    I2 & Pi 5 & SDR & Capture control, IQ samples & USB 2.0 high-speed & 1, 4 \\
+    I3 & Auxillary Supply & Power Module & Power (22.2V) & XT60 & 3\\
+    I4 & Power Module & Pi 5 & Power (5V) & USB-C & 3\\
+    I5 & Power Module & SDR & Power (6V) & Barrel-Jack & 3\\
+    I6 & Flight Controller & Pi 5 & \gls{gps} position, fix, satellites & \gls{usb}-Micro, MAVLink, 1 Hz & 4\\
+    I7 & Flight Controller & Pi 5 & RC capture switch state & \gls{usb}-Micro, MAVLink, 5 Hz & 4 \\
+    I8 & Flight controller & Transmitter & Telemetry, commands &  radio, MAVLink & 4 \\
+
+    \hline
   \end{tabularx}
 \end{table}
 
 
 
 
-\section{Plan for Work}
-\label{sec:plan-for-work}
-
-This section provides an overview of the methodology that each objective underwent during development. 
-
-\subsection[Objective 1: Develop SDR-to-SBC Interface for Radar Control and Data Acquisition]{Objective 1: Develop \gls{sdr}-to-\gls{sbc} Interface for Radar Control and Data Acquisition}
-
-The methodology for interfacing the \gls{sdr} with the \gls{sbc} followed a structured software engineering lifecycle. It included evaluation of the legacy interface, software implementation, unit testing, and system-level validation. All project source code was authored, reviewed, tested, and version-controlled by the project team.
-
-\subsubsection{Research and Evaluation of Existing Interfaces}
-
-The first phase reviewed the software interfaces provided by the radar manufacturer \cite{luswavePUPDUAL24C}. This included analysing the legacy MATLAB-based drivers to understand the communication logic and determine whether existing libraries could be reused. The outcome determined that the legacy drivers could be adapted for the target hardware. These findings also defined the technology stack for implementation.
-
-\subsubsection{Software Implementation}
-
-Following the research phase, an API was developed and implemented. Development was divided into two stages: establishing the communication protocol and implementing the radar command structure. First, the \gls{usb} firmware protocol was implemented to manage the data link between the radar and the \gls{sbc}. The radar control commands, which configure transmit and receive parameters, were then mapped and integrated into the API. To support deployment on the target platform, the API was built as a static library compatible with Ubuntu 22.04. Due to the large variety of radar commands involved and the limited project timeframe, Claude Code was used to assist in implementing the different commands once the command protocol structure had been designed. A human-in-the-loop approach was adopted, where all outputs generated by Claude Code were reviewed and verified to ensure correctness.
-
-At the end of this stage, the \gls{usb} communication protocol underwent preliminary testing on a standard Linux computer connected to the radar. The radar control commands also received basic functional verification. This testing removed compile-time errors and performed initial validation checks, such as confirming that captured data volume was consistent with the configured sampling rate. Rigorous data-integrity checks and command-level validation were completed during unit testing.
-
-\subsubsection{Unit Testing}
-\label{chap:413}
-
-Initial unit testing was conducted in a standard Linux desktop environment to isolate variables associated with embedded hardware. The radar receiver channel was connected to a known signal generated by a signal generator, while the transmitter channel was connected to a frequency analyser to observe the transmitted output. Individual radar configuration parameters, such as sweep time, sampling frequency, and active channels, were varied one at a time. Each command was then validated by inspecting the API output and laboratory equipment measurements to verify the transmitted and received radar waveforms, ensuring that the radar parameters updated correctly.
-
-\subsubsection{Ground Integration and Testing}
-\label{chap:414}
-
-Once the API passed desktop unit testing, the static library and associated executables were ported to the target \gls{sbc}, a Raspberry Pi. The \gls{sbc}, software interface, and power system were then integrated onto a moving ground platform. Ground testing included a controlled motion Doppler test, where the radar was mounted on a ground vehicle moving at a constant velocity. In this scenario, the measured Doppler shift was compared against the expected velocity. Testing verified that valid radar data was generated and stored in the designated Raspberry Pi memory locations under operational scenarios. Additionally, stress-test scenarios, such as extended-duration data capture, were conducted to evaluate system stability. Objective 1 was complete once the system passed the ground integration test.
+\section{Requirements and Verification}
+\label{sec:sysdesign-requirements}
 
 
-\subsection{Objective 2: Design and Integrate a Mechanical Mounting and Protection System for the Payload}
-
-Objective 2 addressed the mechanical integration of the radar payload with the selected \gls{uav} platform. The method followed a staged process of platform assessment, payload measurement, \gls{cad} modelling, prototype manufacture, installation, and ground-based verification. This ensured that the radar was securely mounted while flight stability was maintained, the electronics were protected, and an unobstructed field of view was preserved.
-
-\subsubsection{Platform and Payload Assessment}
-
-The first stage assessed the Aurelia X6 to identify suitable payload mounting locations. The underside of the drone was prioritised because it provided the clearest downward-facing radar view and reduced obstruction from the airframe. The payload bay, underside clearance, landing gear, wiring paths, and existing mounting points were inspected to determine the most suitable integration approach.
-
-The payload was divided into external and internal subsystems. The external subsystem included the radar antenna, gimbal, and custom mounting brackets, while the internal subsystem included the single-board computer, power components, wiring, connectors, and supporting electronics within the payload bay. This arrangement positioned the radar antenna for measurement performance while keeping the supporting electronics protected inside the drone structure.
-
-Mechanical and geometric requirements were determined through direct measurement and \gls{cad} inspection. Key dimensions, component masses, mounting points, cable routes, clearance allowances, and the expected centre of mass were recorded to define the mounting geometry and confirm compatibility with the \gls{uav} payload capacity~\cite{aurelia2025x6}.
-
-\subsubsection{Mounting System Design}
-
-A \gls{cad} model of the integrated payload system was developed to assess the mechanical layout before manufacture. The model included the underside of the drone, payload bay, radar antenna, gimbal, internal electronics, brackets, and clearance regions. It was used to check for spatial conflicts, fastener access, cable routing, and radar field-of-view obstruction.
-
-The radar antenna was to be mounted beneath the airframe using a gimbal-supported arrangement. The gimbal improved antenna stability, reduced the effect of drone attitude changes on the radar pointing direction, and maintained clearance from the drone body and landing gear. Custom brackets were designed to interface the radar antenna with the gimbal. These components were intended for \gls{3d} printing to support rapid manufacture and design iteration. The bracket geometry was based on measured radar and gimbal dimensions, including screw-hole locations, cable exit directions, required offsets, and antenna orientation. The design aimed to minimise mass while maintaining sufficient stiffness and fastener support. The internal electronics layout was also developed in \gls{cad}. Components were positioned on standoffs inside the payload bay to provide secure mounting and maintain access to connectors, storage media, and wiring. Cable routes were planned to avoid strain, prevent loose wiring, and ensure that cables did not interfere with the gimbal or radar field of view.
-
-During testing, it was found that this initial enclosure provided insufficient mechanical isolation and support for the antenna assembly. A dedicated enclosure beneath the battery box was found to provide a more practical arrangement. The enclosure incorporated mounting flanges that aligned with the available undertide mounting locations on the \gls{uav}. The gimbal was also reassessed and replaced with a more rigid mounting arrangement, as the gimbal increased unecessary mechanical complexity of the system.
-
-\subsubsection{Prototype, Manufacture and Installation}
-
-Once the \gls{cad} model satisfied the initial spatial, mass, and thermal requirements, prototype components were manufactured using 3D printing. Additive manufacturing was selected because it allowed custom geometry to be produced quickly and revised after fit-up testing.
-
-The internal payload layout was then assembled by mounting the electronics on standoffs. Wiring paths were checked so cables could be restrained and connectors remained accessible. Once the internal and external subsystems were confirmed, the payload was installed onto the Aurelia X6 by securing the enclosure, attaching the radar mount, installing the antenna, and restraining wiring with appropriate strain relief.
-
-\subsubsection{Mechanical Verification}
-
-The completed mounting system was verified through ground-based checks. A static inspection confirmed that the brackets, fasteners, standoffs, electronics, and wiring were secure, and that the payload did not interfere with the landing gear, propellers, airframe, or access panels.
-
-Structural stability was checked by gently loading the mounted payload in the vertical and lateral directions to identify looseness, excessive flexure, cracking, or fastener movement. Any movement or deformation would have required reinforcement or redesign before flight testing.
-
-The final check involved powered ground testing. The electronics were operated while installed on the drone to confirm that the payload remained secure and that wiring did not move into the gimbal path or radar view. Where permitted, a controlled ground-run test was used to assess vibration effects. The assembly was placed on a moving platform where the vibrations were controlled to accurately simulate flight dynamics. Mechanical integration was considered complete once the payload was secure, the radar field of view was clear, and all electronics and wiring were restrained.
-
-\subsection{Objective 3: Design, Build, and Verify the Onboard Power System}
-
-Objective 3 addressed the design, construction, and verification of an onboard power system capable of supplying the \gls{sdr}, \gls{sbc}, gimbal, and supporting electronics during flight operations. The method followed four stages: design, prototyping and controlled testing, construction, and integration testing. This ensured that the power system met electrical requirements, was verified before each stage progressed, and could operate reliably.
-
-\subsubsection{Design}
-
-The first stage identified the electrical and power requirements of all loads. Voltage, current, and power requirements for the \gls{sdr}, \gls{sbc}, and gimbal were extracted from their technical datasheets, with typical and maximum values recorded. The minimum energy required for the 30-minute flight duration was then calculated for each load and for the full system \cite{aguascaARBRESLightWeightCW2013}.
-
-Once the requirements were established, a high-level design addressed energy capacity, output voltage and current, safety, and compatibility. For each requirement category, the necessary components and specifications were determined. The output of this process was a \gls{sld} defining the complete system architecture. Following this, components that satisfied the system requirements were selected and procured.
-
-\subsubsection{Prototyping and Controlled Testing}
-
-Before physical assembly, the power system design was verified through circuit simulation. The specifications of selected components were entered into a simulation model, and key outputs, including total load power, system efficiency, source current draw, and voltage drop, were checked against the design requirements.
-
-Unit testing was then conducted for each component. Each component was tested at its nominal input voltage, with the load increased incrementally until the required operating conditions were reached. Voltage, current, and temperature were recorded at each step to confirm correct operation and identify thermal concerns before system-level testing \cite{ismailElectricPropulsionHybrid2025}.
-
-A staged energisation plan was then developed for complete-system bench testing. The plan defined the sequence in which loads were connected, with voltage, current, power, and temperature recorded at each stage. This approach confirmed performance incrementally and helped to identify and isolate faults. The energisation plan was then followed across all loads to verify that the complete system met power and safety requirements.
-
-\subsubsection{Construction}
-
-During prototyping and controlled testing, the power system used temporary electrical connections so components could be adjusted or replaced if issues were identified. Once the design was verified through the full energisation plan, temporary connections were replaced with soldered joints. Each connection was insulated to prevent short circuits and improve mechanical robustness. The completed assembly was inspected before integration testing.
-
-\subsubsection{Integration Testing}
-
-The constructed power system was verified through ground-based and airborne tests. A ground test was first conducted with the power system installed on the drone to verify that it could safely and reliably support all subsystems for the required operational duration. Electrical parameters were recorded to confirm compliance with the design requirements. Objective 3 was complete once the power system reliably supplied all loads during ground testing \cite{aguascaARBRESLightWeightCW2013}.
 
 
-\subsection{Objective 4: Synchronise Logging of Flight Telemetry and Radar Measurements}
 
-Objective 4 addressed the synchronised logging of radar measurements and \gls{uav} flight telemetry to ensure that time-aligned datasets are collected for research purposes. The method followed a staged process covering \gls{sbc} selection, operating-system setup, activation-signal testing, telemetry and logging configuration, dataset alignment and system testing. This ensured that radar measurements could be interpreted against the corresponding \gls{uav} position, attitude, altitude, and time history.
-
-\subsubsection[SBC Selection and System Setup]{\gls{sbc} Selection and System Setup}
-
-The first stage involved selecting a suitable \gls{sbc} for onboard data logging and control. The \gls{sbc} was chosen based on the \gls{sdr} specifications, including evaluation of the required input/output interfaces and the data throughput demands of the \gls{sdr}~\cite{luswavePUPDUAL24C}. In addition, the selection considered onboard processing capability, storage capacity, physical size, and power consumption. The selected \gls{sbc} had to be able to receive a flight-controller activation signal, initiate radar logging, and store \gls{sdr} data locally.
-
-After selection, an operating system was installed and configured for onboard use~\cite{ltdRaspberryPiSoftware}. This included preparing the boot media and enabling the required interfaces. The \gls{sbc} was configured to detect an external trigger from a designated input pin. A bench test was then conducted using a signal generator to verify that the \gls{sbc} could detect the trigger and execute a testing script reliably.
-
-\subsubsection[Telemetry and SDR Data Logging]{Telemetry and \gls{sdr} Data Logging}
-
-This stage ensured that both telemetry and \gls{sdr} logging were initiated correctly when the flight controller received a command from the ground station.The flight controller was configured to record telemetry required for post-processing, including time, position, altitude, velocity, attitude, heading, and other relevant flight-state information where available. The telemetry log format, sampling rate, file location, and export method were documented so the process could be repeated during future tests. Telemetry logging was validated by recording data while the drone was stationary on the ground. The recorded data were inspected to confirm that the required parameters were present, the data were recorded at an acceptable sampling rate.
-
-In parallel, a program to interface with the flight controller and receive the pilot activation signal was developed. The program was first developed to interface with one of the servo channel outputs of the flight controller, however it was found during subsequent development that interfacing with \gls{usb} over the MAVLink protocol was more practical. This was due to MAVLink requiring fewer wires (one as opposed to two) and being able to transmit both the activation signal and all telemetry from the drone. All telemetry being transmitted allowed data from both the radar and the drone to be synchronised on the \gls{sbc}.
-
-
-\subsubsection{Post Processing and System Verification}
-
-A post-processing method was developed to visualise the now synchronised radar and telemetry data sets. The method plotted the \gls{gps} data points on an HTML map and marked the points where a radar capture was taken. The MAVLink program was verified across three metrics; \gls{gps} drift, activation signal delay, and computational overhead. The three tests encapsulated the functional requirements of the system (data, activation, and low resource consumption), and the completion of these tests marked the completion of objective 4. 
-
+% preamble: \usepackage{float} \usepackage{array}
+\begin{table}[H]
+  \centering
+  \footnotesize
+  \renewcommand{\arraystretch}{1.1}
+  \setlength{\tabcolsep}{4pt}
+  \newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1\textwidth}}
+  \caption{Requirements and verification status}
+  \label{tab:requirements}
+  \begin{tabular}{P{0.06} P{0.36} P{0.40} P{0.12}}
+    \hline
+    ID & Requirement & Result & Status \\
+    \hline
+    \multicolumn{4}{l}{\textbf{System}}\\
+    R0.1 & Not impede the drone's flight & No flight test conducted & Not verified \\
+    R0.2 & Total mass within MTOW & 0.957\,kg estimated, not weighed & Partly met \\
+    R0.3 & Capture and synchronise radar and GPS data in flight & Demonstrated in ground tests only & Partly met \\
+    R0.4 & Command-line interface only & Terminal dashboard over SSH & Met \\
+    \hline
+    \multicolumn{4}{l}{\textbf{Objective 1: Radar capture}}\\
+    R1.1 & Capture radar data using the SDR & Raw IQ captured; output matched MATLAB reference in loopback & Met \\
+    R1.2 & Store radar data & Capture files saved on SBC, named by capture number and runtime & Met \\
+    R1.3 & Radar data can be time-synchronised with GPS data & Shared SBC runtime clock; capture filename logged in each telemetry row & Met \\
+    R1.4 & Radar measurements accurate to supervisor's satisfaction & Range accuracy not yet assessed; anechoic test pending & Not verified \\
+    R1.5 & Configure radar operating parameters from the SBC & Commands accepted; channel change must be sent twice & Partly met \\
+    \hline
+    \multicolumn{4}{l}{\textbf{Objective 2: Mechanical integration}}\\
+    R2.1 & Mechanically fit the SDR system to the drone & Fitted to X6 Standard within landing-gear envelope & Met \\
+    R2.2 & Mechanically stable in flight and protects the radar & Fit-up only; no loading or vibration test; enclosure not sealed & Not verified \\
+    R2.3 & Not impede accurate radar or GPS measurement & Field of view not checked; fixed 45$^\circ$ mount used & Not verified \\
+    R2.4 & Gimbal-mounted radar antenna & Replaced by fixed mount after gimbal jitter & Not met (descoped) \\
+    \hline
+    \multicolumn{4}{l}{\textbf{Objective 3: Power}}\\
+    R3.1 & Correct voltage and current to each component & SDR 5.94--6.18\,V; SBC 5.04--5.13\,V; converters loaded to $\approx$5\,A & Met \\
+    R3.2 & At least 30 minutes on-time in flight & 11.7\,Wh by calculation; no endurance test & Not verified \\
+    R3.3 & At least 80\% power conversion efficiency & 89.8\% in simulation & Met (sim.) \\
+    R3.4 & Independent and detachable from drone power system & Draws from drone 22.2\,V auxiliary supply; JST disconnect tested & Partly met \\
+    R3.5 & Supply all payload hardware safely & Fuse held at 4\,A and blew at 6\,A & Met \\
+    \hline
+    \multicolumn{4}{l}{\textbf{Objective 4: Telemetry synchronisation}}\\
+    R4.1 & Capture and store GPS data & Logged at 1\,Hz to one CSV per run; files never overwritten & Met \\
+    R4.2 & GPS data accurate to supervisor's satisfaction & Stationary drift: RMS 0.05--0.61\,m, max 1.14\,m & No criterion set \\
+    R4.3 & Synchronise GPS and radar data without significant loss & All 13 captures linked to telemetry rows; no rows dropped; resolution limited by 1\,Hz logging & Met \\
+    R4.4 & Pilot can operate the system remotely from the ground & RC switch read over MAVLink; 13/13 events captured; mean latency 2.007\,s & Met \\
+    R4.5 & Pilot can turn radar and GPS capture on and off & Switch starts a fixed-length radar capture; GPS logs continuously & Partly met \\
+    R4.6 & Low SBC resource use & CPU $\leq$0.30\%, RAM $\leq$3.85\% & Met \\
+    \hline
+  \end{tabular}
+\end{table}

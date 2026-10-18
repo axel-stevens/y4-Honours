@@ -6,5 +6,6 @@
 \contentsline {table}{\numberline {5.4}{\ignorespaces Trigger-to-capture latency after removing the 4\,s settle-delay from logs 1--4\relax }}{xix}{table.caption.21}%
 \contentsline {table}{\numberline {5.5}{\ignorespaces Raspberry Pi resource usage for each test condition\relax }}{xx}{table.caption.22}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {6.1}{\ignorespaces problems, constraints and the objective addressing each\relax }}{xxiv}{table.caption.24}%
+\contentsline {table}{\numberline {6.1}{\ignorespaces Interfaces between subsystems\relax }}{xxiii}{table.caption.25}%
+\contentsline {table}{\numberline {6.2}{\ignorespaces Requirements and verification status\relax }}{xxiv}{table.caption.26}%
 \addvspace {10\p@ }

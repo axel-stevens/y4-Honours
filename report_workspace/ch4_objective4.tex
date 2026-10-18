@@ -1,7 +1,7 @@
 \chapter{Objective 4: Synchronise Logging of Flight Telemetry and Radar Measurements}
 \label{sec:obj4}
 
-This chapter provides a detailed account of the fourth objective of the project. The objective and context is introduced, followed by the methodology explained in detail that was followed to complete the objective. Finally, the results of the subsequent verification of the objective completion are discussed.
+This chapter provides a detailed account of the fourth objective of the project. The outcome was a Python/MAVLink process on the Pi that initiates the radar executable and associates capture filenames with received flight-controller telemetry. The objective and context is introduced, followed by the methodology explained in detail that was followed to complete the objective. Finally, the results of the subsequent verification of the objective completion are discussed.
 
 \section{Introduction}
 \label{sec:obj4-intro}
@@ -15,7 +15,7 @@ To synchronise flight telemetry and radar measurements, a pilot-initiated contro
     \label{fig:activation-signal-flow}
 \end{figure}
 
-The work done in this objective included researching and procuring a suitable \gls{sbc}, configuring the flight controller, designing software to interface with the flight controller and radar, and implementing a post-processing script. The requirements of the system was the ability for a pilot to trigger the radar capture directly from a switch on the transmitter, and that every capture is synchronised to the telemetry for processing. The final system was a MAVLink-based Python program on board a Raspberry Pi 5 that interfaced with both the radar and the flight controller.
+The work done in this objective included researching and procuring a suitable \gls{sbc}, configuring the flight controller, designing software to interface with the flight controller and radar, and implementing a post-processing script. The requirements of the system was the ability for a pilot to trigger the radar capture directly from a switch on the transmitter, and that every capture is associated with a telemetry log entry. The final system was a MAVLink-based Python program on board a Raspberry Pi 5 that interfaced with both the radar and the flight controller.
 
 \section{Methodology}
 \label{sec:obj4-method}

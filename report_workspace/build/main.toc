@@ -21,30 +21,12 @@
 \contentsline {chapter}{References}{xxi}{section.5.4}%
 \contentsline {chapter}{Statement of AI Use}{xxii}{chapter*.23}%
 \contentsline {chapter}{\numberline {6}System Design}{xxiii}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Problem Definitions}{xxiii}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Plan for Work}{xxiv}{section.6.2}%
-\contentsline {subsection}{\numberline {6.2.1}Objective 1: Develop SDR-to-SBC Interface for Radar Control and Data Acquisition}{xxiv}{subsection.6.2.1}%
-\contentsline {subsubsection}{Research and Evaluation of Existing Interfaces}{xxiv}{subsection.6.2.1}%
-\contentsline {subsubsection}{Software Implementation}{xxiv}{subsection.6.2.1}%
-\contentsline {subsubsection}{Unit Testing}{xxv}{subsection.6.2.1}%
-\contentsline {subsubsection}{Ground Integration and Testing}{xxv}{subsection.6.2.1}%
-\contentsline {subsection}{\numberline {6.2.2}Objective 2: Design and Integrate a Mechanical Mounting and Protection System for the Payload}{xxv}{subsection.6.2.2}%
-\contentsline {subsubsection}{Platform and Payload Assessment}{xxv}{subsection.6.2.2}%
-\contentsline {subsubsection}{Mounting System Design}{xxvi}{subsection.6.2.2}%
-\contentsline {subsubsection}{Prototype, Manufacture and Installation}{xxvi}{subsection.6.2.2}%
-\contentsline {subsubsection}{Mechanical Verification}{xxvii}{subsection.6.2.2}%
-\contentsline {subsection}{\numberline {6.2.3}Objective 3: Design, Build, and Verify the Onboard Power System}{xxvii}{subsection.6.2.3}%
-\contentsline {subsubsection}{Design}{xxvii}{subsection.6.2.3}%
-\contentsline {subsubsection}{Prototyping and Controlled Testing}{xxvii}{subsection.6.2.3}%
-\contentsline {subsubsection}{Construction}{xxviii}{subsection.6.2.3}%
-\contentsline {subsubsection}{Integration Testing}{xxviii}{subsection.6.2.3}%
-\contentsline {subsection}{\numberline {6.2.4}Objective 4: Synchronise Logging of Flight Telemetry and Radar Measurements}{xxviii}{subsection.6.2.4}%
-\contentsline {subsubsection}{SBC Selection and System Setup}{xxviii}{subsection.6.2.4}%
-\contentsline {subsubsection}{Telemetry and SDR Data Logging}{xxviii}{subsection.6.2.4}%
-\contentsline {subsubsection}{Post Processing and System Verification}{xxix}{subsection.6.2.4}%
-\contentsline {chapter}{\numberline {A}Objective 4: Supporting Material}{xxx}{appendix.A}%
-\contentsline {section}{\numberline {A.1}SSH Setup}{xxx}{section.A.1}%
-\contentsline {section}{\numberline {A.2}GPIO Packages Install}{xxx}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Virtual Environment and \texttt {rpi-lgpio} Install}{xxx}{section.A.3}%
-\contentsline {section}{\numberline {A.4}GPIO Read Script}{xxx}{section.A.4}%
-\contentsline {section}{\numberline {A.5}Telemetry Data Visualisation Script}{xxxi}{section.A.5}%
+\contentsline {section}{\numberline {6.1}System Architecture}{xxiii}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Subsystem Interfaces}{xxiii}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Requirements and Verification}{xxiv}{section.6.3}%
+\contentsline {chapter}{\numberline {A}Objective 4: Supporting Material}{xxv}{appendix.A}%
+\contentsline {section}{\numberline {A.1}SSH Setup}{xxv}{section.A.1}%
+\contentsline {section}{\numberline {A.2}GPIO Packages Install}{xxv}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Virtual Environment and \texttt {rpi-lgpio} Install}{xxv}{section.A.3}%
+\contentsline {section}{\numberline {A.4}GPIO Read Script}{xxv}{section.A.4}%
+\contentsline {section}{\numberline {A.5}Telemetry Data Visualisation Script}{xxvi}{section.A.5}%
