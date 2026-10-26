@@ -1,11 +1,11 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {5.1}{\ignorespaces MAVLink messages requested from the flight controller and their use.\relax }}{xv}{table.caption.15}%
-\contentsline {table}{\numberline {5.2}{\ignorespaces Mean position of each stationary window\relax }}{xix}{table.caption.19}%
-\contentsline {table}{\numberline {5.3}{\ignorespaces Horizontal GPS drift and satellites visible for each stationary window\relax }}{xix}{table.caption.20}%
-\contentsline {table}{\numberline {5.4}{\ignorespaces Trigger-to-capture latency after removing the 4\,s settle-delay from logs 1--4\relax }}{xix}{table.caption.21}%
-\contentsline {table}{\numberline {5.5}{\ignorespaces Raspberry Pi resource usage for each test condition\relax }}{xx}{table.caption.22}%
+\contentsline {table}{\numberline {5.1}{\ignorespaces MAVLink messages requested from the flight controller and their use.\relax }}{xiii}{table.caption.14}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces Mean position of each stationary window\relax }}{xvi}{table.caption.18}%
+\contentsline {table}{\numberline {5.3}{\ignorespaces Horizontal GPS drift and satellites visible for each stationary window\relax }}{xvi}{table.caption.19}%
+\contentsline {table}{\numberline {5.4}{\ignorespaces Trigger-to-capture latency after removing the 4\,s settle-delay from logs 1--4\relax }}{xvii}{table.caption.20}%
+\contentsline {table}{\numberline {5.5}{\ignorespaces Raspberry Pi resource usage for each test condition\relax }}{xvii}{table.caption.21}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {6.1}{\ignorespaces Interfaces between subsystems\relax }}{xxiv}{table.caption.25}%
-\contentsline {table}{\numberline {6.2}{\ignorespaces Requirements and verification status\relax }}{xxv}{table.caption.26}%
+\contentsline {table}{\numberline {6.1}{\ignorespaces Interfaces between subsystems\relax }}{xxi}{table.caption.24}%
+\contentsline {table}{\numberline {6.2}{\ignorespaces Requirements and verification status\relax }}{xxii}{table.caption.25}%
 \addvspace {10\p@ }

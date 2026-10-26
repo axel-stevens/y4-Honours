@@ -1380,6 +1380,7 @@ INPUT /usr/share/texlive/texmf-dist/tex/latex/comment/comment.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/comment/comment.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/comment/comment.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/comment/comment.sty
+INPUT /usr/share/texlive/texmf-dist/tex/latex/tools/tabularx.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty
 INPUT ./acronyms.tex
 INPUT ./acronyms.tex
@@ -1577,12 +1578,6 @@ INPUT ch4-4_images/Activation signal diagram.drawio.png
 INPUT ./ch4-4_images/Activation signal diagram.drawio.png
 INPUT ./ch4-4_images/Activation signal diagram.drawio.png
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
-INPUT ./ch4-4_images/Control System Development Cycle.drawio.png
-INPUT ./ch4-4_images/Control System Development Cycle.drawio.png
-INPUT ch4-4_images/Control System Development Cycle.drawio.png
-INPUT ./ch4-4_images/Control System Development Cycle.drawio.png
-INPUT ./ch4-4_images/Control System Development Cycle.drawio.png
-INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmti10.tfm
 INPUT ./ch4-4_images/display.png
 INPUT ./ch4-4_images/display.png
 INPUT ch4-4_images/display.png
@@ -1664,7 +1659,6 @@ INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb
-INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb
