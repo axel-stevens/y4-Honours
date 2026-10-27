@@ -1,12 +1,14 @@
 \chapter{System Design}
 \label{ch:system-design}
 
-This section covers the overall design of the built system, the interfaces between subsystems, and the system requirements of the project. The purpose is to provide an overview of the design and the constraints, and demonstrate where the four objectives of the project are in the overall system. This section concludes with a short summary of the status of the system requirements after completing the project.  
+The purpose of the system design was obtaining a high level idea of how each subsystem interacts with the other, and an understanding on how each subsystem meets the requirements. This chapter covers the system architecture, showing the key subsystems and how they interact. Then, the subsystem interfaces are covered in more detail. 
 
 \section{System Architecture}
 \label{sec:sysdesign-architecture}
 
-A diagram of the overall system architecture is shown in Figure~\ref{fig:system-design_system_diagram}. The system shows the key subsystems and their interactions, as well as their physical locations. The pilot's switch signal goes from the transmitter to the flight controller (via a receiver). This signal is further propagated to the \gls{sbc} via the MAVLink connection. Then the program on the \gls{sbc} launches the capture executable, which drives the \gls{sdr} over \gls{usb}~2.0. The same MAVLink connection carries \gls{gps}, position, attitude, battery, and flight mode. Both the capture signal and telemetry data sets, as one program stamps both the data streams with a single runtime clock and writes each capture filename into a dataset row. The \gls{sdr} and \gls{sbc} are both powered by a 22.2 V auxiliary power supply that is converted to 6 V for the \gls{sdr} and 5 V for the \gls{sbc}. The \gls{sdr}, \gls{sbc}, and power module are enclosed in a 3D-Printed compartment underneath the battery box from the drone, and the antenna is fixed on an external 45$^{\circ}$ mount.
+A diagram of the system architecture is shown in Figure~\ref{fig:system-design_system_diagram}. The system shows the key subsystems and their interactions, and whether they are located in the drone, the 3D printed compartment, or with the pilot. The activation signal propagates throughout the diagram, starting at the transmitter and ending at the radar. The program on the \gls{sbc} launches an executable, which provides the radar with the information required to complete the capture. Both radar capture and drone telemetry are synchronised by the \gls{sbc}. The entire system is powered by the drone's supply, and the system resides in the 3D-printed compartment, beneath the drone. 
+
+
 
 \begin{figure}[H]
   \centering
@@ -18,8 +20,7 @@ A diagram of the overall system architecture is shown in Figure~\ref{fig:system-
 \section{Subsystem Interfaces}
 \label{sec:sysdesign-interfaces}
 
-Each subsystem interface is listed in Table~\ref{tab:interfaces}. The interfaces I6 and I7 share the same physical connection and are read by a single program on one clock. The 480 Mb/s requirement from I2 determined the choice of using a Raspberry Pi 5 as the \gls{sbc}.
-
+Each subsystem interface is listed in Table~\ref{tab:interfaces} and numbered I1-I8. The interfaces I6 and I7 share the same physical connection and are read by a single program on one clock. 
 \begin{table}[H]
   \centering
   \footnotesize
@@ -43,63 +44,3 @@ Each subsystem interface is listed in Table~\ref{tab:interfaces}. The interfaces
     \hline
   \end{tabularx}
 \end{table}
-
-
-
-
-\section{Requirements and Verification}
-\label{sec:sysdesign-requirements}
-
-The system requirements are derived from the specifications for technical objectives 1.1 to 1.6 in the project plan, and from its scope constraints. The requirements are regrouped in this section under the four objectives. Each requirement has an ID, a definition, a written account of its result, and the requirement's status. The status "Met" means the requirement was verified by test, inspection or demonstration. The status "Partly Met" the requirement was met in some partial capacity by test, demonstration or inspection. The status "Not Verified" means a test, demonstration, or inspection was not possible to verify the requirement and no analysis was conducted. The status "Not Met" means the requirement was confirmed to be not met by test, demonstration, or inspection.
-
-
-\begin{table}[H]
-  \centering
-  \footnotesize
-  \renewcommand{\arraystretch}{1.1}
-  \setlength{\tabcolsep}{4pt}
-  \newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1\textwidth}}
-  \caption{Requirements and verification status}
-  \label{tab:requirements}
-  \begin{tabular}{P{0.06} P{0.36} P{0.40} P{0.12}}
-    \hline
-    ID & Requirement & Result & Status \\
-    \hline
-    \multicolumn{4}{l}{\textbf{System}}\\
-    R0.1 & Not impede the drone's flight & No flight test conducted & Not verified \\
-    R0.2 & Total mass within MTOW & 0.957\,kg estimated, not weighed & Partly met \\
-    R0.3 & Capture and synchronise radar and GPS data in flight & Demonstrated in ground tests only & Partly met \\
-    R0.4 & Command-line interface only & Terminal dashboard over SSH & Met \\
-    \hline
-    \multicolumn{4}{l}{\textbf{Objective 1: Radar capture}}\\
-    R1.1 & Capture radar data using the SDR & Raw IQ captured; output matched MATLAB reference in loopback & Met \\
-    R1.2 & Store radar data & Capture files saved on SBC, named by capture number and runtime & Met \\
-    R1.3 & Radar data can be time-synchronised with GPS data & Shared SBC runtime clock; capture filename logged in each telemetry row & Met \\
-    R1.4 & Radar range measurements verified against a known reference target & Range accuracy not yet assessed; anechoic test pending & Not verified \\
-    R1.5 & Configure radar operating parameters from the SBC & Commands accepted; channel change must be sent twice & Partly met \\
-    \hline
-    \multicolumn{4}{l}{\textbf{Objective 2: Mechanical integration}}\\
-    R2.1 & Mechanically fit the SDR system to the drone & Fitted to X6 Standard within landing-gear envelope & Met \\
-    R2.2 & Mechanically stable in flight and protects the radar & Fit-up only; no loading or vibration test; enclosure not sealed & Not verified \\
-    R2.3 & Not impede accurate radar or GPS measurement & Field of view not checked; fixed 45$^\circ$ mount used & Not verified \\
-    R2.4 & Gimbal-mounted radar antenna & Replaced by fixed mount after gimbal jitter & Not met (descoped) \\
-    \hline
-    \multicolumn{4}{l}{\textbf{Objective 3: Power}}\\
-    R3.1 & Correct voltage and current to each component & SDR 5.94--6.18\,V; SBC 5.04--5.13\,V; converters loaded to $\approx$5\,A & Met \\
-    R3.2 & At least 30 minutes on-time in flight & 11.7\,Wh by calculation; no endurance test & Not verified \\
-    R3.3 & At least 80\% power conversion efficiency & 89.8\% in simulation & Met (sim.) \\
-    R3.4 & Independent and detachable from drone power system & Draws from drone 22.2\,V auxiliary supply; JST disconnect tested & Partly met \\
-    R3.5 & Supply all payload hardware safely & Fuse held at 4\,A and blew at 6\,A & Met \\
-    \hline
-    \multicolumn{4}{l}{\textbf{Objective 4: Telemetry synchronisation}}\\
-    R4.1 & Capture and store GPS data & Logged at 1\,Hz to one CSV per run; files never overwritten & Met \\
-    R4.2 & GPS position error characterised while stationary & Stationary drift: RMS 0.05--0.61\,m, max 1.14\,m & Met \\
-    R4.3 & Synchronise GPS and radar data without significant loss & All 13 captures linked to telemetry rows; no rows dropped; resolution limited by 1\,Hz logging & Met \\
-    R4.4 & Pilot can operate the system remotely from the ground & RC switch read over MAVLink; 13/13 events captured; mean latency 2.007\,s & Met \\
-    R4.5 & Pilot can turn radar and GPS capture on and off & Switch starts a fixed-length radar capture; GPS logs continuously & Partly met \\
-    R4.6 & Low SBC resource use & CPU $\leq$0.30\%, RAM $\leq$3.85\% & Met \\
-    \hline
-  \end{tabular}
-\end{table}
-
-Overall, thirteen requirements were met, five requirements were partly met, five were not verified, and one was not met. For the partly met requirements, R0.2 was a mass estimation, the drone was never weighed. R0.3 could only be partly met because only ground tests were conducted. For R3.4, the power is drawn from the drone's auxiliary supply, so it is technically not independent. For R4.5, the switch starts at a fixed caputure length, however the \gls{gps} logs continuously. R0.1, R2.2, and R3.2 require a flight test, so they are unverified. R1.4 is dependent on pending anachoic tests. R2.3 was not checked during testing, as the ground integration test was aimed at verifying base functionality, and so it was out of scope. R2.4 was not met, as the gimbal was descoped after jitter confirmed its infeasibility, and replaced by a 45$^{\circ}$ mount. The core functional chain from pilot trigger to radar capture synchronised with the drone telemetry log is met. The remaining gaps in the project are items dependent on flight tests, and items that are predicated on accuracy. The remaining gaps are characterised by all functional requirements not listed as "Met".

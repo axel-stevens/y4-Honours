@@ -1,14 +1,15 @@
 \chapter{Objective 4: Synchronise Logging of Flight Telemetry and Radar Measurements}
 \label{sec:obj4}
 
-[Make a not shit paragraph here]
-
-Synchronising the radar captures and the telemetry is critical, as each radar capture needs a position and attitude before it can be georeferenced or used in later processing.
+A single python 3 program on the \gls{sbc} handled both the flight controller and the \gls{sdr} in one loop. 
+The code was split by device, a \texttt{Drone} class, which handled the flight controller interface, a \texttt{Radar} class, which handled the radar interface, and a small \texttt{main.py} script to run the overall program. Synchronising the radar captures and the telemetry is critical, as each radar capture needs a position and attitude before it can be georeferenced or used in later processing.
 
 \section{Introduction}
 \label{sec:obj4-intro}
 
-To synchronise flight telemetry and radar measurements, a pilot-initiated control signal must be interpreted, processed, and transmitted through the entire drone integration system. The signal travels from the pilot transmitter to the receiver, then to the flight controller, and finally to the \gls{sbc}, which triggers \gls{sdr} logging. This signal path is shown in Figure~\ref{fig:activation-signal-flow}. 
+To synchronise flight telemetry and radar measurements, a pilot-initiated control signal must be interpreted, processed, and transmitted through the entire drone integration system. This required the flight controller to be configured to output the signal, for the signal to be propagated from the transmitter to the radar, and for the subsequent radar capture to be synchronised with the drone telemetry. 
+
+First a switch was activated manually on the transmitter, which was then propagated to the flight controller. The flight controller then output this signal over a drone communication protocol called MAVLink to the \gls{sbc}. The \gls{sbc} then triggered a capture request to the \gls{sdr} accordingly. The \gls{sdr} started the capture and transmitted the information back to the \gls{sbc}. This signal path is shown in Figure~\ref{fig:activation-signal-flow}. 
 
 \begin{figure}[!htbp]
     \centering
@@ -17,7 +18,7 @@ To synchronise flight telemetry and radar measurements, a pilot-initiated contro
     \label{fig:activation-signal-flow}
 \end{figure}
 
-This objective included researching and procuring a suitable \gls{sbc}, configuring the flight controller, designing software to interface with the flight controller and radar, implementing a post-processing script, and testing the built synchronisation system. The requirements of the system were the ability for a pilot to trigger the radar capture directly from a switch on the transmitter, and that every capture is associated with a telemetry log entry. The final system was a MAVLink-based Python program on board a Raspberry Pi 5 that interfaced with both the radar and the flight controller.
+This objective included researching and procuring a suitable \gls{sbc}, configuring the flight controller, designing software to interface with the flight controller and radar, implementing a post-processing script, and testing the built synchronisation system. The requirements of the system were the ability for a pilot to trigger the radar capture directly from a switch on the transmitter, and that every capture is associated with a telemetry log entry. The final system was a MAVLink-based Python program on board a Raspberry Pi 5 that interfaced with both the radar and the flight controller, synchronising the radar and drone telemetry. 
 
 \section{Methodology}
 \label{sec:obj4-method}
@@ -27,14 +28,13 @@ This objective included researching and procuring a suitable \gls{sbc}, configur
 \subsection{Flight Controller Configuration}
 \label{sec:obj4-fc-config}
 
-The flight controller needed to be configured to read in a signal from the transmitter and tie that signal to a specific channel. There were 8 physical switches on the transmitter. The switch that was deemed suitable was tied to RC channel 15 using the transmitter settings. The telemetry log only records \gls{gps} when the drone is armed. This setting did not suit the project, as the drone needed to be disarmed for the majority of the project. To enable \gls{gps} logging while disarmed, a parameter was changed in the config file on the flight controller. Eventually the .tlog file was replaced by a .csv file on board the \gls{sbc} as it was able to read all relevant telemetry status' directly. 
+The flight controller needed to be configured to read in a signal from the transmitter and tie that signal to a specific channel. There were 8 physical switches on the transmitter. The switch that was deemed suitable was tied to RC channel 15 using the transmitter settings. The telemetry log only records \gls{gps} when the drone is armed. This setting did not suit the project, as the drone needed to be disarmed for the majority of the project. To enable \gls{gps} logging while disarmed, the \texttt{LOG\_DISARMED} parameter was changed in the config file to HIGH on the flight controller. Eventually the .tlog file was replaced by a .csv file on board the \gls{sbc} as it was able to read all relevant telemetry status' directly. 
 
 
 \subsection{Final System}
 \label{sec:obj4-final-system}
 
-A single python 3 program on the \gls{sbc} handled both the flight controller and the \gls{sdr} in one loop. 
-The code was split by device, a \texttt{Drone} class, which handled the flight controller interface, a \texttt{Radar} class, which handled the radar interface, and a small \texttt{main.py} script to run the overall program. 
+
 
 The benefit to the program being one system was the fact that all the timing was able to use a single clock, which was \texttt{runtime} (seconds elapsed since the start of the program). Both the telemetry log and the radar used this value, and shared the same time base which is what made synchronisation possible. 
 
@@ -43,7 +43,7 @@ The benefit to the program being one system was the fact that all the timing was
 
 The \gls{sbc} interfaced with the drone via MAVLink, a communication protocol used to interface between flight controllers and desktop computers, which the Raspberry Pi 5 running Ubuntu resembles in architecture. The physical connection was over \gls{usb}, and the software interface was handled by the \texttt{pymavlink} python package.  The communication method was originally PWM with one of the servo channels on the flight controller, however this was replaced with MAVLink because MAVLink only required one wire to connect instead of two, and was not dependent on the safety switch of the drone (the first iteration is shown in Appendix~\ref{}). 
 
-The script blocked until it received a \texttt{HEARTBEAT} signal which confirmed the link and gave the target system and component IDs to be used by later commands. Instead of relying on default stream rates, the script sent \texttt{MAV\_CMD\_SET\_MESSAGE\_INTERVAL} commands to request each message at a fixed rate. The message IDs of the key messages is shown in Table \ref{tab:mavlink_messages}.
+The program blocked until it received a \texttt{HEARTBEAT} signal from the flight controller which confirmed the link and gave the target system and component IDs to be used by later commands. Instead of relying on default stream rates, the program sent \texttt{MAV\_CMD\_SET\_MESSAGE\_INTERVAL} commands to request each message from the flight controller at a fixed rate. The message IDs of the key messages is shown in Table \ref{tab:mavlink_messages}.
 
 
 \begin{table}[htbp]
@@ -66,9 +66,18 @@ The script blocked until it received a \texttt{HEARTBEAT} signal which confirmed
 \end{table}
 
 
-On each loop in the \texttt{main.py} file, \texttt{update()} drained every queued message with non-blocking \texttt{recv\_match(blocking=False)}, and so the program was never stalled by a slow link as the stored value was always the latest received. Raw MAVLink fields were converted to \gls{si} units upon reception, including converting latitude and longitude from degE7 to degrees, altitude from millimetres to metres, and voltage from millivolts to volts. The armed status of the drone was read from the \texttt{MAV\_MODE\_FLAG\_SAFETY\_ARMED} bit of \texttt{HEARTBEAT.base\_mode}, and the flight mode was decoded with \texttt{mode\_string\_v10}.
+On each loop in the \texttt{main.py} file, \texttt{update()} drained every queued message with a non-blocking \texttt{recv\_match(blocking=False)}, and so the program was never stalled by a slow link as the stored value was always the latest received. 
 
-The radar was triggered from a switch on the pilot's transmitter which was mapped to channel 15. However, instead of reading in a PWM signal output from the flight controller, the signal was read through the \texttt{RC\_CHANNELS} MAVLink message. The trigger logic remained the same; rising edge detection. A capture was requested by the main script to the radar only when the pulse width was above 1800 $\mu s$. The capture logic was sticky; the switch had to be seen as low before a new capture could be requested (which was a pulse width below 1200 $\mu s$). The deadband was widened from the previous iteration as it was found via oscilloscope that a valid signal never goes above 1200 $\mu s$ or below 1800 $\mu s$. The sticky logic prevented one switch from firing repeatedly, ignored the noise in the invalid range, and prevented a switch left high at startup from requesting a capture. Both pulse width parameters can be changed easily in the config file. Buffering was not used; if the radar was still busy, the request was rejected and a message printed, instead of the request being queued. The reason for this was predictability; the timespan of the radar capture is too long for buffering to be feasible. 
+
+Raw MAVLink fields were converted to \gls{si} units upon reception, including converting latitude and longitude from degE7 to degrees, altitude from millimetres to metres, and voltage from millivolts to volts. 
+
+The armed status and flight mode of the drone was decoded as part of the \texttt{HEARTBEAT} message sent from the flight controller. 
+
+The radar was triggered from a switch on the pilot's transmitter which was mapped to channel 15. However, instead of reading in a PWM signal output from the flight controller, the signal was read through the \texttt{RC\_CHANNELS} MAVLink message (shown in Table~\ref{tab:mavlink_messages}).The trigger logic was rising edge detection, as the encoded data in the MAVLink message was pulse width. 
+
+
+
+A capture was requested by the main script to the radar only when the pulse width was above 1800 $\mu s$. The capture logic was sticky; the switch had to be seen as low before a new capture could be requested (which was a pulse width below 1200 $\mu s$). The deadband was widened from the previous iteration as it was found via oscilloscope that a valid signal never goes above 1200 $\mu s$ or below 1800 $\mu s$. The sticky logic prevented one switch from firing repeatedly, ignored the noise in the invalid range, and prevented a switch left high at startup from requesting a capture. Both pulse width parameters can be changed easily in the config file. Buffering was not used; if the radar was still busy, the request was rejected and a message printed, instead of the request being queued. The reason for this was predictability; the timespan of the radar capture is too long for buffering to be feasible. 
 
 On each script startup a telemetry log in the form of a .csv file was created from the program, named with the start date and time, so that a telemetry log never overwrote a previous log. Each row in the log held sixteen telemetry fields and five radar fields of data, in addition to the program runtime. Among the five radar fields was the file name of the radar capture (if one occurred), so that each radar capture could be matched directly to the telemetry rows. 
 
