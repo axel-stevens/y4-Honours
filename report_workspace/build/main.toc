@@ -7,16 +7,18 @@
 \contentsline {chapter}{\numberline {4}Methods, Results and Discussion}{xi}{chapter.4}%
 \contentsline {chapter}{\numberline {5}Objective 4: Synchronise Logging of Flight Telemetry and Radar Measurements}{xii}{chapter.5}%
 \contentsline {section}{\numberline {5.1}Introduction}{xii}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Methodology}{xii}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}Flight Controller Configuration}{xiii}{subsection.5.2.1}%
-\contentsline {subsection}{\numberline {5.2.2}Final System}{xiii}{subsection.5.2.2}%
-\contentsline {subsubsection}{MAVLink Interface}{xiii}{subsection.5.2.2}%
-\contentsline {subsubsection}{SDR Interface}{xv}{figure.caption.15}%
-\contentsline {subsection}{\numberline {5.2.3}Post-Processing}{xv}{subsection.5.2.3}%
-\contentsline {section}{\numberline {5.3}Results and Discussion}{xvi}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}GPS Drift}{xvi}{subsection.5.3.1}%
-\contentsline {subsection}{\numberline {5.3.2}RC Switch Trigger Latency}{xvii}{subsection.5.3.2}%
-\contentsline {subsection}{\numberline {5.3.3}Computational Overhead}{xvii}{subsection.5.3.3}%
+\contentsline {section}{\numberline {5.2}Flight Controller Configuration}{xii}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Final System}{xiii}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}MAVLink Interface}{xiii}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Test: RC Switch Trigger Latency}{xiv}{subsection.5.3.2}%
+\contentsline {subsubsection}{Discussion}{xiv}{table.caption.15}%
+\contentsline {subsection}{\numberline {5.3.3}Telemetry Log}{xv}{subsection.5.3.3}%
+\contentsline {subsection}{\numberline {5.3.4}Test: GPS Drift}{xv}{subsection.5.3.4}%
+\contentsline {subsubsection}{Discussion}{xvi}{table.caption.18}%
+\contentsline {subsection}{\numberline {5.3.5}SDR Interface}{xvi}{subsection.5.3.5}%
+\contentsline {subsection}{\numberline {5.3.6}Test: Computational Overhead}{xvii}{subsection.5.3.6}%
+\contentsline {subsubsection}{Discussion}{xvii}{table.caption.20}%
+\contentsline {subsection}{\numberline {5.3.7}Post-Processing}{xvii}{subsection.5.3.7}%
 \contentsline {section}{\numberline {5.4}Summary}{xviii}{section.5.4}%
 \contentsline {chapter}{References}{xviii}{section.5.4}%
 \contentsline {chapter}{Statement of AI Use}{xix}{chapter*.22}%

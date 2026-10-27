@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.9.1)  27 OCT 2026 11:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.9.1)  27 OCT 2026 22:44
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -976,22 +976,24 @@ l.273 \chapter
 ] [2
 
 ] (build/main.toc
-Overfull \hbox (0.66916pt too wide) detected at line 18
- []\OT1/cmr/m/n/10.95 xvii
- []
-
-
 Overfull \hbox (0.66916pt too wide) detected at line 19
  []\OT1/cmr/m/n/10.95 xvii
  []
 
 
-Overfull \hbox (3.71083pt too wide) detected at line 20
- []\OT1/cmr/m/n/10.95 xviii
+Overfull \hbox (0.66916pt too wide) detected at line 21
+ []\OT1/cmr/m/n/10.95 xvii
  []
 
 
-Overfull \hbox (0.66916pt too wide) detected at line 31
+Overfull \hbox (3.71083pt too wide) detected at line 22
+ []\OT1/cmr/m/n/10.95 xviii
+ []
+
+[3
+
+]
+Overfull \hbox (0.66916pt too wide) detected at line 33
  []\OT1/cmr/m/n/10.95 xxii
  []
 
@@ -999,9 +1001,12 @@ Overfull \hbox (0.66916pt too wide) detected at line 31
 \tf@toc=\write6
 \openout6 = `main.toc'.
 
- [3
+ [4] (build/main.lof
+Overfull \hbox (3.71083pt too wide) detected at line 6
+ []\OT1/cmr/m/n/10.95 xviii
+ []
 
-] [4] (build/main.lof)
+)
 \tf@lof=\write7
 \openout7 = `main.lof'.
 
@@ -1009,18 +1014,8 @@ Overfull \hbox (0.66916pt too wide) detected at line 31
 
 
 ] (build/main.lot
-Overfull \hbox (0.66916pt too wide) detected at line 5
+Overfull \hbox (0.66916pt too wide) detected at line 7
  []\OT1/cmr/m/n/10.95 xvii
- []
-
-
-Overfull \hbox (0.66916pt too wide) detected at line 6
- []\OT1/cmr/m/n/10.95 xvii
- []
-
-
-Overfull \hbox (3.71083pt too wide) detected at line 7
- []\OT1/cmr/m/n/10.95 xviii
  []
 
 )
@@ -1058,7 +1053,7 @@ Overfull \hbox (6.5304pt too wide) in paragraph at lines 1--1
 |[]\OT1/cmr/bx/n/20.74 Objective 4: Syn-chro-nise Log-ging of Flight
  []
 
-<ch4-4_images/Activation signal diagram.drawio.png, id=297, 919.435pt x 586.19pt>
+<ch4-4_images/Activation signal diagram.drawio.png, id=304, 919.435pt x 586.19pt>
 File: ch4-4_images/Activation signal diagram.drawio.png Graphic file (type png)
 <use ch4-4_images/Activation signal diagram.drawio.png>
 Package pdftex.def Info: ch4-4_images/Activation signal diagram.drawio.png  used on input line 16.
@@ -1067,38 +1062,38 @@ Package pdftex.def Info: ch4-4_images/Activation signal diagram.drawio.png  used
 
  <./ch4-4_images/Activation signal diagram.drawio.png>]
 
-LaTeX Warning: Reference `' on page xiii undefined on input line 44.
+LaTeX Warning: Reference `' on page xiii undefined on input line 42.
 
-[13]
-<ch4-4_images/display.png, id=325, 682.04813pt x 587.19376pt>
+[13] [14]
+<ch4-4_images/display.png, id=344, 682.04813pt x 587.19376pt>
 File: ch4-4_images/display.png Graphic file (type png)
 <use ch4-4_images/display.png>
-Package pdftex.def Info: ch4-4_images/display.png  used on input line 88.
+Package pdftex.def Info: ch4-4_images/display.png  used on input line 110.
 (pdftex.def)             Requested size: 273.14923pt x 235.16005pt.
- [14 <./ch4-4_images/display.png>]
+ [15 <./ch4-4_images/display.png>]
 
-Package caption Warning: \label without proper reference on input line 105.
+Package caption Warning: \label without proper reference on input line 172.
 See the caption package documentation for explanation.
 
 
-LaTeX Warning: Reference `fig:radar_state_diagram' on page xv undefined on input line 98.
+LaTeX Warning: Reference `fig:radar_state_diagram' on page xvi undefined on input line 165.
 
-<ch4-4_images/radar state diagram.drawio.png, id=336, 743.77875pt x 130.4875pt>
+<ch4-4_images/radar state diagram.drawio.png, id=363, 743.77875pt x 130.4875pt>
 File: ch4-4_images/radar state diagram.drawio.png Graphic file (type png)
 <use ch4-4_images/radar state diagram.drawio.png>
-Package pdftex.def Info: ch4-4_images/radar state diagram.drawio.png  used on input line 104.
+Package pdftex.def Info: ch4-4_images/radar state diagram.drawio.png  used on input line 171.
 (pdftex.def)             Requested size: 371.88846pt x 65.24358pt.
-<ch4-4_images/flight test screenshot.png, id=345, 809.27344pt x 544.28343pt>
-File: ch4-4_images/flight test screenshot.png Graphic file (type png)
-<use ch4-4_images/flight test screenshot.png>
-Package pdftex.def Info: ch4-4_images/flight test screenshot.png  used on input line 120.
-(pdftex.def)             Requested size: 323.70364pt x 217.70952pt.
-[15 <./ch4-4_images/radar state diagram.drawio.png>] [16 <./ch4-4_images/flight test screenshot.png>] [17]
-Overfull \hbox (1.48906pt too wide) in paragraph at lines 218--218
+[16 <./ch4-4_images/radar state diagram.drawio.png>]
+Overfull \hbox (1.48906pt too wide) in paragraph at lines 196--196
  []|\OT1/cmr/m/n/10.95 Duration 
  []
 
-))
+<ch4-4_images/flight test screenshot zoomed.png, id=382, 184.43906pt x 121.20282pt>
+File: ch4-4_images/flight test screenshot zoomed.png Graphic file (type png)
+<use ch4-4_images/flight test screenshot zoomed.png>
+Package pdftex.def Info: ch4-4_images/flight test screenshot zoomed.png  used on input line 210.
+(pdftex.def)             Requested size: 184.4386pt x 121.20251pt.
+[17]))
 
 LaTeX Warning: Citation `stockelDetectionMonitoringPeople2024' undefined on input line 516.
 
@@ -1252,7 +1247,7 @@ LaTeX Warning: Citation `aurelia2025x6' undefined on input line 516.
 
 LaTeX Warning: Citation `ltdRaspberryPiSoftware' undefined on input line 516.
 
-(build/main.bbl) [18] [19
+(build/main.bbl) [18 <./ch4-4_images/flight test screenshot zoomed.png>] [19
 
 
 ]
@@ -1260,7 +1255,7 @@ LaTeX Warning: Citation `ltdRaspberryPiSoftware' undefined on input line 516.
 
  (./system_design.tex
 Chapter 6.
-<ch4-4_images/high level system diagram.drawio.png, id=398, 854.19125pt x 340.27126pt>
+<ch4-4_images/high level system diagram.drawio.png, id=411, 854.19125pt x 340.27126pt>
 File: ch4-4_images/high level system diagram.drawio.png Graphic file (type png)
 <use ch4-4_images/high level system diagram.drawio.png>
 Package pdftex.def Info: ch4-4_images/high level system diagram.drawio.png  used on input line 15.
@@ -1293,21 +1288,21 @@ File: lstlang1.sty 2020/03/24 1.8d listings language file
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 2D41678B885024C1A367B7428BB840A9;4705.
+(rerunfilecheck)             Checksum: 762259BCD621D882364148B19D0C7612;4919.
  ) 
 Here is how much of TeX's memory you used:
- 34542 strings out of 480171
- 629466 string characters out of 5894490
- 1359720 words of memory out of 5000000
- 51658 multiletter control sequences out of 15000+600000
+ 34574 strings out of 480171
+ 629996 string characters out of 5894490
+ 1361211 words of memory out of 5000000
+ 51688 multiletter control sequences out of 15000+600000
  482004 words of font info for 77 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
- 98i,15n,103p,1952b,2123s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 98i,15n,103p,1190b,2123s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/axel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1095.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on build/main.pdf (24 pages, 1616023 bytes).
+Output written on build/main.pdf (24 pages, 525985 bytes).
 PDF statistics:
- 628 PDF objects out of 1000 (max. 8388607)
- 545 compressed objects within 6 object streams
- 198 named destinations out of 1000 (max. 500000)
- 270 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 642 PDF objects out of 1000 (max. 8388607)
+ 559 compressed objects within 6 object streams
+ 200 named destinations out of 1000 (max. 500000)
+ 278 words of extra memory for PDF output out of 10000 (max. 10000000)
 
