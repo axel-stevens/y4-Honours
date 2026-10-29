@@ -1540,7 +1540,6 @@ INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx9.tfm
 INPUT build/main.toc
 INPUT build/main.toc
 INPUT build/main.toc
-INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmtt10.tfm
 OUTPUT build/main.toc
 INPUT build/main.lof
 INPUT build/main.lof
@@ -1572,6 +1571,7 @@ INPUT ch4_objective4.tex
 INPUT ./ch4_objective4.tex
 INPUT ./ch4_objective4.tex
 INPUT ch4_objective4.tex
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmtt10.tfm
 INPUT ./ch4-4_images/Activation signal diagram.drawio.png
 INPUT ./ch4-4_images/Activation signal diagram.drawio.png
 INPUT ch4-4_images/Activation signal diagram.drawio.png
@@ -1629,16 +1629,7 @@ INPUT /usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
-INPUT /usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
-INPUT /usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
-INPUT /usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
-INPUT /usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmtt10.tfm
-INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmtt12.tfm
-INPUT /usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
-INPUT /usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
-INPUT /usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
-INPUT /usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT build/main.aux
 INPUT build/system_design.aux
 INPUT build/system_design.aux
@@ -1658,5 +1649,4 @@ INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb
-INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb

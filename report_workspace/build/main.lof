@@ -1,9 +1,9 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Activation signal flow starting at the pilot transmitter and ending at the \gls {sdr}.\relax }}{xii}{figure.caption.13}%
-\contentsline {figure}{\numberline {5.2}{\ignorespaces Captured screenshot of live data display for the MAVLink interface (Note: data has demo values).\relax }}{xv}{figure.caption.16}%
-\contentsline {figure}{\numberline {5.3}{\ignorespaces State diagram of radar control sequence\relax }}{xvi}{figure.caption.19}%
-\contentsline {figure}{\numberline {5.4}{\ignorespaces Flight path and radar capture locations plotted in the data visualisation script.\relax }}{xviii}{figure.caption.21}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Activation signal flow starting at the pilot transmitter and ending at the \gls {sdr}.\relax }}{xi}{figure.caption.13}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Captured screenshot of live data display for the MAVLink interface (Note: data has demonstration values).\relax }}{xiv}{figure.caption.16}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces State diagram of radar control sequence\relax }}{xv}{figure.caption.19}%
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Flight path and radar capture locations plotted in the data visualisation script.\relax }}{xvii}{figure.caption.21}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {6.1}{\ignorespaces High level diagram of drone-radar integration system architecture\relax }}{xx}{figure.caption.23}%
+\contentsline {figure}{\numberline {6.1}{\ignorespaces High level diagram of drone-radar integration system architecture\relax }}{xix}{figure.caption.23}%
 \addvspace {10\p@ }
