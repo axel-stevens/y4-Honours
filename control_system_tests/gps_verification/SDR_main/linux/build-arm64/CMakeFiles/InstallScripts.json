@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/axel/Drone_Integration_Program/SDR_main-main/linux/build-arm64/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

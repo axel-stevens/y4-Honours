@@ -1,0 +1,2 @@
+/usr/bin/aarch64-linux-gnu-ar qc libpupradar_core.a CMakeFiles/pupradar_core.dir/src/IntelHex.cpp.o CMakeFiles/pupradar_core.dir/src/Protocol.cpp.o CMakeFiles/pupradar_core.dir/src/RadarSession.cpp.o CMakeFiles/pupradar_core.dir/src/IqWriter.cpp.o
+/usr/bin/aarch64-linux-gnu-ranlib libpupradar_core.a

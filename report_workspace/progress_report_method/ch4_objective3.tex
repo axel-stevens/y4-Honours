@@ -1,0 +1,25 @@
+\section{Objective 3: Design, Build, and Verify the Onboard Power System}
+
+Objective 3 addresses the design, construction, and verification of an onboard power system capable of supplying the \gls{sdr}, \gls{sbc}, gimbal, and supporting electronics during flight operations. The method follows four stages: design, prototyping and controlled testing, construction, and integration testing. This ensures that the power system meets electrical requirements, is verified before each stage progresses, and can operate reliably in flight.
+
+\subsection{Design}
+
+The first stage identifies the electrical and power requirements of all loads. Voltage, current, and power requirements for the \gls{sdr}, \gls{sbc}, and gimbal will be extracted from their technical datasheets, with typical and maximum values recorded. The minimum energy required for the 30-minute flight duration will then be calculated for each load and for the full system \cite{aguascaARBRESLightWeightCW2013}.
+
+Once the requirements are established, a high-level design will address energy capacity, output voltage and current, safety, and compatibility. For each requirement category, the necessary components and specifications will be determined. The output of this process will be a \gls{sld} defining the complete system architecture. Following this, components that satisfy required system requirements will then be selected and procured.
+
+\subsection{Prototyping and Controlled Testing}
+
+Before physical assembly, the power system design will be verified through circuit simulation. The specifications of selected components will be entered into a simulation model, and key outputs, including total load power, system efficiency, source current draw, and voltage drop, will be checked against the design requirements.
+
+Unit testing will then be conducted for each component. Each component will be tested at its nominal input voltage, with the load increased incrementally until the required operating conditions are reached. Voltage, current, and temperature will be recorded at each step to confirm correct operation and identify thermal concerns before system-level testing \cite{ismailElectricPropulsionHybrid2025}.
+
+A staged energisation plan will then be developed for complete-system bench testing. The plan will define the sequence in which loads are connected, with voltage, current, power, and temperature recorded at each stage. This approach confirms performance incrementally and helps to identify and isolate faults. The energisation plan will then be followed across all loads to verify that the complete system meets power and safety requirements.
+
+\subsection{Construction}
+
+During prototyping and controlled testing, the power system will use temporary electrical connections so components can be adjusted or replaced if issues are identified. Once the design is verified through the full energisation plan, temporary connections will be replaced with soldered joints. Each connection will be insulated to prevent short circuits and improve mechanical robustness. The completed assembly will be inspected before integration testing.
+
+\subsection{Integration Testing}
+
+The constructed power system will be verified through ground-based and airborne tests. A ground test will first be conducted with the power system installed on the drone to verify that it can safely and reliably support all subsystems for the required operational duration. Electrical parameters will be recorded to confirm compliance with the design requirements. An airborne flight test will then verify that the power system can supply the \gls{sdr}, \gls{sbc}, and gimbal for the flight duration. Objective 3 will be complete once the power system reliably supplies all loads during flight testing \cite{aguascaARBRESLightWeightCW2013}.

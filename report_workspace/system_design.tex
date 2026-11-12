@@ -1,0 +1,46 @@
+\chapter{System Design}
+\label{ch:system-design}
+
+The purpose of the system design was obtaining a high level idea of how each subsystem interacts with the other, and an understanding on how each subsystem meets the requirements. This chapter covers the system architecture, showing the key subsystems and how they interact. Then, the subsystem interfaces are covered in more detail. 
+
+\section{System Architecture}
+\label{sec:sysdesign-architecture}
+
+A diagram of the system architecture is shown in Figure~\ref{fig:system-design_system_diagram}. The system shows the key subsystems and their interactions, and whether they are located in the drone, the 3D printed compartment, or with the pilot. The activation signal propagates throughout the diagram, starting at the transmitter and ending at the radar. The program on the \gls{sbc} launches an executable, which provides the radar with the information required to complete the capture. Both radar capture and drone telemetry are synchronised by the \gls{sbc}. The entire system is powered by the drone's supply, and the system resides in the 3D-printed compartment, beneath the drone. 
+
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{ch4-4_images/high level system diagram.drawio.png}
+  \caption{High level diagram of drone-radar integration system architecture}
+  \label{fig:system-design_system_diagram}
+\end{figure}
+
+\section{Subsystem Interfaces}
+\label{sec:sysdesign-interfaces}
+
+Each subsystem interface is listed in Table~\ref{tab:interfaces} and numbered I1-I8. The interfaces I6 and I7 share the same physical connection and are read by a single program on one clock. 
+\begin{table}[H]
+  \centering
+  \footnotesize
+  \renewcommand{\arraystretch}{1.2}
+  \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+  \caption{Interfaces between subsystems}
+  \label{tab:interfaces}
+  \begin{tabularx}{\textwidth}{l Y Y Y Y l Y}
+    \hline
+    ID & From & To & Data / signal & Link, protocol, rate & Objective \\
+    \hline
+    I1 & SDR & Antennas & RF transmit / receive & Coaxial & 1 \\
+    I2 & Pi 5 & SDR & Capture control, IQ samples & USB 2.0 high-speed & 1, 4 \\
+    I3 & Auxiliary Supply & Power Module & Power (22.2V) & XT60 & 3\\
+    I4 & Power Module & Pi 5 & Power (5V) & USB-C & 3\\
+    I5 & Power Module & SDR & Power (6V) & Barrel-Jack & 3\\
+    I6 & Flight Controller & Pi 5 & \gls{gps} position, fix, satellites & \gls{usb}-Micro, MAVLink, 1 Hz & 4\\
+    I7 & Flight Controller & Pi 5 & RC capture switch state & \gls{usb}-Micro, MAVLink, 5 Hz & 4 \\
+    I8 & Flight controller & Transmitter & Telemetry, commands &  radio, MAVLink & 4 \\
+
+    \hline
+  \end{tabularx}
+\end{table}

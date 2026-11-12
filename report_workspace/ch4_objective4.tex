@@ -1,8 +1,14 @@
-\section{Objective 4: Synchronise Logging of Flight Telemetry and Radar Measurements}
+\chapter{Objective 4: Synchronise Logging of Flight Telemetry and Radar Measurements}
+\label{sec:obj4}
 
-\subsection{Introduction}
+A single python 3 program on the \gls{sbc} handled both the flight controller and the \gls{sdr}. The code was split by device, a \texttt{Drone} class, which handled the flight controller interface, a \texttt{Radar} class, which handled the radar interface, and a small \texttt{main.py} script to run the overall program. The program is available at the following GitHub repository: https://github.com/axel-stevens/y4-Honours. Synchronising the radar captures and the telemetry was critical, as each radar capture needed a position and attitude before it could be georeferenced or used in later processing.
 
-To synchronise flight telemetry and radar measurements, a pilot-initiated control signal must be interpreted, processed, and transmitted through the system. The signal travels from the pilot transmitter to the receiver, then to the flight controller, and finally to the \gls{sbc}, which triggers \gls{sdr} logging. This signal path is shown in Figure~\ref{fig:activation-signal-flow}.
+\section{Introduction}
+\label{sec:obj4-intro}
+
+To synchronise flight telemetry and radar measurements, a pilot-initiated control signal had to be interpreted, processed, and transmitted through the entire drone integration system. This required the flight controller to be configured to output the signal, for the signal to be propagated from the transmitter to the radar, and for the subsequent radar capture to be synchronised with the drone telemetry.
+
+First a switch was activated manually on the transmitter, which was then propagated to the flight controller. The flight controller then output this signal over a drone communication protocol called MAVLink to the \gls{sbc}. The \gls{sbc} then triggered a capture request to the \gls{sdr} accordingly. The \gls{sdr} started the capture and transmitted the information back to the \gls{sbc}. The signal path is shown in Figure~\ref{fig:activation-signal-flow}. 
 
 \begin{figure}[!htbp]
     \centering
@@ -11,460 +17,28 @@ To synchronise flight telemetry and radar measurements, a pilot-initiated contro
     \label{fig:activation-signal-flow}
 \end{figure}
 
-Progress toward this objective has included researching and procuring a suitable \gls{sbc}, completing its initial setup, and conducting a communication trial between the \gls{sbc} and a simulated flight-controller signal.
+This objective included researching and procuring a suitable \gls{sbc}, configuring the flight controller, designing software to interface with the flight controller and radar, implementing a post-processing script, and testing the built synchronisation system. The requirements of the system were the ability for a pilot to trigger the radar capture directly from a switch on the transmitter, and that every capture is associated with a telemetry log entry. The final system was a MAVLink-based Python program on board a Raspberry Pi 5 that interfaced with both the radar and the flight controller, synchronising the radar and drone telemetry. 
 
-\subsection{Methodology}
+\section{Flight Controller Configuration}
+\label{sec:obj4-fc-config}
 
+The flight controller needed to be configured to read in a signal from the transmitter and tie that signal to a specific channel. One of the switches on the transmitter was tied to \gls{rc} channel 15 using the transmitter settings. The telemetry log only records \gls{gps} when the drone is armed. This setting did not suit the project, as the drone needed to be disarmed for the majority of the project. To enable \gls{gps} logging while disarmed, the \texttt{LOG\_DISARMED} parameter was changed in the config file to HIGH on the flight controller. Eventually the .tlog file was replaced by a .csv file on board the \gls{sbc} as it was able to read all relevant telemetry status' directly. 
 
-\includegraphics[width=0.8\textwidth]{ch4-4_images/Control System Development Cycle.drawio.png}
 
+\section{Final System}
+\label{sec:obj4-final-system}
 
+The benefit to the program being on one system (the \gls{sbc}) was that all timing was able to use a single clock, which was \texttt{runtime} (seconds elapsed since the start of the program). Both the telemetry log and the radar used this value, and shared the same time base, making radar capture and telemetry synchronisation possible. 
 
-\subsubsection{SBC Setup and Iteration 1: GPIO Read}
+To verify the program on the \gls{sbc}, three tests were conducted, evaluating the key requirements of the system; \gls{gps}, radar capture response, and computational overhead. The \gls{gps} drift and radar tests were done using existing testing data (the ground integration tests, discussed in Section~\ref{ch9_integrated_system_testing}). This was due to it being infeasible to carry the drone out for another test solely for the purpose of obtaining benchmarks on one subsystem. The computational overhead test was conducted on a separate occasion, as it was possible to do so from indoors. 
 
-\textit{SBC Setup} 
 
-First, requirements of the \gls{sbc} were identified. The hardware requirements for the \gls{sbc} were derived from the \gls{sdr} datasheet, which specifies the need for a high-speed USB 2.0 interface (480 Mb/s)~\cite{luswavePUPDUAL24C}. Additionally, the \gls{sbc} should provide sufficient processing capability to support potential future expansion of onboard processing capability, placing requirements on CPU performance and RAM capacity.
 
-Consequently, a Raspberry Pi 5 with 16 GB of RAM was selected and procured. In addition to satisfying the hardware requirements, Raspberry Pi devices were selected because of their well-supported software ecosystem and prior use in drone-mounted radar research applications~\cite{kawkaSwarmDronesDetection2025,lopezUnmannedAerialVehicleBased2022,coulibalyBlockchainSoftwareDefinedRadio2025,aliDesignImplementationFMCW2017}. A protective case and active cooler were also acquired to secure the device on board the drone and manage \gls{cpu} temperature during \gls{sdr} operation.
+\subsection{MAVLink Interface}
 
-The Raspberry Pi 5 was physically assembled and configured with a lightweight Ubuntu 22.04 operating system. The installation process used an imager to write the Ubuntu disk image to a 64 GB microSD card. The card was then inserted into the Raspberry Pi 5, and the system was booted to verify the operating-system installation.
+The \gls{sbc} interfaced with the drone via MAVLink, a communication protocol used to interface between flight controllers and desktop computers, which the Raspberry Pi 5 running Ubuntu resembles in architecture. The physical connection was over \gls{usb}, and the software interface was handled by the \texttt{pymavlink} python package.  The communication method was originally \gls{pwm} with one of the servo channels on the flight controller, however this was replaced with MAVLink because MAVLink only required one wire to connect instead of two, and was not dependent on the safety switch of the drone. 
 
-A remote development workflow was then configured to develop and test the Python script used to read the \gls{gpio} pin. Native development on the Raspberry Pi was avoided due to its lower performance compared with a desktop computer. Instead, \gls{ssh} was configured and integrated with an \gls{ide} to enable remote development.
-
-\gls{ssh} provides a secure remote connection between a host and a remote computer. In this setup, the desktop computer was used as the development machine, and the Raspberry Pi 5 was used as the remote host. The setup commands are shown in Listing~\ref{lst:ssh-setup}. These commands install the \gls{ssh} server, enable the \gls{ssh} service at boot, and allow incoming \gls{ssh} connections through the firewall. The successful \gls{ssh} connection is shown in \hyperlink{appendix:ssh-connection}{Appendix X}.
-
-\begin{lstlisting}[language=bash,caption={The commands used to setup SSH connection between the Raspberry Pi and a remote computer.},label={lst:ssh-setup}]
-sudo apt install openssh-server
-sudo systemctl enable ssh
-sudo ufw allow ssh
-\end{lstlisting}
-
-The \gls{ssh} connection was then integrated with VS Code using the Microsoft \textit{Remote - \gls{ssh}} extension. The \gls{ssh} configuration file on the development laptop was updated with the Raspberry Pi's IP address and username, after which VS Code was connected to the Raspberry Pi through the remote \gls{ssh} interface.
-
-\textit{Iteration 1: GPIO Read}
-
-To allow the Raspberry Pi to read \gls{gpio} pins, the required \gls{gpio} packages were installed. The installation command is shown in Listing~\ref{lst:gpio-package-install}. The package \texttt{python3-lgpio} provides Python bindings and low-level \gls{gpio} access, and \texttt{gpiod} provides terminal tools for inspecting and manipulating \gls{gpio} pins.
-
-\begin{lstlisting}[language=Bash,caption={Bash command used to install python \gls{gpio} library.},label={lst:gpio-package-install}]
-sudo apt install python3-lgpio gpiod
-\end{lstlisting}
-
-The \texttt{lgpio} package is used interface with \gls{gpio} pins on a level too low in abstraction for the application. The package to use for interfacing with the pins at a higher abstraction level was called \texttt{rpi-lgpio}, which uses \texttt{lgpio} as a backened. The package can only be installed with \texttt{pip}, so a Python virtual environment was created. The virtual environment setup and installation of \texttt{rpi-lgpio} is shown in Listing~\ref{lst:rpi-lgpio-install}
-
-\begin{lstlisting}[language=Bash, caption=commands used to create the python virtual environment and install \texttt{rpi-lgpio},label={lst:rpi-lgpio-install}]
-wget http://abyz.me.uk/lg/lg.zip
-unzip lg.zip
-cd lg
-make
-sudo make install
-python3 -m venv gpio-env
-source gpio-env/bin/activate
-pip install rpi-lgpio
-
-\end{lstlisting}
-
-After installing the packages, a Python script was created to read a \gls{gpio} pin and respond when an external component pulls the signal high. The script is shown in Listing~\ref{lst:gpio-script}.
-
-\begin{lstlisting}[language=python,caption={Python script used to run on the Raspberry Pi to monitor one of the \gls{gpio} pins.},label={lst:gpio-script}]
-#!/usr/bin/env python3
-import RPi.GPIO as GPIO # Uses rpi-lgpio backend automatically
-from time import sleep
-import signal
-
-# Setup
-GPIO_PIN = 17
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(GPIO_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-
-print("Sensing 3.3V High...")
-
-try:
-    while True:
-        if GPIO.input(GPIO_PIN):
-            print("Pin High")
-            sleep(1)
-except KeyboardInterrupt:
-    print("Stopping...")
-finally:
-    GPIO.cleanup()
-pause()
-\end{lstlisting}
-
-To verify the program, an Arduino Uno R3 was used to generate an input signal for a \gls{gpio} pin. Because the Raspberry Pi 5 uses 3.3 V logic and the Arduino Uno R3 outputs 5 V logic, a resistor divider was used to reduce the signal to approximately 3.3 V and protect the Raspberry Pi.
-
-This process concluded the development of the first software that was made for the flight controller. 
-
-
-
-\subsubsection{Iteration 2: PWM Read}
-
-After the first software iteration was tested and confirmed working as expected, a new iteration was created. This iteration now reads in the specific signal sent from the flight controller output to the GPIO pins, which is \gls{pwm}. This iteration was split into several parallel tasks. On the flight controller side, outputting a specific PWM channel from an activation switch on the transmitter was a task, as was configuring the flight controller for telemetry logging. On the \gls{sbc} side, a refined script to interface with the flight controllers signals was made, and setting up the \gls{sbc} to interface with the Radar (including the function to run the SDR capture and setting up the software requirements to run the SDR) was it's own task. These four tasks are outlined in this section.
-
-
-
-\textit{Tie Flight Controller Activation Switch to RC Switch}
-
-Before doing anything, the flight controller had to be conencted to a Desktop PC to be able to interface with the device properly. This was done by installing and using Mission Planner.
-
-Upon configuring, the task then became to tie a PWM output channel to an RC switch on the transmitter. THis PWM output channel would then be read by the SBC, which would activate/deactivate the radar capture accordingly. 
-
-On the transmitter in possession, there were 8 physical switches. The switch that was deemed suitable was tied to RC channel 15 using the transmitter settings.
-
-In Mission Planner, RC Channel 15 was then tied to servo output 8. After configuring, the output signal was scoped with an oscilloscope and confirmed working as intended. 
-
-This development concluded with a successful tying of the transmitter physical switch to a servo output channel on the flight controller, enabling the transmitter to have a physical switch dedicated to radar capture.
-What to bring up:
-\begin{enumerate}
-    \item Signal flow point that we are at
-    \item What PWM is
-    \item Tying the PWM channel on the drone and outputting from the flight controller
-\end{enumerate}
-
-\textit{Configure Flight Controller Telemetry Logging}
-
-It was also imperative to gain an understanding of how the flight controller recorded telemetry and configure the logging in such a way to suit the application. That was the objective of this section. 
-
-It was found that when the host PC connects to the flihgt controller, the flight controller makes a .tlog file and continues to write to the .tlog file until the connection is terminated.
-
-The telemetry log only records \gls{gps} when the drone is armed. This setting did not suit the project, as the drone needed to be disarmed for the majority of the project. To enable \gls{gps} logging while disarmed, a parameter was changed in the config file in Mission Planner. 
-
-\begin{enumerate}
-    \item How the flight controller logs telemetry
-    \item Setting when to record telemetry
-    \item getting the telemetry logs off from the flight controller
-\end{enumerate}
-
-
-\textit{PWM Interface Script}
-
-At this stage of development, the flight controller interfaces with the \gls{sbc} via \gls{pwm}. Whether a signal is logic HIGH or logic LOW is determined by the pulse width of the transmission. For the flight controller signal, a pulse width below 1300 $\mu s$ is logic LOW, and a pulse width above 1700 $\mu s$ is logic HIGH. This is the logic embedded into the script that the \gls{sbc} uses to interface with the flight controller. 
-
-The input logic is controlled by the \texttt{RCInput} class, which is shown in Listing~\ref{lst:RCInput-class}
-
-\begin{lstlisting}[language=Python, caption=RCInput class used to control PWM input logic, label={lst:RCInput-class}]
-import RPi.GPIO as GPIO
-import time
-
-from .config import RC7_PIN, RC8_PIN
-from .config import PWM_HIGH, PWM_LOW
-
-
-class RCInput:
-
-    def __init__(self):
-
-        self.rc7_pulse_width = 0
-        self.rc8_pulse_width = 0
-
-        self.rc7_high = False
-        self.rc8_high = False
-
-        self.rc7_rising_time = None
-        self.rc8_rising_time = None
-
-        self.rc7_last_low = 0
-        self.rc8_last_low = 0
-
-        GPIO.setup(RC7_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-
-        GPIO.setup(RC8_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-
-        GPIO.add_event_detect(RC7_PIN, GPIO.BOTH, callback=self.rc7_callback)
-
-        GPIO.add_event_detect(RC8_PIN, GPIO.BOTH, callback=self.rc8_callback)
-
-    def rc7_callback(self, channel):
-
-        if GPIO.input(channel):
-
-            # Rising edge
-            self.rc7_rising_time = time.monotonic_ns()
-
-        else:
-
-            # Falling edge
-            if self.rc7_rising_time is not None:
-
-                falling_time = time.monotonic_ns()
-
-                self.rc7_pulse_width = (falling_time - self.rc7_rising_time) / 1000
-
-                self.rc7_rising_time = None
-
-                if self.rc7_pulse_width > PWM_HIGH:
-
-                    self.rc7_high = True
-
-                elif self.rc7_pulse_width < PWM_LOW:
-
-                    self.rc7_high = False
-
-    def rc8_callback(self, channel):
-
-        if GPIO.input(channel):
-
-            # Rising edge
-            self.rc8_rising_time = time.monotonic_ns()
-
-        else:
-
-            # Falling edge
-            if self.rc8_rising_time is not None:
-
-                falling_time = time.monotonic_ns()
-
-                self.rc8_pulse_width = (falling_time - self.rc8_rising_time) / 1000
-
-                self.rc8_rising_time = None
-
-                if self.rc8_pulse_width > PWM_HIGH:
-
-                    self.rc8_high = True
-
-                elif self.rc8_pulse_width < PWM_LOW:
-
-                    self.rc8_high = False
-\end{lstlisting}
-
-The main flow of the program is controlled by the main.py script, which is shown in Listing \ref{lst:pwm_interface_main}. The script initialises the Raspberry Pi GPIO interface and creates instances of the RC input, radar, GPS, and display classes. It then continuously monitors the RC channels, starting a radar capture when the appropriate input transitions high and activating GPS when the corresponding input is high. Runtime and capture information are written to output.txt, while the display is periodically updated with the current system state. When the program is interrupted or terminated, it performs a shutdown routine that cleans up the environment. 
-
-\begin{lstlisting}[language=Python, caption=Main file of \gls{pwm} interface script, label={lst:pwm_interface_main}]
-#!/usr/bin/env python3
-
-import RPi.GPIO as GPIO
-import time
-import signal
-
-from files.rc_input import RCInput
-from files.radar import Radar
-from files.gps import GPS
-from files.display import display
-from files.config import DISPLAY_REFRESH
-
-# ============================================================
-# GLOBAL STATE
-# ============================================================
-
-start_time = time.monotonic()
-
-# ============================================================
-# INITIALISE
-# ============================================================
-
-GPIO.setmode(GPIO.BCM)
-
-rc = RCInput()
-
-radar = Radar()
-
-gps = GPS()
-
-# ============================================================
-# OUTPUT
-# ============================================================
-
-
-def update_output(gps, radar):
-    with open("output.txt", "w") as file:
-        file.write(f"GPS Activation time: {gps.activation_time}\n")
-        file.write(f"Radar capture times: {radar.capture_times}\n")
-
-
-# ============================================================
-# MAIN LOOP
-# ============================================================
-
-
-def main():
-
-    global drone_armed
-    global start_time
-
-    print("Starting drone radar interface...")
-    open("output.txt", "w")  # overwrite previous file
-
-    try:
-
-        while True:
-
-            runtime = time.monotonic() - start_time
-
-            # ------------------------------------------------
-            # Radar Capture
-            # ------------------------------------------------
-
-            if rc.rc7_high and rc.rc7_last_low:
-
-                radar.start_capture(runtime)
-                update_output(gps, radar)
-                radar.stop_capture()
-                rc.rc7_last_low = 0
-
-            if not rc.rc7_high:
-                rc.rc7_last_low = 1
-
-            # ------------------------------------------------
-            # GPS
-            # ------------------------------------------------
-
-            if rc.rc8_high:
-
-                gps.activate()
-                update_output(gps, radar)
-
-            # ------------------------------------------------
-            # DISPLAY
-            # ------------------------------------------------
-
-            display(rc, radar, gps, runtime)
-
-            time.sleep(DISPLAY_REFRESH)
-
-    except KeyboardInterrupt:
-
-        shutdown()
-
-
-# ============================================================
-# SHUTDOWN
-# ============================================================
-
-
-def shutdown():
-
-    print("\nCleaning up...")
-
-    GPIO.cleanup()
-
-
-def signal_handler(signal_number, frame):
-
-    shutdown()
-
-    exit(0)
-
-
-signal.signal(signal.SIGINT, signal_handler)
-
-signal.signal(signal.SIGTERM, signal_handler)
-
-
-# ============================================================
-# START
-# ============================================================
-
-if __name__ == "__main__":
-
-    main()
-\end{lstlisting}
-
-
-\begin{enumerate}
-    \item The PWM interface
-    \item Overview of the classes 
-    \item Main function flow
-\end{enumerate}
-
-\textit{SDR Interface function Rev1}
-
-The PWM interface script was modified to enable the use of Bash commands to activate the script that initiates radar capture. Following this, the class to handle the radar capture script was implemented. This function is shown in Listing \ref{lst:radarclass_pwm}. The Radar class manages the state of radar captures and records basic capture information. When a capture is started, it prevents duplicate captures, increments the capture count, records the capture time, and adds it to a list of previous capture times. The \texttt{stop\_capture()} method ends the active capture, while the commented \texttt{subprocess.run()} shows where the external radar acquisition command can be executed.
-
-\begin{lstlisting}[language=Python, caption=Radar capture class implemented in pwm interface script, label={lst:radarclass_pwm}]
-import time
-import subprocess
-
-
-class Radar:
-
-    def __init__(self):
-
-        self.capturing = False
-        self.capture_count = 0
-        self.last_capture_time = None
-
-        self.capture_times = []
-
-    def start_capture(self, runtime):
-
-        if self.capturing:
-            return
-
-        self.capturing = True
-
-        self.capture_count += 1
-
-        self.last_capture_time = runtime
-
-        self.capture_times.append(self.last_capture_time)
-
-        print("Radar capture started")
-
-        # Start radar here
-        # subprocess.run(
-        #     """
-        #     sudo ./build-arm64/pupradar_capture --firmware firmware/SDR_USB_FW.hex --duration 5 --fc-low 24.00e9 --fc-high 26e9 --sweep-time 1 --samp-num 4 --out ~/SDR-data/0209_pi/0209_2GHz_128_0-5ms_loopback_rx1_01 --rx 1
-        #     """,
-        #     shell=True,
-        #     executable="/bin/bash",
-        #     check=True,
-        # )
-
-    def stop_capture(self):
-
-        if not self.capturing:
-            return
-
-        self.capturing = False
-
-        print("Radar capture stopped")
-\end{lstlisting}
-
-
-
-\begin{enumerate}
-    \item Getting Python to run shell code
-    \item Setting the sticky capture function
-    \item The execution capture cycle
-\end{enumerate}
-
-
-
-
-
-\subsubsection{Iteration 3: Mavlink}
-
-Likewise from the second iteration, a single python 3 program on 
-the \gls{sbc} handled both the flight controller and 
-the \gls{sdr} in one loop. 
-
-Again, the code was split by device, a \texttt{Drone} class, which
-handled the flight controller interface, a \texttt{Radar} class, which
-handled the radar interface, and a small \texttt{main.py} script to
-run the overall program. 
-
-The benefit to the program being one one system was the fact that
-all the timing was able to use a single clock, which was \texttt{runtime} (seconds
-elapsed since the start of the program). Both the telemetry
-log and the radar used this value, and shared the same time base 
-which is what made synchronisation possible. 
-
-
-\textit{Mavlink Interface}
-
-The \gls{sbc} interfaced with the drone via Mavlink, a 
-communication protocol used to interface between flight controllers
-and desktop computers (which the Raspberry Pi 5 running Ubuntu
-has a similar architecture to). The physical connection was over 
-\gls{usb} serial, and the software interface was
-handled by the \texttt{pymavlink} python package. 
-
-The script blocked until it received a \texttt{HEARTBEAT} signal
-which confirmed the link and gave the target system and component IDs 
-to be used by later commands. Instead of relying on default stream rates, the script
-sent \texttt{MAV\_CMD\_SET\_MESSAGE\_INTERVAL} commands
-to request each message at a fixed rate. The message 
-ID's of the key messages is shown in Table \ref{tab:mavlink_messages}.
+The program blocked until it received a \texttt{HEARTBEAT} signal from the flight controller which confirmed the link and gave the target system and component IDs to be used by later commands. Instead of relying on default stream rates, the program sent \texttt{MAV\_CMD\_SET\_MESSAGE\_INTERVAL} commands to request each message from the flight controller at a fixed rate. The message IDs of the key messages is shown in Table \ref{tab:mavlink_messages}.
 
 
 \begin{table}[htbp]
@@ -487,53 +61,158 @@ ID's of the key messages is shown in Table \ref{tab:mavlink_messages}.
 \end{table}
 
 
-on each loop in the \texttt{main.py} file, \text{update()} drained
-every queued message with non blocking \texttt{recv\_match(blocking=False)},
-and so the program was never stalled by a slow linkm as the stored
-value was always the latest received. 
+On each loop in the \texttt{main.py} file, \texttt{update()} drained every queued message with a non-blocking \texttt{recv\_match(blocking=False)}, and so the program was never stalled by a slow link as the stored value was always the latest received. 
 
-Raw Mavlink fields were converted to \gls{si} units upon reception,
-including converting lattitude and longitude from degE7 to degrees, 
-altitude from milimetres to metres, and voltage from millivolts to volts.
+Raw MAVLink fields were converted to \gls{si} units upon reception, including converting latitude and longitude from degE7 to degrees, altitude from millimetres to metres, and voltage from millivolts to volts. The armed status and flight mode of the drone was decoded as part of the \texttt{HEARTBEAT} message sent from the flight controller. The radar was triggered from a switch on the pilot's transmitter which was mapped to \gls{rc} channel 15. The signal was read through the \texttt{RC\_CHANNELS} MAVLink message (shown in Table~\ref{tab:mavlink_messages}).The trigger logic was rising edge detection, because the encoded data in the MAVLink message was pulse width. 
 
-The armed status of the drone was read from the \texttt{MAV\_MODE\_FLAG\_SAFETY\_ARMED} 
-bit of \texttt{HEARTBEAT.base\_mode}, and the flight mode
-was decoded with \texttt{mode\_string\_v10}. The \texttt{gps\_ready} state was changed based on whether a fix to three 
-or more satellites was present. 
+A capture was requested by the main script to the radar only when the pulse width was above 1800 $\mu s$. The switch had to be seen as low before a new capture could be requested (which was a pulse width below 1200 $\mu s$). The logic prevented one switch from firing repeatedly, ignored the noise in the invalid range, and prevented a switch left high at startup from requesting a capture. Both pulse width parameters can be changed easily in the config file. Buffering was not used, if the radar was still busy, the request was rejected and a message printed, instead of the request being queued. The reason for this was predictability. The timespan of the radar capture was too long for buffering to be feasible. 
 
-Same from iteration 2, the radar was triggered from a switch on the pilot's 
-transmitter which was mapped to channel 15. However, instead of reading in 
-a PWM signal output from the flight controller, the signal was read through the \texttt{RC\_CHANNELS}
-MAVlink message. 
+\subsection{Test: \texorpdfstring{\gls{rc}}{RC} Switch Trigger Latency}
 
-The trigger logic remained the same; rising edge detection. A capture was 
-requested by the main script to the radar only when the pulse width was above 1800 $ \mus$.
-The capture logic was sticky; the switch had to be seen as low before a new 
-capture could be requested (which was a pulse width below 1200 $\mu s$). The 
-sticky logic prevented one switch from firing repeatedly, ignored the noise
-in the invalid range, and prevented a switch left high at startup from requesting 
-a capture. Both pulse width parameters can be changed easily in the config file. 
-Buffering was not used; if the radar was still busy, the request was rejected 
-and a message printed, instead of the request being queued. The reason for this 
-was
+An average of the length of time taken for the radar to capture between activating the trigger and starting the capture was taken for all five logs from the  tests. Between the first four tests and the last one, the settling time of the radar before capture was changed, which affected the latency. As such in the results, the first four tests the mean latency is subtracted by 4 s to offset the settling time. The results are shown in Table~\ref{tab:ch4-capture_latency}.
 
 
+\begin{table}[H]
+\centering
+\caption{Trigger-to-capture latency after removing the 4\,s settle-delay from logs 1--4}
+\label{tab:ch4-capture_latency}
+\begin{tabular}{lccc}
+\toprule
+Group & Events & Mean latency (s) & Std.\ dev.\ (ms) \\
+\midrule
+Logs 1--4 & 10 & 2.0084 & 0.41 \\
+Log 5     & 3  & 2.0030 & 0.24 \\
+\midrule
+All       & 13 & 2.0071 & 2.4  \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 
-\textit{SDR Interface}
+\subsubsection{Discussion}
 
-\textit{GPS and SDR Processing and Plotting}
+The mean latency across all tests is 2.0062 s. The low standard deviations of 0.24 ms and 0.41 ms within each configuration shows that the trigger path is stable. The higher standard deviation when all the data is combined is a reflection of the two sets being mixed despite being in different configurations.  The program logged data at 1 Hz, so the switch could have flipped up to 1 second extra before the logged row, so the true latency is thus between approximately 2 and 3 seconds, and the numbers shown in Table~\ref{tab:ch4-capture_latency} is a lower bound. 
+
+The latency would have no effect on \gls{sar}, as \gls{sar} requires knowing the position of the antenna during a capture, not how long after a switch a capture started. Also, the \gls{gps} is recorded in sync with the \gls{sdr}, as the program is non-blocking. Whether the latency is acceptable depends on the pilot's user experience, which varies with the pilot. However, during testing the latency was found to be noticeably inconvenient. To improve the latency, the flush and settle time of the radar can be shortened.
+
+\subsection{Telemetry Log}
+
+On each script startup a telemetry log in the form of a .csv file was created from the program, named with the start date and time, so that a telemetry log never overwrote a previous log. Each row in the log held sixteen telemetry fields and five radar fields of data, in addition to the program runtime. Among the five radar fields was the file name of the radar capture (if one occurred), so that each radar capture could be matched directly to the telemetry rows. 
+
+To view live data, a terminal dashboard (which was viewed over \gls{ssh}) showed flight state, \gls{gps}, attitude, battery voltage, the pulse width of the \gls{rc} channel tied to the activation of the \gls{sdr}, and the radar status. The display was refreshed at one Hz; a parameter changeable in the config file. A screenshot of the display with demonstration values is shown in Figure \ref{ch4-4:display}. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{ch4-4_images/display.png}
+    \caption{Captured screenshot of live data display for the MAVLink interface (Note: data has demonstration values).}
+    \label{ch4-4:display}
+\end{figure}
+
+\subsection{Test: \texorpdfstring{\gls{gps}}{GPS} Drift}
+\label{sec:gps-drift}
+
+Windows of time where the drone was stationary during the tests were taken as data samples used to measure stationary \gls{gps} drift, where "stationary" was interpreted as having a ground-speed of $0.1 \text{m/s}$. The mean latitude and longitude of the stationary windows are shown in Table~\ref{tab:ch4-gps_drift_position}. 
+
+\begin{table}[H]
+\centering
+\caption{Mean position of each stationary window}
+\label{tab:ch4-gps_drift_position}
+\begin{tabular}{lccc}
+\toprule
+Window & Duration (s) & Mean latitude ($^\circ$) & Mean longitude ($^\circ$) \\
+\midrule
+Log 1-A & 72  & $-34.9183751$ & $138.6055408$ \\
+Log 2-A & 33  & $-34.9183822$ & $138.6055543$ \\
+Log 3-A & 16  & $-34.9183846$ & $138.6055478$ \\
+Log 3-B & 125 & $-34.9183355$ & $138.6055030$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The standard deviation of the distance from the mean, and the maximum distance of the mean are shown in Table~\ref{tab:ch4-gps_drift}.
+
+\begin{table}[H]
+  \centering
+  \caption{Horizontal \texorpdfstring{\gls{gps}}{GPS} drift and satellites visible for each stationary window}
+  \label{tab:ch4-gps_drift}
+  \begin{tabularx}{\textwidth}{l Y Y Y}
+    \hline
+    Window & RMS distance from mean (m) & Max.\ distance from mean (m) & Satellites visible, mean (min--max) \\
+    \hline
+    Log 1-A & 0.61 & 1.14 & 30.2 (27--32) \\
+    Log 2-A & 0.05 & 0.11 & 30.5 (28--32) \\
+    Log 3-A & 0.07 & 0.17 & 31.8 (31--32) \\
+    Log 3-B & 0.34 & 0.65 & 31.0 (23--32) \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+\subsubsection{Discussion}
+
+The horizontal standard deviation ranged from 0.05 to 0.61 m, with the worst case maximum distance from the mean being 1.14 m. Log 2-A and Log 3-A had highest stability, with standard deviations of 0.05 m and 0.07 m respectively. The largest drift was shown by Log 1-A, which had standard deviation of 0.61 m. The position moved steadily away from the starting point, reaching 1.82 m after 72 s, despite ground-speed remaining below 0.03 m/s. Log 3-B was in between, with a standard deviation of 0.34 m. There is a large dip in the satellite count for log 3-B. It can be seen that Log 1-A has the same approximate satellite count as Log 2-A, yet has a standard deviation of 0.61 m against 0.05 m. The results indicate that the difference in drift did not correspond to the satellite count alone. The two shortest windows had the lowest \gls{gps} drift, so it is evident that drift may grow with window length.  However, drift is not necessarily directly proportional to duration, as the highest drift was recorded by Log 1-A, which has a shorter duration than Log 3-B.
+
+For georeferencing, the \gls{gps} drift does not interfere with the ability to plot where each capture was taken. The location where the data were taken was between two large buildings, which likely negatively affected the \gls{gps} drift. Because of the location, a level of inaccuracy was expected. Operational steps to reduce \gls{gps} drift range from letting the \gls{gps} warm for a number of minutes before operating, and distancing from buildings and metal to reduce multipath. 
 
 
+\subsection{SDR Interface}
 
-\subsection{Results and Discussion}
+The \gls{sbc} and radar did not communicate directly. Instead, the capture executable file was run by the \texttt{Radar} class in the program as a subprocess. This was to ensure appropriate separation between the two systems in order to minimise complexity. Under this method, the \gls{sbc} was only responsible for scheduling and bookkeeping of the radar captures. 
 
-\subsubsection{Development test 1: GPIO Read}
+The capture settings for the radar existed in a \gls{json} file which was read by the program at startup, so that parameters could change between flights without editing code. Among these settings were the executable and firmware paths, output folder for the radar captures, duration of capture, and sweep time. The radar capture cycle was modelled as a state machine, the diagram is shown in Figure~\ref{fig:radar_state_diagram}.
 
-\subsubsection{Development test 2: RC Switch to PWM Capture Cycle}
 
-\subsubsection{Development test 3: Full telemetry live handoff and full capture cycle}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{ch4-4_images/radar state diagram.drawio.png}
+    \caption{State diagram of radar control sequence}
+    \label{fig:radar_state_diagram}
 
-\subsubsection{Ground Test: Full Integration with other subsystems on the ground demonstrating full capture cycle and logging}
+\end{figure}
 
-\subsection{Summary}
+Each capture file was named according to its capture number and runtime on capture. Together with the per-row radar columns in the CSV file, this gave two independent ways to align the radar capture data with the telemetry data sets.
+
+\subsection{Test: Computational Overhead}
+
+To address the tight computational requirements of the airborne system, a computational overhead test was conducted. Three separate tests were run. The first test was recorded while the system was sitting idle and not running the program. The second test was recorded during program runtime and no radar captures were made. The third test was recorded during program runtime while continuously capturing radar data. The first test provided a baseline for the system usage, the second a baseline for the program, and the third the behaviour of the system during operation. The results for the three tests are shown in Table~\ref{tab:pi_overhead}
+
+
+\begin{table}[htbp]
+  \centering
+  \caption{Raspberry Pi resource usage for each test condition}
+  \label{tab:pi_overhead}
+  \begin{tabularx}{\textwidth}{l *{6}{>{\centering\arraybackslash}X}}
+    \toprule
+    Condition & Samples & Duration (s) & System \gls{cpu} (\%) & Script \gls{cpu} (\%) & \gls{ram} used (\%) & Temp. ($^\circ$C) \\
+    \midrule
+    Baseline (script off)     & 313 & 313.5 & 0.07 & --   & 3.60 & 48.17 \\
+    Script running            & 163 & 163.3 & 0.12 & 0.16 & 3.77 & 47.00 \\
+    Script running, capturing & 171 & 171.3 & 0.30 & 0.17 & 3.85 & 47.57 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\subsubsection{Discussion}
+
+Each test made a continual recording of the percentage \gls{cpu} used by the system, percentage \gls{cpu} used by the program, percentage \gls{ram} used by the system, and the temperature of the system. The system \gls{cpu} usage increases steadily across the three tests, but remains at less than 1\% usage. The script \gls{cpu} usage is higher than the system \gls{cpu} usage on one occasion. This is not an error, and is due to the system \gls{cpu} usage being averaged over all four \gls{cpu} cores, while the script is measured against one core. The \gls{ram} usage increases from 3.6\% to 3.85\%, and the average temperature remains approximately constant. From this it can be concluded that the program utilises a substantially small amount of computational resources, and so is enough leftover computational resources for performing live radar data processing on the Raspberry Pi 5 in a future design iteration.
+
+\subsection{Post-Processing}
+\label{sec:obj4-post-processing}
+
+A post-processing script that takes the synced .csv file from the \gls{sbc} and draws the flight path on an interactive map was created. The script is shown in Appendix \ref{app:obj4-telem-data-visualisation}. When a new radar capture starts, a marker is placed on the interactive flight map at the location. The script erases the first row of data, as the longitude and latitude start at invalid value 0. This is because the flight controller initially outputs default values before beginning data recording. Coordinates are already in decimal degrees from the \gls{sbc} program, so they are plotted directly. The script was run on a desktop \gls{pc}, not the \gls{sbc}. Data visualisation was done after capturing, so using a \gls{pc} was appropriate.  \gls{sdr} data was not processed in this stage. An example output is shown in Figure~\ref{fig:ch4-4_data_vis_output}, which was from testing the  \gls{rc} switch latency.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=1]{ch4-4_images/flight test screenshot zoomed.png}
+\caption{Flight path and radar capture locations plotted in the data visualisation script.}
+\label{fig:ch4-4_data_vis_output}
+\end{figure}
+
+The blue line is a point-to-point line between \gls{gps} data points, and the markers indicate points where radar data was captured. The markers also contain information about each radar capture (row, capture count), and there is one marker per radar capture.
+
+\section{Summary}
+\label{sec:obj4-summary} 
+Objective 4 implemented the full control cycle of the \gls{sdr} integration system, enabling a switch on the transmitter to trigger radar captures, and for those captures to be synchronised to drone telemetry. A Raspberry Pi 5 was chosen as the centralised control system as it leaves room for future onboard processing. The final version of the program used MAVLink over \gls{usb}, which simplified wiring and removed the dependency on the drone's safety switch. The program logged telemetry and radar state to one .csv file per run. A latched trigger ran the radar capture sequence. Afterward, a separate program on a \gls{pc} plotted capture locations on a \gls{html} map.
+
+When the system was stationary, the \gls{gps} position drifted 0.05-0.61 metres from the mean, with a worst case drift of 1.14 m. The average trigger-to-capture latency was 2.007 seconds over 13 recorded captures. Due to the system's refresh rate, the actual latency is 2-3 seconds, which can be adjusted. The computational overhead of the program was negligible; the \gls{cpu} usage remained below 1\% and the \gls{ram} usage rose only from 3.6\% to 3.85\% in the most computationally demanding tests. The primary limitations were a settle-delay setting error in the first four logs and the reuse of earlier testing data, instead of staging new tests. Future work includes extending the program to feature on board processing (utilising the Raspberry Pi 5's spare processing power), reducing the capture latency by optimising the radar's capture cycle, and conducting further testing to verify the \gls{gps} drift. 
+
+

@@ -1,0 +1,2 @@
+/usr/bin/aarch64-linux-gnu-ar qc libpupradar_usb.a CMakeFiles/pupradar_usb.dir/src/UsbDevice.cpp.o
+/usr/bin/aarch64-linux-gnu-ranlib libpupradar_usb.a
