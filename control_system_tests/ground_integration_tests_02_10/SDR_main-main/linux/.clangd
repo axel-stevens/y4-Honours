@@ -1,6 +1,0 @@
-CompileFlags:
-  Add:
-    - -std=c++17
-    - -Iinclude
-    - -Ithird_party
-    - -I/usr/include/libusb-1.0
