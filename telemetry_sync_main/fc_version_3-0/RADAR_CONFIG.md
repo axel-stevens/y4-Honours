@@ -2,7 +2,9 @@
 
 `files/radar.py` builds the `pupradar_capture` command from `radar_config.json`, which sits in `fc_version_3-0/`, one level above `files/`. Editing this file changes the radar settings without touching any Python.
 
-## Template
+## Example
+
+The values here are only an example. Check `radar_config.json` for the settings currently in use.
 
 ```json
 {
@@ -39,12 +41,12 @@
 | `firmware` | string | Passed as `--firmware`. |
 | `output_dir` | string | Folder that `--out` files are written to. Created if it doesn't exist. |
 | `use_sudo` | `true` / `false` | Adds `sudo` in front of the command. Optional: if left out, it counts as `false`. |
-| `settle_time` | number | Seconds to wait after the flush finishes before starting the capture. |
+| `settle_time` | number | Seconds to wait after a capture is requested before it starts. |
 | `buffer_time` | number | Seconds after a capture finishes before another capture can be requested. |
 | `capture` | object | Settings used for the capture run. |
-| `flush` | object | Settings used for the flush run before each capture. |
+| `flush` | object | Settings for a separate flush run before each capture. Currently unused, because the flush run is commented out in `radar.py` (see section 5 of `QUICKSTART.md`). |
 
-The `capture` and `flush` objects each need these keys:
+The `capture` object (and `flush`, if the flush run is turned back on) needs these keys:
 
 | Key | Command-line flag |
 |---|---|
@@ -55,12 +57,13 @@ The `capture` and `flush` objects each need these keys:
 | `samp_num` | `--samp-num` |
 | `rx` | `--rx` |
 
-Every key except `use_sudo` is required. If one is missing or misspelled, `Radar` fails with a `KeyError` naming that key. Extra keys are ignored.
+Every key except `use_sudo` and `flush` is required. If one is missing or misspelled, `Radar` fails with a `KeyError` naming that key. Extra keys are ignored.
 
 ## Output file names
 
 - A capture writes to `<output_dir>/<capture_count>_time_<runtime>`. Any `.` in the runtime is replaced with `_`, so capture 3 at runtime `12.5` becomes `3_time_12_5`.
-- The flush always writes to `<output_dir>/flush`.
+- The startup capture that uploads the firmware writes to `<output_dir>/initialise_radar_capture`.
+- The flush run, if turned back on, writes to `<output_dir>/flush`.
 
 ## JSON syntax rules
 

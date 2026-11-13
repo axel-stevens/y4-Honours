@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Windows download metadata
+*Zone.Identifier
+
+# Editor settings
+.vscode/
