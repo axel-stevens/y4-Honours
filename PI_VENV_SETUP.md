@@ -1,6 +1,6 @@
 # Setting up the Python venv on the Pi
 
-Run these commands on the Pi to install everything `fc_version_3-0` needs.
+Run these commands on the Pi to install everything needed.
 
 The Pi 5 uses `rpi-lgpio` instead of `RPi.GPIO`, because `RPi.GPIO` doesn't work on the Pi 5. `rpi-lgpio` is a drop-in replacement that uses `lgpio` underneath, so the code doesn't need changing. The two can't be installed in the same environment.
 

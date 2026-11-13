@@ -1,7 +1,6 @@
-# Quickstart: fc_version_3-0
+# Quickstart:\
 
-> **`telemetry_sync_main/fc_version_3-0` is the main program. It's the version to copy to and run on the Pi.** `fc_version_1-0` and `fc_version_2-0` are earlier versions and aren't used any more.
-
+> **`telemetry_sync_main` is the main program. It's the version to copy to and run on the Pi.** 
 This is the program that runs on the Raspberry Pi on the drone. It does three things:
 
 1. Reads telemetry from the flight controller over MAVLink: GPS, attitude, battery, armed state, flight mode and RC channels.
@@ -34,9 +33,6 @@ y4-Honours/
 ├── PI_VENV_SETUP.md              Python venv setup on the Pi
 ├── write_to_pi.md                Ethernet link and SSH to the Pi
 ├── telemetry_sync_main/
-│   ├── fc_version_1-0/           Earlier version (not used)
-│   ├── fc_version_2-0/           Earlier version (not used)
-│   └── fc_version_3-0/           MAIN PROGRAM: the version that runs on the Pi
 │       ├── main.py               Entry point: connect, log, trigger captures, show the display
 │       ├── radar_config.json     Radar settings (paths, frequencies, timings). Edit this, not the Python
 │       ├── RADAR_CONFIG.md       Full reference for radar_config.json
@@ -86,7 +82,7 @@ The Pi 5 uses `rpi-lgpio` instead of `RPi.GPIO`, which doesn't work on the Pi 5.
 From the laptop, in `telemetry_sync_main/`:
 
 ```bash
-scp -r fc_version_3-0 axel@192.168.137.2:Drone_Integration_Program/
+scp -r . axel@192.168.137.2:Drone_Integration_Program/
 ```
 
 ---
@@ -97,7 +93,7 @@ The program is started manually over SSH. Connect to the Pi (see `write_to_pi.md
 
 ```bash
 source ~/Drone_Integration_Program/.venv/bin/activate
-cd ~/Drone_Integration_Program/fc_version_3-0
+cd ~/Drone_Integration_Program
 python main.py
 ```
 

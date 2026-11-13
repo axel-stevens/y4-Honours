@@ -58,7 +58,7 @@ You can now SSH to the Pi over WSL via a direct Ethernet connection :).
 Copy the main program to the Pi (run from `telemetry_sync_main/` on the laptop):
 
 ```Bash
-scp -r fc_version_3-0 axel@192.168.137.2:Drone_Integration_Program/
+scp -r . -0 axel@192.168.137.2:Drone_Integration_Program/
 ```
 
 Copy the whole program folder back from the Pi to the current folder on the laptop:

@@ -1,8 +1,0 @@
-# MATLAB auto-save files
-*.asv
-
-# OS / editor noise
-.DS_Store
-.claude/
-.mcp.json
-Thumbs.db

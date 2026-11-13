@@ -1,6 +1,0 @@
-build-*/
-*.bin
-*.json
-!firmware/
-test_capture.*
-tiny_fw.hex
